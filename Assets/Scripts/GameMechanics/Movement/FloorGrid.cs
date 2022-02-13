@@ -12,7 +12,9 @@ public class FloorGrid : MonoBehaviour
     [SerializeField]
     private List<GridPoint> hoveredOverGridPoints = new List<GridPoint>();
     private Vector2 currentLocation = new Vector2(0, 0);
-    // Start is called before the first frame update
+
+    [SerializeField]
+    public int dieValue = 0;
 
     void Start()
     {
@@ -24,17 +26,9 @@ public class FloorGrid : MonoBehaviour
                 gridDictionary.Add(new Vector2(this.transform.position.x + i, this.transform.position.z + p), instantiatedGridPoint.GetComponent<GridPoint>());
             }
         }
-
-
-        /*
-        foreach (var myKeyValue in gridDictionary)
-        {
-            Debug.Log(gridDictionary.Values);
-        }
-        */
     }
 
-    public void TryHighlighting(GridPoint gp, Vector2 destination)
+    public void AddGridPointToList(GridPoint gp, Vector2 destination)
     {
         gp.ShowHighlight(true);
 
@@ -44,60 +38,131 @@ public class FloorGrid : MonoBehaviour
         }
     }
 
-    private void Update()
+    public void TryHighlighting(int movementValue)
     {
-        if (Input.GetKeyDown(KeyCode.W))
+        dieValue = DistributedDieValue.distributedDieRollValue;
+
+        switch (movementValue)
         {
-            Vector2 moveUp = new Vector2(1, 0);
-            var destination = currentLocation + moveUp;
-            if (gridDictionary.TryGetValue(destination, out GridPoint value))
-            {
-                //print(destination);
-                value = gridDictionary[destination];
-                currentLocation = destination;
-                TryHighlighting(value, destination);
-            }
-        }
+            case 1:
 
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            Vector2 moveDown = new Vector2(-1, 0);
-            var destination = currentLocation + moveDown;
+                Vector2 moveUp = new Vector2(1, 0);
+                var upDestination = currentLocation + moveUp;
+                if (gridDictionary.TryGetValue(upDestination, out GridPoint upGridPoint))
+                {
+                    if (isGridPointInList(upGridPoint))
+                    {
+                        upGridPoint = gridDictionary[upDestination];
+                        currentLocation = upDestination;
+                        AddGridPointToList(upGridPoint, upDestination);
+                    }
+                    else
+                    {
+                        if (dieValue > 0)
+                        {
+                            upGridPoint = gridDictionary[upDestination];
+                            currentLocation = upDestination;
+                            AddGridPointToList(upGridPoint, upDestination);
+                            dieValue--;
+                            DistributedDieValue.SetDieRollValue(dieValue);
+                        }
+                    }
 
-            if (gridDictionary.TryGetValue(destination, out GridPoint value))
-            {
-                value = gridDictionary[destination];
-                currentLocation = destination;
-                TryHighlighting(value, destination);
-            }
-        }
+                }
 
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            Vector2 moveLeft = new Vector2(0, 1);
-            var destination = currentLocation + moveLeft;
+                break;
 
-            if (gridDictionary.TryGetValue(destination, out GridPoint value))
-            {
-                value = gridDictionary[destination];
-                currentLocation = destination;
-                TryHighlighting(value, destination);
-            }
-        }
+            case 2:
 
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            Vector2 moveRight = new Vector2(0, -1);
-            var destination = currentLocation + moveRight;
+                Vector2 moveDown = new Vector2(-1, 0);
+                var downDestination = currentLocation + moveDown;
 
-            if (gridDictionary.TryGetValue(destination, out GridPoint value))
-            {
-                value = gridDictionary[destination];
-                currentLocation = destination;
-                TryHighlighting(value, destination);
-            }
+                if (gridDictionary.TryGetValue(downDestination, out GridPoint downGridPoint))
+                {
+                    if (isGridPointInList(downGridPoint))
+                    {
+                        downGridPoint = gridDictionary[downDestination];
+                        currentLocation = downDestination;
+                        AddGridPointToList(downGridPoint, downDestination);
+                    }
+                    else
+                    {
+                        if (dieValue > 0)
+                        {
+                            downGridPoint = gridDictionary[downDestination];
+                            currentLocation = downDestination;
+                            AddGridPointToList(downGridPoint, downDestination);
+                            dieValue--;
+                            DistributedDieValue.SetDieRollValue(dieValue);
+                        }
+                    }
+
+                }
+
+                break;
+
+
+            case 3:
+
+                Vector2 moveLeft = new Vector2(0, 1);
+                var leftDestination = currentLocation + moveLeft;
+
+                if (gridDictionary.TryGetValue(leftDestination, out GridPoint leftGridPoint))
+                {
+                    if (isGridPointInList(leftGridPoint))
+                    {
+                        leftGridPoint = gridDictionary[leftDestination];
+                        currentLocation = leftDestination;
+                        AddGridPointToList(leftGridPoint, leftDestination);
+                    }
+                    else
+                    {
+                        if (dieValue > 0)
+                        {
+                            leftGridPoint = gridDictionary[leftDestination];
+                            currentLocation = leftDestination;
+                            AddGridPointToList(leftGridPoint, leftDestination);
+                            dieValue--;
+                            DistributedDieValue.SetDieRollValue(dieValue);
+                        }
+                    }
+
+                }
+
+                break;
+
+            case 4:
+
+                Vector2 moveRight = new Vector2(0, -1);
+                var rightDestination = currentLocation + moveRight;
+
+                if (gridDictionary.TryGetValue(rightDestination, out GridPoint rightGridPoint))
+                {
+                    if (isGridPointInList(rightGridPoint))
+                    {
+                        rightGridPoint = gridDictionary[rightDestination];
+                        currentLocation = rightDestination;
+                        AddGridPointToList(rightGridPoint, rightDestination);
+                    }
+                    else
+                    {
+                        if (dieValue > 0)
+                        {
+                            rightGridPoint = gridDictionary[rightDestination];
+                            currentLocation = rightDestination;
+                            AddGridPointToList(rightGridPoint, rightDestination);
+                            dieValue--;
+                            DistributedDieValue.SetDieRollValue(dieValue);
+                        }
+                    }
+
+                }
+
+                break;
+
         }
     }
+
 
     private bool AddGridPointToList(GridPoint gp)
     {
@@ -114,14 +179,16 @@ public class FloorGrid : MonoBehaviour
                 {
                     if (i + 1 < hoveredOverGridPoints.Count)
                     {
-                        Debug.Log(gp + " is already in list");
-                        var stuff = i + 1;
-                        Debug.Log("Now Removing everything after index: " + i);
 
                         for (int removeMe = i + 1; removeMe != hoveredOverGridPoints.Count;)
                         {
                             hoveredOverGridPoints[removeMe].ShowHighlight(false);
                             hoveredOverGridPoints.RemoveAt(removeMe);
+                            if (dieValue < 6)
+                            {
+                                dieValue++;
+                            }
+                            DistributedDieValue.SetDieRollValue(dieValue);
                         }
                     }
                     add = false;
@@ -136,5 +203,17 @@ public class FloorGrid : MonoBehaviour
         }
 
         return add;
+    }
+
+    private bool isGridPointInList(GridPoint gp)
+    {
+        if (AddGridPointToList(gp) == false)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

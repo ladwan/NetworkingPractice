@@ -6,9 +6,10 @@ public class SetDieImage : MonoBehaviour
 {
     [SerializeField]
     private List<GameObject> uiDieImages = new List<GameObject>();
+
     private void Awake()
     {
-        int value = StaticDieValue.staticDieRollValue;
+        int value = DistributedDieValue.distributedDieRollValue;
         if (value != 0)
         {
             switch (value)
