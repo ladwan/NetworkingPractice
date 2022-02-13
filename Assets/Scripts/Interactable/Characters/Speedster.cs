@@ -42,7 +42,7 @@ namespace Interactable.Characters
 
         public void AttemptAbilty()
         {
-            CastAbility(Moveset, RollDice.RandomRoll(), this);
+            CastAbility(Moveset, StaticDieValue.staticDieRollValue, this);
         }
 
         public void AttemptToTakeDamage(int damage)
