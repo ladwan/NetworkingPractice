@@ -50,7 +50,6 @@ public class FloorGrid : MonoBehaviour
         {
             Vector2 moveUp = new Vector2(1, 0);
             var destination = currentLocation + moveUp;
-
             if (gridDictionary.TryGetValue(destination, out GridPoint value))
             {
                 //print(destination);

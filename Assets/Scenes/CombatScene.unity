@@ -759,6 +759,9 @@ MonoBehaviour:
   gridPoint: {fileID: 459486049}
   floorSpace: {fileID: 0}
   hoveredOverGridPoints: []
+  animEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -2345,11 +2348,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5888436246626738646, guid: 3868121bc64aa7c4fb94da4c0b944be6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: -45
       objectReference: {fileID: 0}
     - target: {fileID: 5888436246626738646, guid: 3868121bc64aa7c4fb94da4c0b944be6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: -45
       objectReference: {fileID: 0}
     - target: {fileID: 5888436246626738646, guid: 3868121bc64aa7c4fb94da4c0b944be6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
