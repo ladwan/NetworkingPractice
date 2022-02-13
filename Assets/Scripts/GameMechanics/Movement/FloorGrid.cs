@@ -6,7 +6,6 @@ public class FloorGrid : MonoBehaviour
 {
     [SerializeField]
     private GameObject gridPoint;
-    public Grid floorSpace;
     [SerializeField]
     private Dictionary<Vector2, GridPoint> gridDictionary = new Dictionary<Vector2, GridPoint>();
     [SerializeField]
