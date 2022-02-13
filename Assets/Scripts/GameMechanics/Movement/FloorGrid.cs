@@ -27,6 +27,17 @@ public class FloorGrid : MonoBehaviour
             }
         }
     }
+    public void EmptyGridPointList()
+    {
+        for (int i = 0; i < hoveredOverGridPoints.Count; i++)
+        {
+            hoveredOverGridPoints[i].ShowHighlight(false);
+        }
+        hoveredOverGridPoints.Clear();
+        DistributedDieValue.SetDieRollValue(DistributedDieValue.unchangingDieRollValue);
+        dieValue = DistributedDieValue.unchangingDieRollValue;
+        currentLocation = new Vector2(0, 0);
+    }
 
     public void AddGridPointToList(GridPoint gp, Vector2 destination)
     {
