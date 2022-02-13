@@ -119,7 +119,7 @@ public class FloorGrid : MonoBehaviour
                         var stuff = i + 1;
                         Debug.Log("Now Removing everything after index: " + i);
 
-                        for (int removeMe = i; removeMe != hoveredOverGridPoints.Count;)
+                        for (int removeMe = i + 1; removeMe != hoveredOverGridPoints.Count;)
                         {
                             hoveredOverGridPoints[removeMe].ShowHighlight(false);
                             hoveredOverGridPoints.RemoveAt(removeMe);
@@ -138,6 +138,4 @@ public class FloorGrid : MonoBehaviour
 
         return add;
     }
-
-    //If you reset by overalpping grid squared it doesnt count that that square is still chosen, fix that
 }
