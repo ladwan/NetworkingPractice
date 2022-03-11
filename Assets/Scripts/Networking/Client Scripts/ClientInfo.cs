@@ -11,4 +11,5 @@ public static class ClientInfo
     public static string username = "";
 
     public static string otherUsername = "";
+
 }

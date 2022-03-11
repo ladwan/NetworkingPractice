@@ -3,15 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using TMPro;
 
 public class Countdown : MonoBehaviour
 {
     [SerializeField]
     private int time = 0;
     [SerializeField]
+    private UnityEvent awakeEvent = new UnityEvent();
+    [SerializeField]
     private UnityEvent countdownBegin = new UnityEvent();
     [SerializeField]
     private UnityEvent countdownFinished = new UnityEvent();
+    [SerializeField]
+    private TextMeshProUGUI timeText = null;
 
 
     [NonSerialized]
@@ -22,9 +27,12 @@ public class Countdown : MonoBehaviour
 
     public int Time { get => time; set => time = value; }
 
+    public UnityEvent AwakeEvent { get => awakeEvent; set => awakeEvent = value; }
+
     public UnityEvent CountdownBegin { get => countdownBegin; set => countdownBegin = value; }
 
     public UnityEvent CountdownFinished { get => countdownFinished; set => countdownFinished = value; }
+
 
     private void Awake()
     {
@@ -37,6 +45,8 @@ public class Countdown : MonoBehaviour
             Debug.Log("Instance already exsists, destroying object!");
             Destroy(this);
         }
+
+        AwakeEvent?.Invoke();
     }
 
     private IEnumerator Count()
@@ -52,6 +62,10 @@ public class Countdown : MonoBehaviour
         {
             time--;
             StartCoroutine(Count());
+            if (timeText)
+            {
+                timeText.text = time.ToString();
+            }
         }
         else
         {

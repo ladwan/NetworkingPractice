@@ -55,5 +55,6 @@ public class ClientHandle : MonoBehaviour
 
 
         ClientInfo.otherUsername = _username;
+
     }
 }

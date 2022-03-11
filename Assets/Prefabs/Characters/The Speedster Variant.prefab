@@ -8,8 +8,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1145084265029886813, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1145084265029886813, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1145084265029886813, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
       propertyPath: m_LocalPosition.y
@@ -17,7 +21,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1145084265029886813, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 6
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1145084265029886813, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1145084265029886813, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
       propertyPath: m_LocalRotation.x
@@ -32,14 +40,6 @@ PrefabInstance:
       value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1145084265029886813, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1145084265029886813, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1145084265029886813, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
@@ -52,14 +52,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2271406186244816878, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
-      propertyPath: CharacterModel
-      value: 
-      objectReference: {fileID: 7098479322418756058}
-    - target: {fileID: 2271406186244816878, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
-      propertyPath: CharacterName
-      value: The Speedster
-      objectReference: {fileID: 0}
-    - target: {fileID: 2271406186244816878, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
       propertyPath: Health
       value: 100
       objectReference: {fileID: 0}
@@ -67,14 +59,76 @@ PrefabInstance:
       propertyPath: RollAlotment
       value: 5
       objectReference: {fileID: 0}
-    - target: {fileID: 3662122414899896620, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
-      propertyPath: m_Name
+    - target: {fileID: 2271406186244816878, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
+      propertyPath: CharacterName
       value: The Speedster
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 2271406186244816878, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
+      propertyPath: CharacterModel
+      value: 
+      objectReference: {fileID: 7098479322418756058}
+    - target: {fileID: 3662122414899896620, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
+      propertyPath: m_Name
+      value: The Speedster Variant
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 2271406186244816878, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
+--- !u!1 &5752506705235420953 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3662122414899896620, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
+  m_PrefabInstance: {fileID: 9009304483653912117}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7115587971985286945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5752506705235420953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94942699e6f75fd41a476ddd5c790f2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CharacterModel: {fileID: 7098479322418756058}
+  CharacterIcon: {fileID: 0}
+  CharacterName: The Speedster
+  Health: 100
+  RollAlotment: 5
+  oneSqRadius: {fileID: 7098479322915447732}
+  twoSqRadius: {fileID: 7098479323994406493}
+  threeSqRadius: {fileID: 7098479323177253557}
+  fourSqRadius: {fileID: 7098479322527465991}
+  fiveSqRadius: {fileID: 7098479322661608217}
+  charIdentity: 2
 --- !u!1 &7098479322418756058 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2271406186244816879, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
+  m_PrefabInstance: {fileID: 9009304483653912117}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7098479322527465991 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2271406186604659762, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
+  m_PrefabInstance: {fileID: 9009304483653912117}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7098479322661608217 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2271406186470694188, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
+  m_PrefabInstance: {fileID: 9009304483653912117}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7098479322915447732 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2271406186824869249, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
+  m_PrefabInstance: {fileID: 9009304483653912117}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7098479323177253557 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2271406184955772032, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
+  m_PrefabInstance: {fileID: 9009304483653912117}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7098479323994406493 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2271406185672521832, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
   m_PrefabInstance: {fileID: 9009304483653912117}
   m_PrefabAsset: {fileID: 0}

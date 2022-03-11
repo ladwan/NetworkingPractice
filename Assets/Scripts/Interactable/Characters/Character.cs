@@ -9,6 +9,7 @@ namespace Interactable
     {
         public enum Identity
         {
+            NoIdentity,
             Brawn,
             Speedster,
         }

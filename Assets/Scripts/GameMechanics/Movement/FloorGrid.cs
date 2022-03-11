@@ -10,6 +10,17 @@ public class FloorGrid : MonoBehaviour
     private Dictionary<Vector2, GridPoint> gridDictionary = new Dictionary<Vector2, GridPoint>();
     [SerializeField]
     private List<GridPoint> hoveredOverGridPoints = new List<GridPoint>();
+    [SerializeField]
+    private Transform player1Spawn;
+    [SerializeField]
+    private Transform player2Spawn;
+    [SerializeField]
+    private DisplaySelectedChar displaySelectedCharREF = null;
+    [SerializeField]
+    private Transform tempTransform = null;
+
+
+    private Vector3 tempVector3 = new Vector3(0, 0);
     private Vector2 currentLocation = new Vector2(0, 0);
 
     [SerializeField]
@@ -25,6 +36,30 @@ public class FloorGrid : MonoBehaviour
                 gridDictionary.Add(new Vector2(this.transform.position.x + i, this.transform.position.z + p), instantiatedGridPoint.GetComponent<GridPoint>());
             }
         }
+
+
+        //Assigning a spawn point to the player based on their ClientInfo.playerNumber
+        if (ClientInfo.playerNumber == 1)
+        {
+            currentLocation = new Vector2(player1Spawn.position.x, player1Spawn.position.z);
+        }
+        else if (ClientInfo.playerNumber == 2)
+        {
+            currentLocation = new Vector2(player2Spawn.position.x, player2Spawn.position.z);
+        }
+
+        if (ClientInfo.playerNumber == 0)
+        {
+            currentLocation = new Vector2(player1Spawn.position.x, player1Spawn.position.z);
+            Debug.Log("Client player number was 0, defaulting to spawn point 1");
+        }
+
+
+        // Organizing the position data into a transform so it can be used to spawn the player
+        tempVector3.x = currentLocation.x;
+        tempVector3.z = currentLocation.y;
+        tempTransform.position = tempVector3;
+        displaySelectedCharREF.SpawnPlayer(tempTransform);
     }
     public void EmptyGridPointList()
     {
@@ -77,7 +112,6 @@ public class FloorGrid : MonoBehaviour
                             DistributedDieValue.SetDieRollValue(dieValue);
                         }
                     }
-
                 }
 
                 break;
@@ -106,7 +140,6 @@ public class FloorGrid : MonoBehaviour
                             DistributedDieValue.SetDieRollValue(dieValue);
                         }
                     }
-
                 }
 
                 break;
@@ -136,7 +169,6 @@ public class FloorGrid : MonoBehaviour
                             DistributedDieValue.SetDieRollValue(dieValue);
                         }
                     }
-
                 }
 
                 break;
@@ -165,11 +197,8 @@ public class FloorGrid : MonoBehaviour
                             DistributedDieValue.SetDieRollValue(dieValue);
                         }
                     }
-
                 }
-
                 break;
-
         }
     }
 
@@ -203,7 +232,6 @@ public class FloorGrid : MonoBehaviour
                     }
                     add = false;
                     break;
-
                 }
             }
         }
