@@ -11,26 +11,25 @@ public class FloorGrid : MonoBehaviour
     [SerializeField]
     private List<GridPoint> hoveredOverGridPoints = new List<GridPoint>();
     [SerializeField]
-    private Transform player1Spawn;
+    private GameObject player1Spawn;
     [SerializeField]
-    private Transform player2Spawn;
+    private GameObject player2Spawn;
     [SerializeField]
     private DisplaySelectedChar displaySelectedCharREF = null;
     [SerializeField]
-    private Transform tempTransform = null;
-
-
-    private Vector3 tempVector3 = new Vector3(0, 0);
-    private Vector2 currentLocation = new Vector2(0, 0);
-
-    [SerializeField]
     public int dieValue = 0;
+
+
+    private Vector2 currentLocation = new Vector2(0, 0);
+    private bool isPlayer1 = false;
+
+
 
     void Start()
     {
-        for (int p = 0; p < 10; p++)
+        for (int p = 0; p < 10; p++) //Create grid columns
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 10; i++) //Create grid rows
             {
                 GameObject instantiatedGridPoint = Instantiate(gridPoint, new Vector3(this.transform.position.x + i, this.transform.position.y, this.transform.position.z + p), new Quaternion(), this.gameObject.transform);
                 gridDictionary.Add(new Vector2(this.transform.position.x + i, this.transform.position.z + p), instantiatedGridPoint.GetComponent<GridPoint>());
@@ -41,26 +40,33 @@ public class FloorGrid : MonoBehaviour
         //Assigning a spawn point to the player based on their ClientInfo.playerNumber
         if (ClientInfo.playerNumber == 1)
         {
-            currentLocation = new Vector2(player1Spawn.position.x, player1Spawn.position.z);
+            currentLocation = new Vector2(player1Spawn.transform.position.x, player1Spawn.transform.position.z);
+            isPlayer1 = true;
         }
         else if (ClientInfo.playerNumber == 2)
         {
-            currentLocation = new Vector2(player2Spawn.position.x, player2Spawn.position.z);
+            currentLocation = new Vector2(player2Spawn.transform.position.x, player2Spawn.transform.position.z);
         }
 
-        if (ClientInfo.playerNumber == 0)
+        if (ClientInfo.playerNumber == 0 || ClientInfo.playerNumber > 2)
         {
-            currentLocation = new Vector2(player1Spawn.position.x, player1Spawn.position.z);
-            Debug.Log("Client player number was 0, defaulting to spawn point 1");
+            currentLocation = new Vector2(player1Spawn.transform.position.x, player1Spawn.transform.position.z);
+            Debug.Log("Client player number was abnormal, please look into code. Defaulting to spawn point 1");
+            isPlayer1 = true;
         }
 
-
-        // Organizing the position data into a transform so it can be used to spawn the player
-        tempVector3.x = currentLocation.x;
-        tempVector3.z = currentLocation.y;
-        tempTransform.position = tempVector3;
-        displaySelectedCharREF.SpawnPlayer(tempTransform);
+        if (isPlayer1)
+        {
+            displaySelectedCharREF.SpawnPlayer(player1Spawn.transform);
+            player1Spawn.transform.GetChild(0).gameObject.SetActive(true);
+        }
+        else
+        {
+            displaySelectedCharREF.SpawnPlayer(player2Spawn.transform);
+            player2Spawn.transform.GetChild(0).gameObject.SetActive(true);
+        }
     }
+
     public void EmptyGridPointList()
     {
         for (int i = 0; i < hoveredOverGridPoints.Count; i++)

@@ -846,7 +846,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 577f3d388967b7f4ca840e97cfa67ce7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FuckThatBitch: {fileID: 11400000, guid: 6d05835182c94834d9f65863c6d536fb, type: 2}
 --- !u!1 &1006516574
 GameObject:
   m_ObjectHideFlags: 0
