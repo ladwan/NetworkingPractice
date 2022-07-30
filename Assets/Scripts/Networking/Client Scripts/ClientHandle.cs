@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ForverFight.GameMechanics;
 using ForverFight.Movement;
 using ForverFight.Ui.CharacterSelection;
+using ForverFight.Networking;
+using FlowControl;
 
 public class ClientHandle : MonoBehaviour
 {
@@ -45,8 +48,9 @@ public class ClientHandle : MonoBehaviour
     {
         int _panelIndex = _packet.ReadInt();
         int _playerIndex = _packet.ReadInt();
-
+        string _otherPlayersCharName = _packet.ReadString();
         CharacterSelect.Instance.UpdateOtherPlayerSelection(_panelIndex, _playerIndex);
+        LocalStoredNetworkData.locallyStoredOpponentsName = _otherPlayersCharName;
     }
 
     public static void ReceiveUsername(Packet _packet)

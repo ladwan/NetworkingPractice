@@ -110,7 +110,7 @@ namespace ForverFight.Ui.CharacterSelection
 
                     }
                     characterPanels[i].Parent.SetActive(true);
-                    ClientSend.SendSelectionData(i, ClientInfo.playerNumber);
+                    ClientSend.SendSelectionData(i, ClientInfo.playerNumber, characterPanels[i].Info.CharName);
                 }
             }
         }

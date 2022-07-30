@@ -32,12 +32,13 @@ public class ClientSend : MonoBehaviour
         }
     }
 
-    public static void SendSelectionData(int _panelIndex, int _playerIndex)
+    public static void SendSelectionData(int _panelIndex, int _playerIndex, string _selectedCharName)
     {
         using (Packet _packet = new Packet((int)ClientPackets.sendSelectionData))
         {
             _packet.Write(_panelIndex);
             _packet.Write(_playerIndex);
+            _packet.Write(_selectedCharName);
 
             SendTcpData(_packet);
         }
