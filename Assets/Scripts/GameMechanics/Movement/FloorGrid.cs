@@ -13,7 +13,11 @@ public class FloorGrid : MonoBehaviour
     [SerializeField]
     private GameObject player1Spawn;
     [SerializeField]
+    private GameObject player1Camera;
+    [SerializeField]
     private GameObject player2Spawn;
+    [SerializeField]
+    private GameObject player2Camera;
     [SerializeField]
     private DisplaySelectedChar displaySelectedCharREF = null;
     [SerializeField]
@@ -38,6 +42,7 @@ public class FloorGrid : MonoBehaviour
 
 
         //Assigning a spawn point to the player based on their ClientInfo.playerNumber
+        Debug.Log(ClientInfo.playerNumber + " : Hey this is the player number !");
         if (ClientInfo.playerNumber == 1)
         {
             currentLocation = new Vector2(player1Spawn.transform.position.x, player1Spawn.transform.position.z);
@@ -58,12 +63,12 @@ public class FloorGrid : MonoBehaviour
         if (isPlayer1)
         {
             displaySelectedCharREF.SpawnPlayer(player1Spawn.transform);
-            player1Spawn.transform.GetChild(0).gameObject.SetActive(true);
+            player1Camera.SetActive(true);
         }
         else
         {
             displaySelectedCharREF.SpawnPlayer(player2Spawn.transform);
-            player2Spawn.transform.GetChild(0).gameObject.SetActive(true);
+            player2Camera.SetActive(true);
         }
     }
 
