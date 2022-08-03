@@ -22,11 +22,12 @@ public class ClientSend : MonoBehaviour
         }
     }
 
-    public static void TryMove()
+    public static void UpdatePlayerCurrentPostition(int x, int y) // Pass this a vector 2's x and y
     {
-        using (Packet _packet = new Packet((int)ClientPackets.tryMove))
+        using (Packet _packet = new Packet((int)ClientPackets.updatePlayerCurrentPosition))
         {
-            _packet.Write(Movement.instance.movementIndex);
+            _packet.Write(x);
+            _packet.Write(y);
 
             SendTcpData(_packet);
         }

@@ -161,7 +161,7 @@ public class Client : MonoBehaviour
         packetHandlers = new Dictionary<int, PacketHandler>()
         {
             { (int)ServerPackets.welcome, ClientHandle.Welcome },
-            { (int)ServerPackets.confirmMove, ClientHandle.ConfirmMove },
+            { (int)ServerPackets.sendUpdatedPlayerPosition, ClientHandle.RecieveUpdatedPlayerPosition},
             { (int)ServerPackets.totalPlayer, ClientHandle.ReceiveTotalPlayerUpdate},
             { (int)ServerPackets.sendSelectionPacket, ClientHandle.ReceiveSelectionPacket},
             { (int)ServerPackets.sendUsername, ClientHandle.ReceiveUsername},

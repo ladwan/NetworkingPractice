@@ -23,10 +23,24 @@ public class FloorGrid : MonoBehaviour
     [SerializeField]
     public int dieValue = 0;
 
+    public static FloorGrid instance = null;
 
     private Vector2 currentLocation = new Vector2(0, 0);
     private bool isPlayer1 = false;
 
+
+    protected void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Debug.Log("More Than 1 Floor grid detected, Destroying self...");
+            Destroy(instance);
+        }
+    }
 
 
     void Start()
@@ -42,7 +56,6 @@ public class FloorGrid : MonoBehaviour
 
 
         //Assigning a spawn point to the player based on their ClientInfo.playerNumber
-        Debug.Log(ClientInfo.playerNumber + " : Hey this is the player number !");
         if (ClientInfo.playerNumber == 1)
         {
             currentLocation = new Vector2(player1Spawn.transform.position.x, player1Spawn.transform.position.z);
@@ -213,6 +226,22 @@ public class FloorGrid : MonoBehaviour
         }
     }
 
+    public void ConfirmMove()
+    {
+        ClientSend.UpdatePlayerCurrentPostition((int)currentLocation.x, (int)currentLocation.y);
+        var test = new Vector3(currentLocation.x, 0, currentLocation.y);
+
+        var moveLocalPlayer = ClientInfo.playerNumber == 1 ? player1Spawn.transform.position = test : player2Spawn.transform.position = test;
+
+        Debug.Log("I RAN !");
+    }
+
+    public void UpdateOpponentPosition(Vector2 newPos)
+    {
+        var test = new Vector3(newPos.x, 0, newPos.y);
+
+        var moveOpponent = ClientInfo.playerNumber == 1 ? player2Spawn.transform.position = test : player1Spawn.transform.position = test;
+    }
 
     private bool AddGridPointToList(GridPoint gp)
     {

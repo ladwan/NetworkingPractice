@@ -58,14 +58,14 @@ namespace GameServer
             }
         }
 
-        public static void ConfirmMove(int _toClient, int _movementData)
+        public static void SendUpdatedPlayerPosition(int _playerThatDoesntNeedMsgId, int x, int y)
         {
-            using (Packet _packet = new Packet((int)ServerPackets.confirmMove))
+            using (Packet _packet = new Packet((int)ServerPackets.sendUpdatedPlayerPosition))
             {
-                _packet.Write(_movementData);
-                _packet.Write(_toClient);
+                _packet.Write(x);
+                _packet.Write(y);
 
-                SendTcpData(_toClient, _packet);
+                SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
             }
         }
         public static void SendTotalPlayerUpdate(int _playerThatDoesntNeedMsgId, int _playerCount)

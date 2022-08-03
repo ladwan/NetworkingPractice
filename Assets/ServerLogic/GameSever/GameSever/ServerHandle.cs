@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace GameServer
 {
     class ServerHandle
@@ -36,7 +37,7 @@ namespace GameServer
         {
             int _movementData = _packet.ReadInt();
             Console.WriteLine($"{Server.usernames[_fromClient]} is trying to move {_movementData} spaces");
-            ServerSend.ConfirmMove(_fromClient, _movementData);
+            //ServerSend.SendUpdatedPlayerPosition(_fromClient, 1, 1);
             //TODO: Send player into game
         }
 

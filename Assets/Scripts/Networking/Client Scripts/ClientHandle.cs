@@ -28,14 +28,12 @@ public class ClientHandle : MonoBehaviour
 
         ClientSend.WelcomeReceived();
     }
-    public static void ConfirmMove(Packet _packet)
+    public static void RecieveUpdatedPlayerPosition(Packet _packet)
     {
-        int _movementData = _packet.ReadInt();
-        int _myId = _packet.ReadInt();
 
-        Debug.Log($"Message from server: You have moved {_movementData} spaces!");
-        Client.localClientInstance.localClientId = _myId;
-        Movement.instance.ServerMovePlayer(_movementData);
+        int x = _packet.ReadInt();
+        int y = _packet.ReadInt();
+        FloorGrid.instance.UpdateOpponentPosition(new Vector2(x, y));
     }
 
     public static void ReceiveTotalPlayerUpdate(Packet _packet)

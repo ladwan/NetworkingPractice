@@ -8,7 +8,7 @@ using UnityEngine;
 public enum ServerPackets
 {
     welcome = 1,
-    confirmMove = 2,
+    sendUpdatedPlayerPosition = 2,
     totalPlayer = 3,
     sendSelectionPacket = 4,
     sendUsername = 5,
@@ -18,7 +18,7 @@ public enum ServerPackets
 public enum ClientPackets
 {
     welcomeReceived = 1,
-    tryMove = 2,
+    updatePlayerCurrentPosition = 2,
     sendSelectionData = 3,
 }
 

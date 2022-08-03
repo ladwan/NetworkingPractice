@@ -10,7 +10,7 @@ namespace GameServer
     public enum ServerPackets
     {
         welcome = 1,
-        confirmMove = 2,
+        sendUpdatedPlayerPosition = 2,
         totalPlayers = 3,
         sendSelectionPacket = 4,
         sendUsername = 5,
@@ -20,7 +20,7 @@ namespace GameServer
     public enum ClientPackets
     {
         welcomeReceived = 1,
-        tryMove = 2,
+        updatePlayerCurrentPosition = 2,
         sendSelectionData = 3,
     }
 

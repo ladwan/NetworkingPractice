@@ -62,7 +62,7 @@ namespace GameServer
             packetHandlers = new Dictionary<int, PacketHandler>()
             {
                 {(int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
-                {(int)ClientPackets.tryMove, ServerHandle.TryMove },
+                {(int)ClientPackets.updatePlayerCurrentPosition, ServerHandle.TryMove },
                 {(int)ClientPackets.sendSelectionData, ServerHandle.ServerReadSelectionPacket},
             };
             Console.WriteLine("Initialized Packets..");

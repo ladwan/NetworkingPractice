@@ -29,10 +29,11 @@ namespace ForverFight.Movement
         // Update is called once per frame
         void Update()
         {
+            /*
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
                 movementIndex = 1;
-                ClientSend.TryMove();
+                ClientSend.UpdatePlayerCurrentPostition();
                 //objToMove.position += new Vector3(1, 0, 0);
                 if (objToMove.position.x > 13)
                 {
@@ -42,7 +43,7 @@ namespace ForverFight.Movement
             if (Input.GetKeyDown(KeyCode.DownArrow))
             {
                 movementIndex = 2;
-                ClientSend.TryMove();
+                ClientSend.UpdatePlayerCurrentPostition();
                 //objToMove.position += new Vector3(-1, 0, 0);
                 if (objToMove.position.x < 1)
                 {
@@ -52,7 +53,7 @@ namespace ForverFight.Movement
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
                 movementIndex = 3;
-                ClientSend.TryMove();
+                ClientSend.UpdatePlayerCurrentPostition();
                 //objToMove.position += new Vector3(0, 0, 1);
                 if (objToMove.position.z > 13)
                 {
@@ -62,13 +63,13 @@ namespace ForverFight.Movement
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
                 movementIndex = 4;
-                ClientSend.TryMove();
+                ClientSend.UpdatePlayerCurrentPostition();
                 //objToMove.position += new Vector3(0, 0, -1);
                 if (objToMove.position.z < 1)
                 {
                     objToMove.position += new Vector3(0, 0, 1);
                 }
-            }
+            }*/
         }
         public void ServerMovePlayer(int _movementData)
         {
