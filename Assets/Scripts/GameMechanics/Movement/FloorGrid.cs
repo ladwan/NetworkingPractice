@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ForverFight.HelperScripts;
 
 public class FloorGrid : MonoBehaviour
 {
@@ -68,9 +69,9 @@ public class FloorGrid : MonoBehaviour
 
         if (ClientInfo.playerNumber == 0 || ClientInfo.playerNumber > 2)
         {
-            currentLocation = new Vector2(player1Spawn.transform.position.x, player1Spawn.transform.position.z);
-            Debug.Log("Client player number was abnormal, please look into code. Defaulting to spawn point 1");
-            isPlayer1 = true;
+            currentLocation = new Vector2(player2Spawn.transform.position.x, player2Spawn.transform.position.z);
+            Debug.Log("Client player number was abnormal, please look into code. Defaulting to spawn point 2");
+            isPlayer1 = false;
         }
 
         if (isPlayer1)
@@ -106,7 +107,7 @@ public class FloorGrid : MonoBehaviour
             hoveredOverGridPoints.Add(gp);
         }
     }
-
+    #region TryHighlighting
     public void TryHighlighting(int movementValue)
     {
         dieValue = DistributedDieValue.distributedDieRollValue;
@@ -115,26 +116,43 @@ public class FloorGrid : MonoBehaviour
         {
             case 1:
 
-                Vector2 moveUp = new Vector2(1, 0);
+                Vector2 moveUp = new Vector2(0, 0);
+                if (ClientInfo.playerNumber == 1)
+                {
+                    moveUp = new Vector2(1, 0);
+                }
+                else if (ClientInfo.playerNumber == 2)
+                {
+                    moveUp = new Vector2(-1, 0);
+                }
+
                 var upDestination = currentLocation + moveUp;
+                Debug.Log(upDestination);
                 if (gridDictionary.TryGetValue(upDestination, out GridPoint upGridPoint))
                 {
-                    if (isGridPointInList(upGridPoint))
+                    if (upGridPoint != GridPointOccupiedByOpponent())
                     {
-                        upGridPoint = gridDictionary[upDestination];
-                        currentLocation = upDestination;
-                        AddGridPointToList(upGridPoint, upDestination);
-                    }
-                    else
-                    {
-                        if (dieValue > 0)
+                        if (isGridPointInList(upGridPoint))
                         {
                             upGridPoint = gridDictionary[upDestination];
                             currentLocation = upDestination;
                             AddGridPointToList(upGridPoint, upDestination);
-                            dieValue--;
-                            DistributedDieValue.SetDieRollValue(dieValue);
                         }
+                        else
+                        {
+                            if (dieValue > 0)
+                            {
+                                upGridPoint = gridDictionary[upDestination];
+                                currentLocation = upDestination;
+                                AddGridPointToList(upGridPoint, upDestination);
+                                dieValue--;
+                                DistributedDieValue.SetDieRollValue(dieValue);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("That position is already taken! Please try to move elsewhere. ");
                     }
                 }
 
@@ -142,27 +160,43 @@ public class FloorGrid : MonoBehaviour
 
             case 2:
 
-                Vector2 moveDown = new Vector2(-1, 0);
+                Vector2 moveDown = new Vector2(0, 0);
+                if (ClientInfo.playerNumber == 1)
+                {
+                    moveDown = new Vector2(-1, 0);
+                }
+                else if (ClientInfo.playerNumber == 2)
+                {
+                    moveDown = new Vector2(1, 0);
+                }
+
                 var downDestination = currentLocation + moveDown;
 
                 if (gridDictionary.TryGetValue(downDestination, out GridPoint downGridPoint))
                 {
-                    if (isGridPointInList(downGridPoint))
+                    if (downGridPoint != GridPointOccupiedByOpponent())
                     {
-                        downGridPoint = gridDictionary[downDestination];
-                        currentLocation = downDestination;
-                        AddGridPointToList(downGridPoint, downDestination);
-                    }
-                    else
-                    {
-                        if (dieValue > 0)
+                        if (isGridPointInList(downGridPoint))
                         {
                             downGridPoint = gridDictionary[downDestination];
                             currentLocation = downDestination;
                             AddGridPointToList(downGridPoint, downDestination);
-                            dieValue--;
-                            DistributedDieValue.SetDieRollValue(dieValue);
                         }
+                        else
+                        {
+                            if (dieValue > 0)
+                            {
+                                downGridPoint = gridDictionary[downDestination];
+                                currentLocation = downDestination;
+                                AddGridPointToList(downGridPoint, downDestination);
+                                dieValue--;
+                                DistributedDieValue.SetDieRollValue(dieValue);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("That position is already taken! Please try to move elsewhere. ");
                     }
                 }
 
@@ -171,27 +205,43 @@ public class FloorGrid : MonoBehaviour
 
             case 3:
 
-                Vector2 moveLeft = new Vector2(0, 1);
+                Vector2 moveLeft = new Vector2(0, 0);
+                if (ClientInfo.playerNumber == 1)
+                {
+                    moveLeft = new Vector2(0, 1);
+                }
+                else if (ClientInfo.playerNumber == 2)
+                {
+                    moveLeft = new Vector2(0, -1);
+                }
+
                 var leftDestination = currentLocation + moveLeft;
 
                 if (gridDictionary.TryGetValue(leftDestination, out GridPoint leftGridPoint))
                 {
-                    if (isGridPointInList(leftGridPoint))
+                    if (leftGridPoint != GridPointOccupiedByOpponent())
                     {
-                        leftGridPoint = gridDictionary[leftDestination];
-                        currentLocation = leftDestination;
-                        AddGridPointToList(leftGridPoint, leftDestination);
-                    }
-                    else
-                    {
-                        if (dieValue > 0)
+                        if (isGridPointInList(leftGridPoint))
                         {
                             leftGridPoint = gridDictionary[leftDestination];
                             currentLocation = leftDestination;
                             AddGridPointToList(leftGridPoint, leftDestination);
-                            dieValue--;
-                            DistributedDieValue.SetDieRollValue(dieValue);
                         }
+                        else
+                        {
+                            if (dieValue > 0)
+                            {
+                                leftGridPoint = gridDictionary[leftDestination];
+                                currentLocation = leftDestination;
+                                AddGridPointToList(leftGridPoint, leftDestination);
+                                dieValue--;
+                                DistributedDieValue.SetDieRollValue(dieValue);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("That position is already taken! Please try to move elsewhere. ");
                     }
                 }
 
@@ -199,48 +249,63 @@ public class FloorGrid : MonoBehaviour
 
             case 4:
 
-                Vector2 moveRight = new Vector2(0, -1);
+                Vector2 moveRight = new Vector2(0, 0);
+                if (ClientInfo.playerNumber == 1)
+                {
+                    moveRight = new Vector2(0, -1);
+                }
+                else if (ClientInfo.playerNumber == 2)
+                {
+                    moveRight = new Vector2(0, 1);
+                }
+
                 var rightDestination = currentLocation + moveRight;
 
                 if (gridDictionary.TryGetValue(rightDestination, out GridPoint rightGridPoint))
                 {
-                    if (isGridPointInList(rightGridPoint))
+                    if (rightGridPoint != GridPointOccupiedByOpponent())
                     {
-                        rightGridPoint = gridDictionary[rightDestination];
-                        currentLocation = rightDestination;
-                        AddGridPointToList(rightGridPoint, rightDestination);
-                    }
-                    else
-                    {
-                        if (dieValue > 0)
+                        if (isGridPointInList(rightGridPoint))
                         {
                             rightGridPoint = gridDictionary[rightDestination];
                             currentLocation = rightDestination;
                             AddGridPointToList(rightGridPoint, rightDestination);
-                            dieValue--;
-                            DistributedDieValue.SetDieRollValue(dieValue);
+                        }
+                        else
+                        {
+                            if (dieValue > 0)
+                            {
+                                rightGridPoint = gridDictionary[rightDestination];
+                                currentLocation = rightDestination;
+                                AddGridPointToList(rightGridPoint, rightDestination);
+                                dieValue--;
+                                DistributedDieValue.SetDieRollValue(dieValue);
+                            }
                         }
                     }
+                    else
+                    {
+                        Debug.Log("That position is already taken! Please try to move elsewhere. ");
+                    }
                 }
+
                 break;
         }
     }
-
+    #endregion
     public void ConfirmMove()
     {
         ClientSend.UpdatePlayerCurrentPostition((int)currentLocation.x, (int)currentLocation.y);
         var test = new Vector3(currentLocation.x, 0, currentLocation.y);
 
         var moveLocalPlayer = ClientInfo.playerNumber == 1 ? player1Spawn.transform.position = test : player2Spawn.transform.position = test;
-
-        Debug.Log("I RAN !");
     }
 
-    public void UpdateOpponentPosition(Vector2 newPos)
+    public void UpdateOpponentPosition(Vector2 value)
     {
-        var test = new Vector3(newPos.x, 0, newPos.y);
+        var newPos = new Vector3(value.x, 0, value.y);
 
-        var moveOpponent = ClientInfo.playerNumber == 1 ? player2Spawn.transform.position = test : player1Spawn.transform.position = test;
+        var moveOpponent = ClientInfo.playerNumber == 1 ? player2Spawn.transform.position = newPos : player1Spawn.transform.position = newPos;
     }
 
     private bool AddGridPointToList(GridPoint gp)
@@ -293,5 +358,27 @@ public class FloorGrid : MonoBehaviour
         {
             return false;
         }
+    }
+
+    private GridPoint GridPointOccupiedByOpponent()
+    {
+        if (ClientInfo.playerNumber == 1)
+        {
+            if (gridDictionary.TryGetValue(Vector3ToVector2.ConvertToVector2(player2Spawn.transform.position), out GridPoint gridPointOccupiedByOpponent))
+            {
+                return gridPointOccupiedByOpponent;
+            }
+
+        }
+        else if (ClientInfo.playerNumber == 2)
+        {
+            if (gridDictionary.TryGetValue(Vector3ToVector2.ConvertToVector2(player1Spawn.transform.position), out GridPoint gridPointOccupiedByOpponent))
+            {
+                return gridPointOccupiedByOpponent;
+            }
+        }
+
+        Debug.Log("ClientInfo.PlayerNumber returned an abnormal value, please check code");
+        return null;
     }
 }
