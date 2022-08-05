@@ -86,7 +86,7 @@ public class FloorGrid : MonoBehaviour
         }
     }
 
-    public void EmptyGridPointList()
+    public void EmptyGridPointList() //Removes Highlighted Sq's
     {
         for (int i = 0; i < hoveredOverGridPoints.Count; i++)
         {
@@ -95,7 +95,10 @@ public class FloorGrid : MonoBehaviour
         hoveredOverGridPoints.Clear();
         DistributedDieValue.SetDieRollValue(DistributedDieValue.unchangingDieRollValue);
         dieValue = DistributedDieValue.unchangingDieRollValue;
-        currentLocation = new Vector2(0, 0);
+
+        var player1Vector2 = new Vector2(player1Spawn.transform.position.x, player1Spawn.transform.position.z);
+        var player2Vector2 = new Vector2(player2Spawn.transform.position.x, player2Spawn.transform.position.z);
+        var updatedCurrentLocation = ClientInfo.playerNumber == 1 ? currentLocation = player1Vector2 : currentLocation = player2Vector2;
     }
 
     public void AddGridPointToList(GridPoint gp, Vector2 destination)
@@ -296,9 +299,10 @@ public class FloorGrid : MonoBehaviour
     public void ConfirmMove()
     {
         ClientSend.UpdatePlayerCurrentPostition((int)currentLocation.x, (int)currentLocation.y);
-        var test = new Vector3(currentLocation.x, 0, currentLocation.y);
+        var currentLocationVector3 = new Vector3(currentLocation.x, 0, currentLocation.y);
 
-        var moveLocalPlayer = ClientInfo.playerNumber == 1 ? player1Spawn.transform.position = test : player2Spawn.transform.position = test;
+        var moveLocalPlayer = ClientInfo.playerNumber == 1 ? player1Spawn.transform.position = currentLocationVector3 : player2Spawn.transform.position = currentLocationVector3;
+        EmptyGridPointList();
     }
 
     public void UpdateOpponentPosition(Vector2 value)
