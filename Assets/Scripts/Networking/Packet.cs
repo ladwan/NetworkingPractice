@@ -12,6 +12,7 @@ public enum ServerPackets
     totalPlayer = 3,
     sendSelectionPacket = 4,
     sendUsername = 5,
+    startTurn = 6,
 }
 
 /// <summary>Sent from client to server.</summary>
@@ -20,6 +21,7 @@ public enum ClientPackets
     welcomeReceived = 1,
     updatePlayerCurrentPosition = 2,
     sendSelectionData = 3,
+    endTurn = 4,
 }
 
 public class Packet : IDisposable

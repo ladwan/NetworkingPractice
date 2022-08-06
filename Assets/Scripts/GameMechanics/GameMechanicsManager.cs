@@ -18,8 +18,6 @@ namespace ForverFight.GameMechanics
         private static GameMechanicsManager instance = null;
         [NonSerialized]
         private string opponentsName = "";
-        [NonSerialized]
-        private bool destroyingDuplicate = false;
 
 
         public static GameMechanicsManager Instance { get => instance; set => instance = value; }
@@ -36,7 +34,6 @@ namespace ForverFight.GameMechanics
             else if (instance != this)
             {
                 Debug.Log("Instance of GAME MANAGER already exsists, destroying object!");
-                destroyingDuplicate = true;
                 Destroy(this);
             }
         }

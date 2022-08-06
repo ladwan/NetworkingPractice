@@ -5,78 +5,89 @@ using UnityEngine;
 using UnityEngine.Events;
 using TMPro;
 
-public class Countdown : MonoBehaviour
+namespace ForverFight.HelperScripts
 {
-    [SerializeField]
-    private int time = 0;
-    [SerializeField]
-    private UnityEvent awakeEvent = new UnityEvent();
-    [SerializeField]
-    private UnityEvent countdownBegin = new UnityEvent();
-    [SerializeField]
-    private UnityEvent countdownFinished = new UnityEvent();
-    [SerializeField]
-    private TextMeshProUGUI timeText = null;
-
-
-    [NonSerialized]
-    private Countdown instance;
-    [NonSerialized]
-    private bool doOnce = false;
-
-
-    public int Time { get => time; set => time = value; }
-
-    public UnityEvent AwakeEvent { get => awakeEvent; set => awakeEvent = value; }
-
-    public UnityEvent CountdownBegin { get => countdownBegin; set => countdownBegin = value; }
-
-    public UnityEvent CountdownFinished { get => countdownFinished; set => countdownFinished = value; }
-
-
-    private void Awake()
+    public class Countdown : MonoBehaviour
     {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else if (instance != this)
-        {
-            Debug.Log("Instance already exsists, destroying object!");
-            Destroy(this);
-        }
+        [SerializeField]
+        private int time = 0;
+        [SerializeField]
+        private UnityEvent awakeEvent = new UnityEvent();
+        [SerializeField]
+        private UnityEvent countdownBegin = new UnityEvent();
+        [SerializeField]
+        private UnityEvent countdownFinished = new UnityEvent();
+        [SerializeField]
+        private TextMeshProUGUI timeText = null;
 
-        AwakeEvent?.Invoke();
-    }
 
-    private IEnumerator Count()
-    {
-        if (doOnce == false)
-        {
-            countdownBegin?.Invoke();
-            doOnce = true;
-        }
+        [NonSerialized]
+        private Countdown instance;
+        [NonSerialized]
+        private bool doOnce = false;
 
-        yield return new WaitForSecondsRealtime(1);
-        if (time > 0)
+
+        public int Time { get => time; set => time = value; }
+
+        public UnityEvent AwakeEvent { get => awakeEvent; set => awakeEvent = value; }
+
+        public UnityEvent CountdownBegin { get => countdownBegin; set => countdownBegin = value; }
+
+        public UnityEvent CountdownFinished { get => countdownFinished; set => countdownFinished = value; }
+
+
+        private void Awake()
         {
-            time--;
-            StartCoroutine(Count());
-            if (timeText)
+            if (instance == null)
             {
-                timeText.text = time.ToString();
+                instance = this;
+            }
+            else if (instance != this)
+            {
+                Debug.Log("Instance already exsists, destroying object!");
+                Destroy(this);
+            }
+
+            AwakeEvent?.Invoke();
+        }
+
+        private IEnumerator Count()
+        {
+            if (doOnce == false)
+            {
+                countdownBegin?.Invoke();
+                doOnce = true;
+            }
+
+            yield return new WaitForSecondsRealtime(1);
+
+            if (time > 0)
+            {
+                time--;
+                if (timeText)
+                {
+                    timeText.text = time.ToString();
+                }
+                StartCoroutine(Count());
+            }
+            else
+            {
+                countdownFinished?.Invoke();
+                StopCoroutine(Count());
             }
         }
-        else
+
+
+        public void StartTimer()
         {
-            countdownFinished?.Invoke();
-            StopCoroutine(Count());
+            StartCoroutine(Count());
         }
-    }
 
-
-    public void StartTimer()
-    {
-        StartCoroutine(Count());
+        public void ResetTimer(int value)
+        {
+            StopAllCoroutines();
+            time = value;
+            StartCoroutine(Count());
+        }
     }
 }

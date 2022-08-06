@@ -8,6 +8,8 @@ public class RollDice : MonoBehaviour
 {
     [SerializeField]
     private Animator sixSidedDieAnimator = new Animator();
+    [SerializeField]
+    private GameObject uiToTurnOn = null;
 
 
     public void RollSixSidedDie()
@@ -20,6 +22,11 @@ public class RollDice : MonoBehaviour
     {
         var value = Random.Range(1, 7);
         return value;
+    }
+
+    public void CallUiDelay()
+    {
+        StartCoroutine(UiDelay());
     }
 
     private void TriggerSixSidedDieAnim(int rollValue)
@@ -62,6 +69,11 @@ public class RollDice : MonoBehaviour
                 sixSidedDieAnimator.SetTrigger("6sidedRoll6");
                 break;
         }
+    }
+    IEnumerator UiDelay()
+    {
+        yield return new WaitForSeconds(8);
+        uiToTurnOn.SetActive(true);
     }
 }
 

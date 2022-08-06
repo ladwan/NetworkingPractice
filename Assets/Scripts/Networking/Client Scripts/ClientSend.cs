@@ -44,5 +44,15 @@ public class ClientSend : MonoBehaviour
             SendTcpData(_packet);
         }
     }
+
+    public static void EndTurn()
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.endTurn))
+        {
+            int signalInt = 1;
+            _packet.Write(signalInt);
+            SendTcpData(_packet);
+        }
+    }
     #endregion
 }

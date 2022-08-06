@@ -5,7 +5,7 @@ using ForverFight.GameMechanics;
 using ForverFight.Movement;
 using ForverFight.Ui.CharacterSelection;
 using ForverFight.Networking;
-using FlowControl;
+using ForverFight.FlowControl;
 
 public class ClientHandle : MonoBehaviour
 {
@@ -57,6 +57,12 @@ public class ClientHandle : MonoBehaviour
 
 
         ClientInfo.otherUsername = _username;
+    }
 
+    public static void ReceiveStartTurnSignal(Packet _packet)
+    {
+        int signalInt = _packet.ReadInt();
+        Debug.Log(signalInt);
+        PlayerTurnManager.Instance.StartTurn();
     }
 }

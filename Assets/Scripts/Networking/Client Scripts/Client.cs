@@ -165,6 +165,8 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.totalPlayer, ClientHandle.ReceiveTotalPlayerUpdate},
             { (int)ServerPackets.sendSelectionPacket, ClientHandle.ReceiveSelectionPacket},
             { (int)ServerPackets.sendUsername, ClientHandle.ReceiveUsername},
+            { (int)ServerPackets.startTurn, ClientHandle.ReceiveStartTurnSignal},
+
 
         };
         Debug.Log("Initialized Packets..");

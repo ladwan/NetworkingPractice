@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ForverFight.HelperScripts;
+using ForverFight.FlowControl;
 
 public class FloorGrid : MonoBehaviour
 {
@@ -303,6 +304,7 @@ public class FloorGrid : MonoBehaviour
 
         var moveLocalPlayer = ClientInfo.playerNumber == 1 ? player1Spawn.transform.position = currentLocationVector3 : player2Spawn.transform.position = currentLocationVector3;
         EmptyGridPointList();
+        PlayerTurnManager.Instance.EndTurn();
     }
 
     public void UpdateOpponentPosition(Vector2 value)
