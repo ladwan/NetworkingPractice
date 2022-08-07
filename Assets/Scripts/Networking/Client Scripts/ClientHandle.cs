@@ -62,7 +62,6 @@ public class ClientHandle : MonoBehaviour
     public static void ReceiveStartTurnSignal(Packet _packet)
     {
         int signalInt = _packet.ReadInt();
-        Debug.Log(signalInt);
         PlayerTurnManager.Instance.StartTurn();
     }
 }

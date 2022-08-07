@@ -99,6 +99,7 @@ namespace ForverFight.FlowControl
             {
                 if (ClientInfo.playerNumber == 1)
                 {
+                    CleanUpUiAfterTurn.Instance.CleanUpUi();
                     player1Ui.gameObject.SetActive(false);
                     player1Timer.ResetTimer(30);
                     player1TimerSubtext.text = "( Opponents turn... )";
@@ -107,6 +108,8 @@ namespace ForverFight.FlowControl
                     {
                         player1DieAnim.Play("Despawn", 0);
                     }
+                    DistributedDieValue.SetUnchangingDieRollValue(0);
+                    DistributedDieValue.SetDieRollValue(0);
                     ClientSend.EndTurn();
                     return;
                 }
@@ -114,6 +117,7 @@ namespace ForverFight.FlowControl
 
                 if (ClientInfo.playerNumber == 2)
                 {
+                    CleanUpUiAfterTurn.Instance.CleanUpUi();
                     player2Ui.gameObject.SetActive(false);
                     player2Timer.ResetTimer(30);
                     player2TimerSubtext.text = "( Opponents turn... )";
@@ -122,6 +126,8 @@ namespace ForverFight.FlowControl
                     {
                         player2DieAnim.Play("Despawn", 0);
                     }
+                    DistributedDieValue.SetUnchangingDieRollValue(0);
+                    DistributedDieValue.SetDieRollValue(0);
                     ClientSend.EndTurn();
                     return;
                 }
