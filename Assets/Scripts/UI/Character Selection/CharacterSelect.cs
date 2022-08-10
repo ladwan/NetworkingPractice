@@ -76,42 +76,47 @@ namespace ForverFight.Ui.CharacterSelection
 
         public void UpdateSelection(CharacterPanel selectedCharPanel)
         {
-            currentlySelectedPanel = selectedCharPanel;
-            infoDisplay.Info = selectedCharPanel.Info;
-            infoDisplay.UpdateDisplayInfo();
-            selectedCharPanel.Info.AbilityDescription.PopulateInfoDisplay();
-            abilityDescriptionTextBox.text = selectedCharPanel.Info.AbilityDescriptionText;
-
-            for (int i = 0; i < characterPanels.Count; i++)
+            if (selectedCharPanel != otherPlayerCurrentPanel)
             {
-                if (characterPanels[i] != currentlySelectedPanel)
+
+                currentlySelectedPanel = selectedCharPanel;
+                infoDisplay.Info = selectedCharPanel.Info;
+                infoDisplay.UpdateDisplayInfo();
+                selectedCharPanel.Info.AbilityDescription.PopulateInfoDisplay();
+                abilityDescriptionTextBox.text = selectedCharPanel.Info.AbilityDescriptionText;
+
+                for (int i = 0; i < characterPanels.Count; i++)
                 {
-                    if (otherPlayerCurrentPanel != null)
+                    if (characterPanels[i] != currentlySelectedPanel)
                     {
-                        if (characterPanels[i] != otherPlayerCurrentPanel)
+                        if (otherPlayerCurrentPanel != null)
+                        {
+                            if (characterPanels[i] != otherPlayerCurrentPanel)
+                            {
+                                characterPanels[i].Parent.SetActive(false);
+                            }
+                        }
+                        else
                         {
                             characterPanels[i].Parent.SetActive(false);
                         }
                     }
                     else
                     {
-                        characterPanels[i].Parent.SetActive(false);
-                    }
-                }
-                else
-                {
-                    if (ClientInfo.playerNumber == 1)
-                    {
-                        characterPanels[i].Highlight.GetComponent<Image>().color = Color.red;
-                    }
-                    else if (ClientInfo.playerNumber == 2)
-                    {
-                        characterPanels[i].Highlight.GetComponent<Image>().color = Color.blue;
+                        if (ClientInfo.playerNumber == 1)
+                        {
+                            characterPanels[i].Highlight.GetComponent<Image>().color = Color.red;
+                        }
+                        else if (ClientInfo.playerNumber == 2)
+                        {
+                            characterPanels[i].Highlight.GetComponent<Image>().color = Color.blue;
+                        }
 
+                        characterPanels[i].Parent.SetActive(true);
+                        ClientSend.SendSelectionData(i, ClientInfo.playerNumber, characterPanels[i].Info.CharName);
                     }
-                    characterPanels[i].Parent.SetActive(true);
-                    ClientSend.SendSelectionData(i, ClientInfo.playerNumber, characterPanels[i].Info.CharName);
                 }
+
             }
         }
 
