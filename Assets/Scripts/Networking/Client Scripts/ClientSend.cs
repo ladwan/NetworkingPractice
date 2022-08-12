@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ForverFight.Movement;
+using ForverFight.Ui.CharacterSelection;
 public class ClientSend : MonoBehaviour
 {
     private static void SendTcpData(Packet _packet)
@@ -51,6 +52,25 @@ public class ClientSend : MonoBehaviour
         {
             int signalInt = 1;
             _packet.Write(signalInt);
+            SendTcpData(_packet);
+        }
+    }
+
+    public static void SendReadyUp()
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.sendReadyUp))
+        {
+            int signalInt = 1;
+            _packet.Write(signalInt);
+            SendTcpData(_packet);
+        }
+    }
+
+    public static void EnterSyncTimerQueue()
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.enterSyncTimerQueue))
+        {
+            _packet.Write(CharacterSelect.Instance.CountdownTimer.Time);
             SendTcpData(_packet);
         }
     }

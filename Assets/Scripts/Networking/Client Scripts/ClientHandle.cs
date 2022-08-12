@@ -64,4 +64,22 @@ public class ClientHandle : MonoBehaviour
         int signalInt = _packet.ReadInt();
         PlayerTurnManager.Instance.StartTurn();
     }
+
+    public static void ReceiveReadyUpSignal(Packet _packet)
+    {
+        CharacterSelect.Instance.OtherPlayerCheckmark.SetActive(true);
+
+        if (SendReadyUp.Instance.LocalPlayerCheckmark.activeInHierarchy)
+        {
+            ClientSend.EnterSyncTimerQueue();
+        }
+
+    }
+
+    public static void ReceiveSyncedTimerTime(Packet _packet)
+    {
+        int _timeLeft = _packet.ReadInt();
+
+        CharacterSelect.Instance.CountdownTimer.Time = 4;
+    }
 }

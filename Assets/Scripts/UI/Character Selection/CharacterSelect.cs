@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using ForverFight.HelperScripts;
 
 namespace ForverFight.Ui.CharacterSelection
 {
@@ -24,6 +25,13 @@ namespace ForverFight.Ui.CharacterSelection
         private string otherUsernameString;
         [SerializeField]
         private Text abilityDescriptionTextBox;
+        [SerializeField]
+        private Button confirmButton = null;
+        [SerializeField]
+        private GameObject otherPlayerCheckmark = null;
+        [SerializeField]
+        private Countdown countdownTimer = null;
+
 
         [NonSerialized]
         private CharacterPanel currentlySelectedPanel;
@@ -40,6 +48,9 @@ namespace ForverFight.Ui.CharacterSelection
         public List<CharacterPanel> CharacterPanelsList { get => characterPanelsList; set => characterPanelsList = value; }
         public Dictionary<int, CharacterPanel> CharacterPanels { get => characterPanels; set => characterPanels = value; }
         public Text OtherUsername { get => otherUsername; set => otherUsername = value; }
+        public GameObject OtherPlayerCheckmark { get => otherPlayerCheckmark; set => otherPlayerCheckmark = value; }
+        public Countdown CountdownTimer { get => countdownTimer; set => countdownTimer = value; }
+
 
         private void Awake()
         {
@@ -78,7 +89,7 @@ namespace ForverFight.Ui.CharacterSelection
         {
             if (selectedCharPanel != otherPlayerCurrentPanel)
             {
-
+                confirmButton.interactable = true;
                 currentlySelectedPanel = selectedCharPanel;
                 infoDisplay.Info = selectedCharPanel.Info;
                 infoDisplay.UpdateDisplayInfo();
@@ -143,6 +154,14 @@ namespace ForverFight.Ui.CharacterSelection
             {
                 otherPlayerOldPanel.Parent.SetActive(false);
                 otherPlayerOldPanel = characterPanels[_panelIndex];
+            }
+        }
+
+        public void SetTimerAfterReadyUp()
+        {
+            if (countdownTimer.Time > 4)
+            {
+                countdownTimer.Time = 4;
             }
         }
     }

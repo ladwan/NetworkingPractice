@@ -13,6 +13,8 @@ public enum ServerPackets
     sendSelectionPacket = 4,
     sendUsername = 5,
     startTurn = 6,
+    relayReadyUp = 7,
+    syncTimers = 8,
 }
 
 /// <summary>Sent from client to server.</summary>
@@ -22,6 +24,8 @@ public enum ClientPackets
     updatePlayerCurrentPosition = 2,
     sendSelectionData = 3,
     endTurn = 4,
+    sendReadyUp = 5,
+    enterSyncTimerQueue = 6,
 }
 
 public class Packet : IDisposable

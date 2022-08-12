@@ -166,6 +166,9 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.sendSelectionPacket, ClientHandle.ReceiveSelectionPacket},
             { (int)ServerPackets.sendUsername, ClientHandle.ReceiveUsername},
             { (int)ServerPackets.startTurn, ClientHandle.ReceiveStartTurnSignal},
+            { (int)ServerPackets.relayReadyUp, ClientHandle.ReceiveReadyUpSignal},
+            { (int)ServerPackets.syncTimers, ClientHandle.ReceiveSyncedTimerTime},
+
 
 
         };
