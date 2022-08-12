@@ -1117,7 +1117,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1642512142}
   m_OnClick:
     m_PersistentCalls:
@@ -1539,6 +1539,7 @@ GameObject:
   - component: {fileID: 1766740637}
   - component: {fileID: 1766740636}
   - component: {fileID: 1766740635}
+  - component: {fileID: 1766740638}
   m_Layer: 5
   m_Name: InputField
   m_TagString: Untagged
@@ -1627,7 +1628,20 @@ MonoBehaviour:
       m_Calls: []
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1766740638}
+        m_TargetAssemblyTypeName: ForverFight.HelperScripts.UsernameInputTracker,
+          Assembly-CSharp
+        m_MethodName: UpdateUsername
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_CaretColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_CustomCaretColor: 0
   m_SelectionColor: {r: 0.65882355, g: 0.80784315, b: 1, a: 0.7529412}
@@ -1674,6 +1688,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1766740633}
   m_CullTransparentMesh: 0
+--- !u!114 &1766740638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1766740633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9023a0684353d564ababcbe337d918d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  confirmButton: {fileID: 1642512141}
+  usernameInputField: {fileID: 1766740635}
 --- !u!1 &1883149641
 GameObject:
   m_ObjectHideFlags: 0
