@@ -156,7 +156,7 @@ public class FloorGrid : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log("That position is already taken! Please try to move elsewhere. ");
+                        Debug.Log("That position is already taken! Please try to move elsewhere.");
                     }
                 }
 
