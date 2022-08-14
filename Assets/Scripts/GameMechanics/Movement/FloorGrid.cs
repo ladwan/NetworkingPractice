@@ -102,15 +102,16 @@ public class FloorGrid : MonoBehaviour
         var updatedCurrentLocation = ClientInfo.playerNumber == 1 ? currentLocation = player1Vector2 : currentLocation = player2Vector2;
     }
 
-    public void AddGridPointToList(GridPoint gp, Vector2 destination)
+    public void AddGridPointToList(GridPoint gp)
     {
         gp.ShowHighlight(true);
 
-        if (AddGridPointToList(gp))
+        if (AddGridPointToListBool(gp))
         {
             hoveredOverGridPoints.Add(gp);
         }
     }
+
     #region TryHighlighting
     public void TryHighlighting(int movementValue)
     {
@@ -136,11 +137,11 @@ public class FloorGrid : MonoBehaviour
                 {
                     if (upGridPoint != GridPointOccupiedByOpponent())
                     {
-                        if (isGridPointInList(upGridPoint))
+                        if (IsGridPointInList(upGridPoint))
                         {
                             upGridPoint = gridDictionary[upDestination];
                             currentLocation = upDestination;
-                            AddGridPointToList(upGridPoint, upDestination);
+                            AddGridPointToList(upGridPoint);
                         }
                         else
                         {
@@ -148,7 +149,7 @@ public class FloorGrid : MonoBehaviour
                             {
                                 upGridPoint = gridDictionary[upDestination];
                                 currentLocation = upDestination;
-                                AddGridPointToList(upGridPoint, upDestination);
+                                AddGridPointToList(upGridPoint);
                                 dieValue--;
                                 DistributedDieValue.SetDieRollValue(dieValue);
                             }
@@ -180,11 +181,11 @@ public class FloorGrid : MonoBehaviour
                 {
                     if (downGridPoint != GridPointOccupiedByOpponent())
                     {
-                        if (isGridPointInList(downGridPoint))
+                        if (IsGridPointInList(downGridPoint))
                         {
                             downGridPoint = gridDictionary[downDestination];
                             currentLocation = downDestination;
-                            AddGridPointToList(downGridPoint, downDestination);
+                            AddGridPointToList(downGridPoint);
                         }
                         else
                         {
@@ -192,7 +193,7 @@ public class FloorGrid : MonoBehaviour
                             {
                                 downGridPoint = gridDictionary[downDestination];
                                 currentLocation = downDestination;
-                                AddGridPointToList(downGridPoint, downDestination);
+                                AddGridPointToList(downGridPoint);
                                 dieValue--;
                                 DistributedDieValue.SetDieRollValue(dieValue);
                             }
@@ -225,11 +226,11 @@ public class FloorGrid : MonoBehaviour
                 {
                     if (leftGridPoint != GridPointOccupiedByOpponent())
                     {
-                        if (isGridPointInList(leftGridPoint))
+                        if (IsGridPointInList(leftGridPoint))
                         {
                             leftGridPoint = gridDictionary[leftDestination];
                             currentLocation = leftDestination;
-                            AddGridPointToList(leftGridPoint, leftDestination);
+                            AddGridPointToList(leftGridPoint);
                         }
                         else
                         {
@@ -237,7 +238,7 @@ public class FloorGrid : MonoBehaviour
                             {
                                 leftGridPoint = gridDictionary[leftDestination];
                                 currentLocation = leftDestination;
-                                AddGridPointToList(leftGridPoint, leftDestination);
+                                AddGridPointToList(leftGridPoint);
                                 dieValue--;
                                 DistributedDieValue.SetDieRollValue(dieValue);
                             }
@@ -269,11 +270,11 @@ public class FloorGrid : MonoBehaviour
                 {
                     if (rightGridPoint != GridPointOccupiedByOpponent())
                     {
-                        if (isGridPointInList(rightGridPoint))
+                        if (IsGridPointInList(rightGridPoint))
                         {
                             rightGridPoint = gridDictionary[rightDestination];
                             currentLocation = rightDestination;
-                            AddGridPointToList(rightGridPoint, rightDestination);
+                            AddGridPointToList(rightGridPoint);
                         }
                         else
                         {
@@ -281,7 +282,7 @@ public class FloorGrid : MonoBehaviour
                             {
                                 rightGridPoint = gridDictionary[rightDestination];
                                 currentLocation = rightDestination;
-                                AddGridPointToList(rightGridPoint, rightDestination);
+                                AddGridPointToList(rightGridPoint);
                                 dieValue--;
                                 DistributedDieValue.SetDieRollValue(dieValue);
                             }
@@ -314,7 +315,7 @@ public class FloorGrid : MonoBehaviour
         var moveOpponent = ClientInfo.playerNumber == 1 ? player2Spawn.transform.position = newPos : player1Spawn.transform.position = newPos;
     }
 
-    private bool AddGridPointToList(GridPoint gp)
+    private bool AddGridPointToListBool(GridPoint gp)
     {
         bool add = false;
         if (hoveredOverGridPoints.Count != 0)
@@ -354,9 +355,9 @@ public class FloorGrid : MonoBehaviour
         return add;
     }
 
-    private bool isGridPointInList(GridPoint gp)
+    private bool IsGridPointInList(GridPoint gp)
     {
-        if (AddGridPointToList(gp) == false)
+        if (AddGridPointToListBool(gp) == false)
         {
             return true;
         }
@@ -386,5 +387,17 @@ public class FloorGrid : MonoBehaviour
 
         Debug.Log("ClientInfo.PlayerNumber returned an abnormal value, please check code");
         return null;
+    }
+
+    public void AddStartingGpHighlight()
+    {
+        if (gridDictionary.TryGetValue(currentLocation, out GridPoint startingSq))
+        {
+            AddGridPointToList(startingSq);
+        }
+        else
+        {
+            Debug.Log("Starting sq not found !");
+        }
     }
 }
