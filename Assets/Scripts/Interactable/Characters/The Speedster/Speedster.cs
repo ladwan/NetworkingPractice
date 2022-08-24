@@ -62,5 +62,11 @@ namespace Interactable.Characters
                 AttemptAbilty();
             }
         }
+
+
+        public void QuickPunch()
+        {
+
+        }
     }
 }
