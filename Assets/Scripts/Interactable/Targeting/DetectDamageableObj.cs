@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace ForverFight.Interactable
 {
@@ -13,6 +15,11 @@ namespace ForverFight.Interactable
         [SerializeField]
         private Material targetFoundMat = null;
         [SerializeField]
+        private GameObject activeTargetCube = null;
+        [SerializeField]
+        private UnityEvent fireAbilityEvent = new UnityEvent();
+
+        [NonSerialized]
         private GameObject damageableObj = null;
 
 
@@ -25,6 +32,7 @@ namespace ForverFight.Interactable
             {
                 detectionCubeMeshRenderer.material = targetFoundMat;
                 damageableObj = other.gameObject;
+                activeTargetCube.SetActive(true);
             }
         }
 
@@ -34,6 +42,7 @@ namespace ForverFight.Interactable
             {
                 detectionCubeMeshRenderer.material = noTargetMat;
                 damageableObj = null;
+                activeTargetCube.SetActive(false);
             }
         }
 
@@ -41,7 +50,7 @@ namespace ForverFight.Interactable
         {
             if (damageableObj)
             {
-                //Code for dmg here eventually
+                fireAbilityEvent?.Invoke();
             }
         }
     }
