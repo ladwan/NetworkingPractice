@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using ForverFight.Interactable.Abilities;
 using ForverFight.Networking;
+using UnityEngine;
 
 public class CharacterDataManager : MonoBehaviour
 {

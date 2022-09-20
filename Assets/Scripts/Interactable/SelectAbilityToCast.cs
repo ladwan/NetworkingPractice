@@ -16,10 +16,7 @@ namespace ForverFight.Interactable.Abilities
 
         protected void OnEnable()
         {
-            if(LocalStoredNetworkData.localPlayerSelectAbilityToCast == null)
-            {
-                LocalStoredNetworkData.localPlayerSelectAbilityToCast = this;
-            }
+            LocalStoredNetworkData.localPlayerSelectAbilityToCast = this;
         }
 
         public void SelectAbility()

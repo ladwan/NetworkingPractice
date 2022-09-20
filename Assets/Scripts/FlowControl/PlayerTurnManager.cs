@@ -110,6 +110,13 @@ namespace ForverFight.FlowControl
                     }
                     DistributedDieValue.SetUnchangingDieRollValue(0);
                     DistributedDieValue.SetDieRollValue(0);
+
+                    if (LocalStoredNetworkData.localPlayerSelectAbilityToCast)
+                    {
+                        LocalStoredNetworkData.localPlayerSelectAbilityToCast.ToggleAbilityRadius(false);
+                        LocalStoredNetworkData.localPlayerSelectAbilityToCast = null;
+                    }
+
                     ClientSend.EndTurn();
                     return;
                 }
@@ -128,6 +135,13 @@ namespace ForverFight.FlowControl
                     }
                     DistributedDieValue.SetUnchangingDieRollValue(0);
                     DistributedDieValue.SetDieRollValue(0);
+
+                    if (LocalStoredNetworkData.localPlayerSelectAbilityToCast)
+                    {
+                        LocalStoredNetworkData.localPlayerSelectAbilityToCast.ToggleAbilityRadius(false);
+                        LocalStoredNetworkData.localPlayerSelectAbilityToCast = null;
+                    }
+
                     ClientSend.EndTurn();
                     return;
                 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using ForverFight.Networking;
 
 namespace ForverFight.HelperScripts
 {
@@ -88,6 +89,15 @@ namespace ForverFight.HelperScripts
                 {
                     player2RollDieButton.interactable = true;
                 }
+            }
+        }
+
+        public void CleanUpAbilityRadius(bool value)
+        {
+            if (LocalStoredNetworkData.localPlayerSelectAbilityToCast)
+            {
+                LocalStoredNetworkData.localPlayerSelectAbilityToCast.ToggleAbilityRadius(value);
+                LocalStoredNetworkData.localPlayerSelectAbilityToCast = null;
             }
         }
     }
