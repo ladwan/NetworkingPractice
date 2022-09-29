@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using ForverFight.Networking;
+using UnityEngine;
 
 namespace ForverFight.Interactable.Abilities
 {
@@ -17,6 +15,7 @@ namespace ForverFight.Interactable.Abilities
         protected void OnEnable()
         {
             LocalStoredNetworkData.localPlayerSelectAbilityToCast = this;
+            Debug.Log("Yooo! I Ran! : 01 ");
         }
 
         public void SelectAbility()

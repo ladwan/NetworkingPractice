@@ -1,8 +1,7 @@
-﻿using System.Collections;
+﻿using ForverFight.FlowControl;
+using ForverFight.HelperScripts;
 using System.Collections.Generic;
 using UnityEngine;
-using ForverFight.HelperScripts;
-using ForverFight.FlowControl;
 
 public class FloorGrid : MonoBehaviour
 {
@@ -70,9 +69,9 @@ public class FloorGrid : MonoBehaviour
 
         if (ClientInfo.playerNumber == 0 || ClientInfo.playerNumber > 2)
         {
-            currentLocation = new Vector2(player2Spawn.transform.position.x, player2Spawn.transform.position.z);
-            Debug.Log("Client player number was abnormal, please look into code. Defaulting to spawn point 2");
-            isPlayer1 = false;
+            currentLocation = new Vector2(player1Spawn.transform.position.x, player1Spawn.transform.position.z);
+            Debug.Log("Client player number was abnormal, please look into code. Defaulting to spawn point 1");
+            isPlayer1 = true;
         }
 
         if (isPlayer1)

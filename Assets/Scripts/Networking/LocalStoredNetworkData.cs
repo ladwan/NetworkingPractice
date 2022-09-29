@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using ForverFight.Interactable.Abilities;
+using UnityEngine.UI;
 
 namespace ForverFight.Networking
 {
@@ -12,6 +10,8 @@ namespace ForverFight.Networking
         public static bool isPlayer1Turn = true;
 
         public static SelectAbilityToCast localPlayerSelectAbilityToCast = null;
+
+        public static Button localPlayerAttackConfirmButton = null;
     }
 }
 

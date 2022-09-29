@@ -1,9 +1,8 @@
+using ForverFight.Networking;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using ForverFight.Networking;
+using UnityEngine.Events;
 
 namespace ForverFight.HelperScripts
 {
@@ -11,23 +10,19 @@ namespace ForverFight.HelperScripts
     {
         [Header("Player 1")]
         [SerializeField]
-        private GameObject player1BackgroundPanel = null;
+        private List<GameObject> player1ObjectsToTurnEnable = new List<GameObject>();
         [SerializeField]
-        private GameObject player1MovementUi = null;
+        private List<GameObject> player1ObjectsToTurnDisable = new List<GameObject>();
         [SerializeField]
-        private GameObject player1AttackUi = null;
-        [SerializeField]
-        private Button player1RollDieButton = null;
+        private UnityEvent player1TurnEndEvent = new UnityEvent();
 
         [Header("Player 2")]
         [SerializeField]
-        private GameObject player2BackgroundPanel = null;
+        private List<GameObject> player2ObjectsToTurnEnable = new List<GameObject>();
         [SerializeField]
-        private GameObject player2MovementUi = null;
+        private List<GameObject> player2ObjectsToTurnDisable = new List<GameObject>();
         [SerializeField]
-        private GameObject player2AttackUi = null;
-        [SerializeField]
-        private Button player2RollDieButton = null;
+        private UnityEvent player2TurnEndEvent = new UnityEvent();
 
 
         [NonSerialized]
@@ -54,41 +49,31 @@ namespace ForverFight.HelperScripts
         {
             if (ClientInfo.playerNumber == 1)
             {
-                if (player1BackgroundPanel.activeInHierarchy)
+                for (int i = 0; i < player1ObjectsToTurnEnable.Count; i++)
                 {
-                    player1BackgroundPanel.SetActive(false);
+                    player1ObjectsToTurnEnable[i].SetActive(true);
                 }
-                if (player1MovementUi.activeInHierarchy)
+
+                for (int i = 0; i < player1ObjectsToTurnDisable.Count; i++)
                 {
-                    player1MovementUi.SetActive(false);
+                    player1ObjectsToTurnDisable[i].SetActive(false);
                 }
-                if (player1AttackUi.activeInHierarchy)
-                {
-                    player1AttackUi.SetActive(false);
-                }
-                if (!player1RollDieButton.interactable)
-                {
-                    player1RollDieButton.interactable = true;
-                }
+
+                player1TurnEndEvent?.Invoke();
             }
             else if (ClientInfo.playerNumber == 2)
             {
-                if (player2BackgroundPanel.activeInHierarchy)
+                for (int i = 0; i < player2ObjectsToTurnEnable.Count; i++)
                 {
-                    player2BackgroundPanel.SetActive(false);
+                    player2ObjectsToTurnEnable[i].SetActive(true);
                 }
-                if (player2MovementUi.activeInHierarchy)
+
+                for (int i = 0; i < player2ObjectsToTurnDisable.Count; i++)
                 {
-                    player2MovementUi.SetActive(false);
+                    player2ObjectsToTurnDisable[i].SetActive(false);
                 }
-                if (player2AttackUi.activeInHierarchy)
-                {
-                    player2AttackUi.SetActive(false);
-                }
-                if (!player2RollDieButton.interactable)
-                {
-                    player2RollDieButton.interactable = true;
-                }
+
+                player2TurnEndEvent?.Invoke();
             }
         }
 
@@ -97,7 +82,6 @@ namespace ForverFight.HelperScripts
             if (LocalStoredNetworkData.localPlayerSelectAbilityToCast)
             {
                 LocalStoredNetworkData.localPlayerSelectAbilityToCast.ToggleAbilityRadius(value);
-                LocalStoredNetworkData.localPlayerSelectAbilityToCast = null;
             }
         }
     }

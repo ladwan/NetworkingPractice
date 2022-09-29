@@ -1,10 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using TMPro;
 using ForverFight.HelperScripts;
 using ForverFight.Networking;
+using System;
+using System.Collections;
+using TMPro;
+using UnityEngine;
 
 namespace ForverFight.FlowControl
 {
@@ -114,7 +113,6 @@ namespace ForverFight.FlowControl
                     if (LocalStoredNetworkData.localPlayerSelectAbilityToCast)
                     {
                         LocalStoredNetworkData.localPlayerSelectAbilityToCast.ToggleAbilityRadius(false);
-                        LocalStoredNetworkData.localPlayerSelectAbilityToCast = null;
                     }
 
                     ClientSend.EndTurn();

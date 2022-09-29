@@ -1,6 +1,5 @@
+using ForverFight.Networking;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -33,6 +32,7 @@ namespace ForverFight.Interactable
                 detectionCubeMeshRenderer.material = targetFoundMat;
                 damageableObj = other.gameObject;
                 activeTargetCube.SetActive(true);
+                LocalStoredNetworkData.localPlayerAttackConfirmButton.interactable = true;
             }
         }
 
@@ -43,6 +43,7 @@ namespace ForverFight.Interactable
                 detectionCubeMeshRenderer.material = noTargetMat;
                 damageableObj = null;
                 activeTargetCube.SetActive(false);
+                LocalStoredNetworkData.localPlayerAttackConfirmButton.interactable = false;
             }
         }
 

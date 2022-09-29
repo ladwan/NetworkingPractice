@@ -752,6 +752,7 @@ Transform:
   - {fileID: 807454139}
   - {fileID: 1095206155}
   - {fileID: 654013215}
+  - {fileID: 231754725}
   m_Father: {fileID: 311792656}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -797,6 +798,52 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnOpponentScriptREF: {fileID: 195005823}
+--- !u!1 &231754724
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 231754725}
+  - component: {fileID: 231754726}
+  m_Layer: 0
+  m_Name: Dynamic Reference Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &231754725
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 231754724}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 195005822}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &231754726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 231754724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 915f6fef8790a6a4a81d3b073d3cc31d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player1AttackConfirmButton: {fileID: 2107012162}
+  player2AttackConfirmButton: {fileID: 2013879899}
 --- !u!1 &237079241
 GameObject:
   m_ObjectHideFlags: 0
@@ -1483,7 +1530,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sixSidedDieAnimator: {fileID: 189313252}
-  uiToTurnOn: {fileID: 820057299}
+  uiToToggle: {fileID: 0}
 --- !u!114 &340163337
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2309,42 +2356,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1321447670}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 92420964}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 694388380}
-        m_TargetAssemblyTypeName: UnityEngine.UI.Selectable, UnityEngine.UI
-        m_MethodName: set_interactable
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
       - m_Target: {fileID: 880057296}
         m_TargetAssemblyTypeName: FloorGrid, Assembly-CSharp
         m_MethodName: ConfirmMove
@@ -2597,14 +2608,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f8b9d35249610f4fa826b8746986bae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player1BackgroundPanel: {fileID: 92420964}
-  player1MovementUi: {fileID: 1321447670}
-  player1AttackUi: {fileID: 1404345062}
-  player1RollDieButton: {fileID: 694388380}
-  player2BackgroundPanel: {fileID: 820057299}
-  player2MovementUi: {fileID: 803936618}
-  player2AttackUi: {fileID: 1810849305}
-  player2RollDieButton: {fileID: 340163337}
+  player1ObjectsToTurnEnable:
+  - {fileID: 1983759541}
+  player1ObjectsToTurnDisable:
+  - {fileID: 92420964}
+  - {fileID: 1321447670}
+  - {fileID: 1404345062}
+  player1TurnEndEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 694388380}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Selectable, UnityEngine.UI
+        m_MethodName: set_interactable
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  player2ObjectsToTurnEnable: []
+  player2ObjectsToTurnDisable:
+  - {fileID: 820057299}
+  - {fileID: 803936618}
+  - {fileID: 1810849305}
+  player2TurnEndEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 340163337}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Selectable, UnityEngine.UI
+        m_MethodName: set_interactable
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!1 &683877670
 GameObject:
   m_ObjectHideFlags: 0
@@ -2930,7 +2974,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sixSidedDieAnimator: {fileID: 1992690350}
-  uiToTurnOn: {fileID: 92420964}
+  uiToToggle: {fileID: 1992690349}
 --- !u!114 &694388380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7023,6 +7067,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 336035656}
+  - {fileID: 1983759542}
   - {fileID: 1535058859}
   m_Father: {fileID: 766723294}
   m_RootOrder: 1
@@ -7169,9 +7214,8 @@ RectTransform:
   m_Children:
   - {fileID: 475742416}
   - {fileID: 694388378}
-  - {fileID: 1983759542}
   m_Father: {fileID: 1443357163}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -8673,7 +8717,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1983759542}
   m_Layer: 5
-  m_Name: Health Ui Holder
+  m_Name: Health Ui Holder (Player 1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8686,15 +8730,15 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1983759541}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.000057721514}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1794246275}
   - {fileID: 1616066699}
-  m_Father: {fileID: 1535058859}
-  m_RootOrder: 2
+  m_Father: {fileID: 1443357163}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -8802,7 +8846,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectsToEnable:
   - {fileID: 92420964}
-  objectsToDisable: []
+  objectsToDisable:
+  - {fileID: 1983759541}
 --- !u!95 &1992690350
 Animator:
   serializedVersion: 4
@@ -9618,11 +9663,23 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 2107012163}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1983759541}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &2107012163
 MonoBehaviour:
   m_ObjectHideFlags: 0
