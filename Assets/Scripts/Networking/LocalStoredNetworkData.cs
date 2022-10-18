@@ -12,6 +12,10 @@ namespace ForverFight.Networking
         public static SelectAbilityToCast localPlayerSelectAbilityToCast = null;
 
         public static Button localPlayerAttackConfirmButton = null;
+
+        public static int localPlayerCurrentAP = 3;
+
+        public static int opponentsCurrentAP = 3;
     }
 }
 
