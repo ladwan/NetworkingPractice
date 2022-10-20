@@ -1,22 +1,22 @@
+using ForverFight.Networking;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ForverFight.Networking;
 
 namespace ForverFight.Ui
 {
     public class ActionPointsManager : MonoBehaviour
     {
         [SerializeField]
-        private List<GameObject> apLights = new List<GameObject>();
+        private List<ApLight> apLights = new List<ApLight>();
 
 
         [NonSerialized]
         private int maxAP = 9;
 
 
-        public List<GameObject> ApLights { get => apLights; set => apLights = value; }
+        public List<ApLight> ApLights { get => apLights; set => apLights = value; }
+
 
         protected void OnEnable()
         {
@@ -38,7 +38,7 @@ namespace ForverFight.Ui
             }
             for (int i = 0; i < LocalStoredNetworkData.localPlayerCurrentAP; i++)
             {
-                apLights[i].SetActive(true);
+                apLights[i].gameObject.SetActive(true);
             }
         }
 
@@ -46,10 +46,34 @@ namespace ForverFight.Ui
         {
             for (int i = 0; i < apLights.Count; i++)
             {
-                apLights[i].SetActive(false);
+                apLights[i].gameObject.SetActive(false);
             }
+        }
+
+        public bool YouHaveEnoughAp(int value)
+        {
+            if (value < LocalStoredNetworkData.localPlayerCurrentAP)
+            {
+                return true;
+            }
+            else
+            {
+                Debug.Log("Insufficient AP");
+                return false;
+            }
+        }
+
+        public void ApMovementBlink()
+        {
+            apLights[LocalStoredNetworkData.localPlayerCurrentAP - 1].StartBlink();
+            LocalStoredNetworkData.localPlayerCurrentAP--;
         }
     }
 
     //TODO: Connect die roll to apLights, also add in a way to 'spend' AP's with movement or combat.
+
+    //TODO: Take out distributed die roll when highlighting sq's for movement and connect AP to that system
+    // a) Find a way to make the AP used in highlighting blink indicating that they are about to be used.
+    // b) Make AP lights stop blinking and update current AP amount after  movement is confirmed
+    // c) Stop ending turn after confirmed move.
 }
