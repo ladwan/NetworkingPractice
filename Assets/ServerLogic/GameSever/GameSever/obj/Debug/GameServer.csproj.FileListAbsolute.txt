@@ -1,0 +1,8 @@
+C:\Users\V!!Be\Documents\GitHub\NetworkingPractice\Assets\ServerLogic\GameSever\GameSever\bin\Debug\GameSever.exe.config
+C:\Users\V!!Be\Documents\GitHub\NetworkingPractice\Assets\ServerLogic\GameSever\GameSever\bin\Debug\GameSever.exe
+C:\Users\V!!Be\Documents\GitHub\NetworkingPractice\Assets\ServerLogic\GameSever\GameSever\bin\Debug\GameSever.pdb
+C:\Users\V!!Be\Documents\GitHub\NetworkingPractice\Assets\ServerLogic\GameSever\GameSever\obj\Debug\GameServer.csproj.AssemblyReference.cache
+C:\Users\V!!Be\Documents\GitHub\NetworkingPractice\Assets\ServerLogic\GameSever\GameSever\obj\Debug\GameServer.csproj.SuggestedBindingRedirects.cache
+C:\Users\V!!Be\Documents\GitHub\NetworkingPractice\Assets\ServerLogic\GameSever\GameSever\obj\Debug\GameServer.csproj.CoreCompileInputs.cache
+C:\Users\V!!Be\Documents\GitHub\NetworkingPractice\Assets\ServerLogic\GameSever\GameSever\obj\Debug\GameSever.exe
+C:\Users\V!!Be\Documents\GitHub\NetworkingPractice\Assets\ServerLogic\GameSever\GameSever\obj\Debug\GameSever.pdb

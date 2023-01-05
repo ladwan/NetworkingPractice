@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 
@@ -39,7 +36,7 @@ namespace GameServer
             TcpClient _client = tcpListener.EndAcceptTcpClient(result);
             tcpListener.BeginAcceptTcpClient(new AsyncCallback(TcpConnectCallback), null);
 
-            Console.WriteLine($"Incoming connection from... {_client.Client.RemoteEndPoint }");
+            Console.WriteLine($"Incoming connection from... {_client.Client.RemoteEndPoint}");
             for (int i = 1; i <= maxPlayers; i++)
             {
                 if (connectedClients[i].myClientTcp.socket == null)
@@ -49,7 +46,7 @@ namespace GameServer
                     return;
                 }
             }
-            Console.WriteLine($"{_client.Client.RemoteEndPoint } failed to connect, server is full !");
+            Console.WriteLine($"{_client.Client.RemoteEndPoint} failed to connect, server is full !");
         }
 
         private static void InitializeSeverData()
@@ -64,6 +61,10 @@ namespace GameServer
                 {(int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
                 {(int)ClientPackets.updatePlayerCurrentPosition, ServerHandle.TryMove },
                 {(int)ClientPackets.sendSelectionData, ServerHandle.ServerReadSelectionPacket},
+                {(int)ClientPackets.endTurn, ServerHandle.ServerRecieveEndTurnSignal},
+                {(int)ClientPackets.sendReadyUp, ServerHandle.ServerRecieveReadyUpSignal},
+                {(int)ClientPackets.enterSyncTimerQueue, ServerHandle.ServerRecieveCurrentTime},
+
             };
             Console.WriteLine("Initialized Packets..");
         }

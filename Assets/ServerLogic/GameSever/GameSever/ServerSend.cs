@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameServer
 {
@@ -81,15 +77,15 @@ namespace GameServer
             }
         }
 
-        public static void ServerSendSelectionPacket(int _playerThatDoesntNeedMsgId, int _panelIndex, int _playerIndex)
+        public static void ServerSendSelectionPacket(int _playerThatDoesntNeedMsgId, int _panelIndex, int _playerIndex, string _otherPlayersName)
         {
             using (Packet _packet = new Packet((int)ServerPackets.sendSelectionPacket))
             {
                 _packet.Write(_panelIndex);
                 _packet.Write(_playerIndex);
+                _packet.Write(_otherPlayersName);
 
                 SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
-
             }
         }
 
@@ -101,6 +97,37 @@ namespace GameServer
 
                 SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
 
+            }
+        }
+
+        public static void StartTurn(int _playerThatDoesntNeedMsgId, int _signalInt)
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.startTurn))
+            {
+                _packet.Write(_signalInt);
+
+                SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
+            }
+        }
+
+        public static void RelayReadyUp(int _playerThatDoesntNeedMsgId, int _signalInt)
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.relayReadyUp))
+            {
+                _packet.Write(_signalInt);
+
+                SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
+            }
+        }
+
+        public static void SyncTimers(int _playerThatDoesntNeedMsgId, int _currentTime)
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.syncTimers))
+            {
+                _packet.Write(_currentTime);
+
+                SendTcpDataToOppositePlayer(1, _packet);
+                SendTcpDataToOppositePlayer(2, _packet);
             }
         }
     }

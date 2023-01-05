@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System.Net;
 using System.Net.Sockets;
+using UnityEngine;
 
 public class Client : MonoBehaviour
 {
@@ -162,15 +161,12 @@ public class Client : MonoBehaviour
         {
             { (int)ServerPackets.welcome, ClientHandle.Welcome },
             { (int)ServerPackets.sendUpdatedPlayerPosition, ClientHandle.RecieveUpdatedPlayerPosition},
-            { (int)ServerPackets.totalPlayer, ClientHandle.ReceiveTotalPlayerUpdate},
+            { (int)ServerPackets.totalPlayers, ClientHandle.ReceiveTotalPlayerUpdate},
             { (int)ServerPackets.sendSelectionPacket, ClientHandle.ReceiveSelectionPacket},
             { (int)ServerPackets.sendUsername, ClientHandle.ReceiveUsername},
             { (int)ServerPackets.startTurn, ClientHandle.ReceiveStartTurnSignal},
             { (int)ServerPackets.relayReadyUp, ClientHandle.ReceiveReadyUpSignal},
             { (int)ServerPackets.syncTimers, ClientHandle.ReceiveSyncedTimerTime},
-
-
-
         };
         Debug.Log("Initialized Packets..");
     }

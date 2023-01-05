@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 
 namespace GameServer
 {
     class ServerHandle
     {
+        private static int desyncedTimersRecived = 0;
         public static void WelcomeReceived(int _fromClient, Packet _packet)
         {
             int _clientIdCheck = _packet.ReadInt();
@@ -45,9 +41,31 @@ namespace GameServer
         {
             int _panelIndex = _packet.ReadInt();
             int _playerIndex = _packet.ReadInt();
+            string _playerName = _packet.ReadString();
 
-            ServerSend.ServerSendSelectionPacket(_fromClient, _panelIndex, _playerIndex);
+            ServerSend.ServerSendSelectionPacket(_fromClient, _panelIndex, _playerIndex, _playerName);
+        }
 
+        public static void ServerRecieveEndTurnSignal(int _fromClient, Packet _packet)
+        {
+            int _signalInt = _packet.ReadInt();
+            ServerSend.StartTurn(_fromClient, _signalInt);
+        }
+
+        public static void ServerRecieveReadyUpSignal(int _fromClient, Packet _packet)
+        {
+            int _signalInt = _packet.ReadInt();
+            ServerSend.RelayReadyUp(_fromClient, _signalInt);
+        }
+        public static void ServerRecieveCurrentTime(int _fromClient, Packet _packet)
+        {
+            desyncedTimersRecived++;
+            if (desyncedTimersRecived >= 2)
+            {
+                int _currentTime = _packet.ReadInt();
+                ServerSend.SyncTimers(_fromClient, _currentTime);
+                desyncedTimersRecived = 0;
+            }
         }
     }
 }

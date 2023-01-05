@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using UnityEngine;
 
 /// <summary>Sent from server to client.</summary>
 public enum ServerPackets
 {
     welcome = 1,
     sendUpdatedPlayerPosition = 2,
-    totalPlayer = 3,
+    totalPlayers = 3,
     sendSelectionPacket = 4,
     sendUsername = 5,
     startTurn = 6,
