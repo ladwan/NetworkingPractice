@@ -1873,7 +1873,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7490724337037628810, guid: e2f127fbf30498544bc6fa43de3fef6b, type: 3}
       propertyPath: severIp
-      value: 192.168.1.141
+      value: 192.168.254.70
       objectReference: {fileID: 0}
     - target: {fileID: 7490724337037628811, guid: e2f127fbf30498544bc6fa43de3fef6b, type: 3}
       propertyPath: m_RootOrder
