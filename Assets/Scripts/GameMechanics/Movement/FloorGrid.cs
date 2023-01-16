@@ -1,5 +1,7 @@
 ﻿using ForverFight.FlowControl;
 using ForverFight.HelperScripts;
+using ForverFight.Networking;
+using ForverFight.Ui;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -144,13 +146,13 @@ public class FloorGrid : MonoBehaviour
                         }
                         else
                         {
-                            if (dieValue > 0)
+                            if (LocalStoredNetworkData.localPlayerCurrentAP > 0)
                             {
                                 upGridPoint = gridDictionary[upDestination];
                                 currentLocation = upDestination;
                                 AddGridPointToList(upGridPoint);
-                                dieValue--;
-                                DistributedDieValue.SetDieRollValue(dieValue);
+                                DistributedDieValue.SetDieRollValue(LocalStoredNetworkData.localPlayerCurrentAP);
+                                ActionPointsManager.Instance.ApMovementBlink();
                             }
                         }
                     }
@@ -193,8 +195,8 @@ public class FloorGrid : MonoBehaviour
                                 downGridPoint = gridDictionary[downDestination];
                                 currentLocation = downDestination;
                                 AddGridPointToList(downGridPoint);
-                                dieValue--;
-                                DistributedDieValue.SetDieRollValue(dieValue);
+                                DistributedDieValue.SetDieRollValue(LocalStoredNetworkData.localPlayerCurrentAP);
+                                ActionPointsManager.Instance.ApMovementBlink();
                             }
                         }
                     }
@@ -238,8 +240,8 @@ public class FloorGrid : MonoBehaviour
                                 leftGridPoint = gridDictionary[leftDestination];
                                 currentLocation = leftDestination;
                                 AddGridPointToList(leftGridPoint);
-                                dieValue--;
-                                DistributedDieValue.SetDieRollValue(dieValue);
+                                DistributedDieValue.SetDieRollValue(LocalStoredNetworkData.localPlayerCurrentAP);
+                                ActionPointsManager.Instance.ApMovementBlink();
                             }
                         }
                     }
@@ -282,8 +284,8 @@ public class FloorGrid : MonoBehaviour
                                 rightGridPoint = gridDictionary[rightDestination];
                                 currentLocation = rightDestination;
                                 AddGridPointToList(rightGridPoint);
-                                dieValue--;
-                                DistributedDieValue.SetDieRollValue(dieValue);
+                                DistributedDieValue.SetDieRollValue(LocalStoredNetworkData.localPlayerCurrentAP);
+                                ActionPointsManager.Instance.ApMovementBlink();
                             }
                         }
                     }
@@ -304,7 +306,8 @@ public class FloorGrid : MonoBehaviour
 
         var moveLocalPlayer = ClientInfo.playerNumber == 1 ? player1Spawn.transform.position = currentLocationVector3 : player2Spawn.transform.position = currentLocationVector3;
         EmptyGridPointList();
-        PlayerTurnManager.Instance.EndTurn();
+        //ActionPointsManager.Instance.UpdateAP(0);
+        PlayerTurnManager.Instance.EndTurn(false);
     }
 
     public void UpdateOpponentPosition(Vector2 value)
@@ -334,11 +337,12 @@ public class FloorGrid : MonoBehaviour
                         {
                             hoveredOverGridPoints[removeMe].ShowHighlight(false);
                             hoveredOverGridPoints.RemoveAt(removeMe);
-                            if (dieValue < 6)
+                            if (LocalStoredNetworkData.localPlayerCurrentAP < 9)
                             {
-                                dieValue++;
+                                LocalStoredNetworkData.localPlayerCurrentAP++;
                             }
-                            DistributedDieValue.SetDieRollValue(dieValue);
+                            ActionPointsManager.Instance.UpdateAP(0);
+                            DistributedDieValue.SetDieRollValue(LocalStoredNetworkData.localPlayerCurrentAP);
                         }
                     }
                     add = false;

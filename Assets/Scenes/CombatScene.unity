@@ -1227,7 +1227,7 @@ Transform:
   - {fileID: 1893315688}
   - {fileID: 195005822}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!850595691 &319269256
 LightingSettings:
@@ -1368,14 +1368,14 @@ MonoBehaviour:
       - m_Target: {fileID: 808368854}
         m_TargetAssemblyTypeName: ForverFight.FlowControl.PlayerTurnManager, Assembly-CSharp
         m_MethodName: EndTurn
-        m_Mode: 1
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
   timeText: {fileID: 336035658}
 --- !u!114 &336035658
@@ -1982,6 +1982,10 @@ PrefabInstance:
     - target: {fileID: 4364250494267079521, guid: ce3247d19c9cd36468566922e988680a, type: 3}
       propertyPath: m_Name
       value: Ap Light (4, Local Player)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4364250494267079521, guid: ce3247d19c9cd36468566922e988680a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce3247d19c9cd36468566922e988680a, type: 3}
@@ -4175,7 +4179,7 @@ Transform:
   m_Children:
   - {fileID: 459486050}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &880057296
 MonoBehaviour:
@@ -4807,6 +4811,8 @@ MonoBehaviour:
   - {fileID: 1477957819}
   - {fileID: 991497348}
   - {fileID: 1837954118}
+  currentAp: 0
+  apLightsToBeBlinked: []
 --- !u!114 &1078293877
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5392,7 +5398,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1169403296
 GameObject:
@@ -7973,37 +7979,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!1 &1630979998
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1630980000}
-  m_Layer: 0
-  m_Name: Grid
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1630980000
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1630979998}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1642043153
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8219,6 +8194,10 @@ PrefabInstance:
     - target: {fileID: 4364250494267079521, guid: ce3247d19c9cd36468566922e988680a, type: 3}
       propertyPath: m_Name
       value: Ap Light (2, Local Player)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4364250494267079521, guid: ce3247d19c9cd36468566922e988680a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce3247d19c9cd36468566922e988680a, type: 3}
@@ -8622,14 +8601,14 @@ MonoBehaviour:
       - m_Target: {fileID: 808368854}
         m_TargetAssemblyTypeName: ForverFight.FlowControl.PlayerTurnManager, Assembly-CSharp
         m_MethodName: EndTurn
-        m_Mode: 1
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
   timeText: {fileID: 1773318171}
 --- !u!114 &1773318171
@@ -10204,6 +10183,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 1983759541}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
       - m_Target: {fileID: 92420964}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
@@ -10760,6 +10751,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ap Light (3, Local Player)
       objectReference: {fileID: 0}
+    - target: {fileID: 4364250494267079521, guid: ce3247d19c9cd36468566922e988680a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce3247d19c9cd36468566922e988680a, type: 3}
 --- !u!224 &2126634221 stripped
@@ -10872,6 +10867,10 @@ PrefabInstance:
     - target: {fileID: 4364250493872614145, guid: ce3247d19c9cd36468566922e988680a, type: 3}
       propertyPath: m_Name
       value: Ap Background (1, LocalPlayer) (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4364250494267079521, guid: ce3247d19c9cd36468566922e988680a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce3247d19c9cd36468566922e988680a, type: 3}

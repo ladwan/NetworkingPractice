@@ -1,5 +1,6 @@
 using ForverFight.HelperScripts;
 using ForverFight.Networking;
+using ForverFight.Ui;
 using System;
 using System.Collections;
 using TMPro;
@@ -92,7 +93,7 @@ namespace ForverFight.FlowControl
             }
         }
 
-        public void EndTurn()
+        public void EndTurn(bool timeRanOut)
         {
             if (isLocalPlayersTurn)
             {
@@ -109,6 +110,15 @@ namespace ForverFight.FlowControl
                     }
                     DistributedDieValue.SetUnchangingDieRollValue(0);
                     DistributedDieValue.SetDieRollValue(0);
+
+                    if (timeRanOut)
+                    {
+                        ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.ApLightsToBeBlinked.Count);
+                    }
+                    else
+                    {
+                        ActionPointsManager.Instance.UpdateAP(0);
+                    }
 
                     if (LocalStoredNetworkData.localPlayerSelectAbilityToCast)
                     {

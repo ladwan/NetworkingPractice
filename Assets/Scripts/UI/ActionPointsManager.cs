@@ -1,5 +1,6 @@
 using ForverFight.Networking;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,18 +9,42 @@ namespace ForverFight.Ui
     public class ActionPointsManager : MonoBehaviour
     {
         [SerializeField]
+        private static ActionPointsManager instance = null;
+        [SerializeField]
         private List<ApLight> apLights = new List<ApLight>();
+        [SerializeField]
+        private int currentAp = 0;
+        [SerializeField]
+        private List<ApLight> apLightsToBeBlinked = new List<ApLight>();
 
 
         [NonSerialized]
         private int maxAP = 9;
+        [NonSerialized]
+        private bool blinkCoroutineIsRunning = false;
 
+
+        public static ActionPointsManager Instance { get => instance; set => instance = value; }
 
         public List<ApLight> ApLights { get => apLights; set => apLights = value; }
 
+        public int CurrentAp { get => currentAp; set => currentAp = value; }
 
-        protected void OnEnable()
+        public List<ApLight> ApLightsToBeBlinked { get => apLightsToBeBlinked; set => apLightsToBeBlinked = value; }
+
+
+        protected void Awake()
         {
+            if (instance == null)
+            {
+                instance = this;
+            }
+            else
+            {
+                Debug.Log("More Than 1 AP Manager detected, Destroying self...");
+                Destroy(instance);
+                return;
+            }
             UpdateAP(0);
         }
 
@@ -44,10 +69,14 @@ namespace ForverFight.Ui
 
         private void EmptyAllAP()
         {
+            StopAllCoroutines();
             for (int i = 0; i < apLights.Count; i++)
             {
                 apLights[i].gameObject.SetActive(false);
             }
+
+            apLightsToBeBlinked.Clear();
+            blinkCoroutineIsRunning = false;
         }
 
         public bool YouHaveEnoughAp(int value)
@@ -65,15 +94,45 @@ namespace ForverFight.Ui
 
         public void ApMovementBlink()
         {
-            apLights[LocalStoredNetworkData.localPlayerCurrentAP - 1].StartBlink();
+            apLightsToBeBlinked.Add(apLights[LocalStoredNetworkData.localPlayerCurrentAP - 1]);
             LocalStoredNetworkData.localPlayerCurrentAP--;
+            if (!blinkCoroutineIsRunning)
+            {
+                StartCoroutine(Blink());
+            }
+        }
+
+        private IEnumerator Blink()
+        {
+            blinkCoroutineIsRunning = true;
+            yield return new WaitForSecondsRealtime(0.5f);
+
+            for (int i = 0; i < apLightsToBeBlinked.Count; i++)
+            {
+                apLightsToBeBlinked[i].gameObject.SetActive(false);
+            }
+
+            yield return new WaitForSecondsRealtime(0.5f);
+
+            for (int i = 0; i < apLightsToBeBlinked.Count; i++)
+            {
+                apLightsToBeBlinked[i].gameObject.SetActive(true);
+            }
+
+            StartCoroutine(Blink());
+        }
+
+        public void StopBlink()
+        {
+            StopAllCoroutines();
+            blinkCoroutineIsRunning = false;
         }
     }
 
-    //TODO: Connect die roll to apLights, also add in a way to 'spend' AP's with movement or combat.
 
-    //TODO: Take out distributed die roll when highlighting sq's for movement and connect AP to that system
-    // a) Find a way to make the AP used in highlighting blink indicating that they are about to be used.
-    // b) Make AP lights stop blinking and update current AP amount after  movement is confirmed
-    // c) Stop ending turn after confirmed move.
+    //TODO: Put finishing touches on AP movement system
+    // a) Implement new AP movement for Player 2
+    // b) Stop ending turn after confirmed move.
+    // c) Fix any Ui oddities that may arrise with the switching of thw movement systems
+
 }
