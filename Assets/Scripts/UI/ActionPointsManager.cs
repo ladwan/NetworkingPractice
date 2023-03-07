@@ -16,6 +16,8 @@ namespace ForverFight.Ui
         private int currentAp = 0;
         [SerializeField]
         private List<ApLight> apLightsToBeBlinked = new List<ApLight>();
+        [SerializeField]
+        private bool playerTurnHasEnded = false;
 
 
         [NonSerialized]
@@ -31,6 +33,8 @@ namespace ForverFight.Ui
         public int CurrentAp { get => currentAp; set => currentAp = value; }
 
         public List<ApLight> ApLightsToBeBlinked { get => apLightsToBeBlinked; set => apLightsToBeBlinked = value; }
+
+        public bool PlayerTurnHasEnded { get => playerTurnHasEnded; set => playerTurnHasEnded = value; }
 
 
         protected void Awake()
@@ -65,18 +69,40 @@ namespace ForverFight.Ui
             {
                 apLights[i].gameObject.SetActive(true);
             }
+
+            if (playerTurnHasEnded)
+            {
+                if (apLightsToBeBlinked.Count > 0)
+                {
+                    apLightsToBeBlinked.Clear();
+                    StopBlink();
+                    playerTurnHasEnded = false;
+                }
+            }
         }
 
         private void EmptyAllAP()
         {
-            StopAllCoroutines();
             for (int i = 0; i < apLights.Count; i++)
             {
                 apLights[i].gameObject.SetActive(false);
             }
+        }
 
-            apLightsToBeBlinked.Clear();
-            blinkCoroutineIsRunning = false;
+        public void UpdateBlinkingAP()
+        {
+            if (apLightsToBeBlinked.Count > 0)
+            {
+                if (playerTurnHasEnded)
+                {
+                    apLightsToBeBlinked.Clear();
+                    playerTurnHasEnded = false;
+                }
+                else
+                {
+                    apLightsToBeBlinked.RemoveAt(apLightsToBeBlinked.Count - 1);
+                }
+            }
         }
 
         public bool YouHaveEnoughAp(int value)
@@ -131,8 +157,6 @@ namespace ForverFight.Ui
 
 
     //TODO: Put finishing touches on AP movement system
-    // a) Implement new AP movement for Player 2
-    // b) Stop ending turn after confirmed move.
-    // c) Fix any Ui oddities that may arrise with the switching of thw movement systems
-
+    // a) Stop ending turn after confirmed move.
+    // b) Fix any Ui oddities that may arrise with the switching of thw movement systems
 }

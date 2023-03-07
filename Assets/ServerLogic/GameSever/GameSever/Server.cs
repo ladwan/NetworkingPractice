@@ -59,7 +59,7 @@ namespace GameServer
             packetHandlers = new Dictionary<int, PacketHandler>()
             {
                 {(int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
-                {(int)ClientPackets.updatePlayerCurrentPosition, ServerHandle.TryMove },
+                {(int)ClientPackets.updatePlayerCurrentPosition, ServerHandle.ReadUpdatedPlayerPosition },
                 {(int)ClientPackets.sendSelectionData, ServerHandle.ServerReadSelectionPacket},
                 {(int)ClientPackets.endTurn, ServerHandle.ServerRecieveEndTurnSignal},
                 {(int)ClientPackets.sendReadyUp, ServerHandle.ServerRecieveReadyUpSignal},

@@ -29,12 +29,12 @@ namespace GameServer
             //TODO: Send player into game
         }
 
-        public static void TryMove(int _fromClient, Packet _packet)
+        public static void ReadUpdatedPlayerPosition(int _fromClient, Packet _packet)
         {
-            int _movementData = _packet.ReadInt();
-            Console.WriteLine($"{Server.usernames[_fromClient]} is trying to move {_movementData} spaces");
-            //ServerSend.SendUpdatedPlayerPosition(_fromClient, 1, 1);
-            //TODO: Send player into game
+            int _playerUpdatedX = _packet.ReadInt();
+            int _playerUpdatedY = _packet.ReadInt();
+
+            ServerSend.SendUpdatedPlayerPosition(_fromClient, _playerUpdatedX, _playerUpdatedY);
         }
 
         public static void ServerReadSelectionPacket(int _fromClient, Packet _packet)

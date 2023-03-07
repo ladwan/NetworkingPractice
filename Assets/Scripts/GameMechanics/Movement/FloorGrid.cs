@@ -190,7 +190,7 @@ public class FloorGrid : MonoBehaviour
                         }
                         else
                         {
-                            if (dieValue > 0)
+                            if (LocalStoredNetworkData.localPlayerCurrentAP > 0)
                             {
                                 downGridPoint = gridDictionary[downDestination];
                                 currentLocation = downDestination;
@@ -235,7 +235,7 @@ public class FloorGrid : MonoBehaviour
                         }
                         else
                         {
-                            if (dieValue > 0)
+                            if (LocalStoredNetworkData.localPlayerCurrentAP > 0)
                             {
                                 leftGridPoint = gridDictionary[leftDestination];
                                 currentLocation = leftDestination;
@@ -279,7 +279,7 @@ public class FloorGrid : MonoBehaviour
                         }
                         else
                         {
-                            if (dieValue > 0)
+                            if (LocalStoredNetworkData.localPlayerCurrentAP > 0)
                             {
                                 rightGridPoint = gridDictionary[rightDestination];
                                 currentLocation = rightDestination;
@@ -306,7 +306,7 @@ public class FloorGrid : MonoBehaviour
 
         var moveLocalPlayer = ClientInfo.playerNumber == 1 ? player1Spawn.transform.position = currentLocationVector3 : player2Spawn.transform.position = currentLocationVector3;
         EmptyGridPointList();
-        //ActionPointsManager.Instance.UpdateAP(0);
+        ActionPointsManager.Instance.PlayerTurnHasEnded = true;
         PlayerTurnManager.Instance.EndTurn(false);
     }
 
@@ -342,6 +342,7 @@ public class FloorGrid : MonoBehaviour
                                 LocalStoredNetworkData.localPlayerCurrentAP++;
                             }
                             ActionPointsManager.Instance.UpdateAP(0);
+                            ActionPointsManager.Instance.UpdateBlinkingAP();
                             DistributedDieValue.SetDieRollValue(LocalStoredNetworkData.localPlayerCurrentAP);
                         }
                     }

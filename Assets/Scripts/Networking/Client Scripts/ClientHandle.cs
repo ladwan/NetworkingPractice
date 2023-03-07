@@ -30,7 +30,6 @@ public class ClientHandle : MonoBehaviour
     }
     public static void RecieveUpdatedPlayerPosition(Packet _packet)
     {
-
         int x = _packet.ReadInt();
         int y = _packet.ReadInt();
         FloorGrid.instance.UpdateOpponentPosition(new Vector2(x, y));

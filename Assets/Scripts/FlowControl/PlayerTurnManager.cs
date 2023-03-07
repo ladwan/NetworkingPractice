@@ -113,11 +113,15 @@ namespace ForverFight.FlowControl
 
                     if (timeRanOut)
                     {
+                        ActionPointsManager.Instance.PlayerTurnHasEnded = true;
                         ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.ApLightsToBeBlinked.Count);
+                        FloorGrid.instance.EmptyGridPointList();
                     }
                     else
                     {
+                        ActionPointsManager.Instance.PlayerTurnHasEnded = true;
                         ActionPointsManager.Instance.UpdateAP(0);
+                        FloorGrid.instance.EmptyGridPointList();
                     }
 
                     if (LocalStoredNetworkData.localPlayerSelectAbilityToCast)
@@ -143,6 +147,19 @@ namespace ForverFight.FlowControl
                     }
                     DistributedDieValue.SetUnchangingDieRollValue(0);
                     DistributedDieValue.SetDieRollValue(0);
+
+                    if (timeRanOut)
+                    {
+                        ActionPointsManager.Instance.PlayerTurnHasEnded = true;
+                        ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.ApLightsToBeBlinked.Count);
+                        FloorGrid.instance.EmptyGridPointList();
+                    }
+                    else
+                    {
+                        ActionPointsManager.Instance.PlayerTurnHasEnded = true;
+                        ActionPointsManager.Instance.UpdateAP(0);
+                        FloorGrid.instance.EmptyGridPointList();
+                    }
 
                     if (LocalStoredNetworkData.localPlayerSelectAbilityToCast)
                     {
