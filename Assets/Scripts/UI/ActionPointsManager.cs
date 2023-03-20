@@ -52,6 +52,7 @@ namespace ForverFight.Ui
             UpdateAP(0);
         }
 
+
         public void UpdateAP(int value)
         {
             EmptyAllAP();
@@ -103,6 +104,13 @@ namespace ForverFight.Ui
                     apLightsToBeBlinked.RemoveAt(apLightsToBeBlinked.Count - 1);
                 }
             }
+        }
+
+        public void MoveWasConfirmed()
+        {
+            StopBlink();
+            apLightsToBeBlinked.Clear();
+            UpdateAP(0);
         }
 
         public bool YouHaveEnoughAp(int value)

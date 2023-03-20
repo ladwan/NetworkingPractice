@@ -3141,6 +3141,30 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 92420964}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 1321447670}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &508807177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6526,6 +6550,7 @@ MonoBehaviour:
   - {fileID: 1837954118}
   currentAp: 0
   apLightsToBeBlinked: []
+  playerTurnHasEnded: 0
 --- !u!114 &1078293877
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6807,6 +6832,7 @@ MonoBehaviour:
   - {fileID: 1347022902}
   currentAp: 0
   apLightsToBeBlinked: []
+  playerTurnHasEnded: 0
 --- !u!224 &1100776178
 RectTransform:
   m_ObjectHideFlags: 0

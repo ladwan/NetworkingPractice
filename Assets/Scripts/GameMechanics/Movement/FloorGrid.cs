@@ -306,8 +306,9 @@ public class FloorGrid : MonoBehaviour
 
         var moveLocalPlayer = ClientInfo.playerNumber == 1 ? player1Spawn.transform.position = currentLocationVector3 : player2Spawn.transform.position = currentLocationVector3;
         EmptyGridPointList();
-        ActionPointsManager.Instance.PlayerTurnHasEnded = true;
-        PlayerTurnManager.Instance.EndTurn(false);
+        ActionPointsManager.Instance.MoveWasConfirmed();
+        //PlayerTurnManager.Instance.EndTurn(false);
+
     }
 
     public void UpdateOpponentPosition(Vector2 value)
