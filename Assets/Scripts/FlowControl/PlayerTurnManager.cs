@@ -115,6 +115,7 @@ namespace ForverFight.FlowControl
                     {
                         ActionPointsManager.Instance.PlayerTurnHasEnded = true;
                         ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.ApLightsToBeBlinked.Count);
+                        ActionPointsManager.Instance.UpdateBlinkingAP();
                         FloorGrid.instance.EmptyGridPointList();
                     }
                     else
@@ -152,6 +153,7 @@ namespace ForverFight.FlowControl
                     {
                         ActionPointsManager.Instance.PlayerTurnHasEnded = true;
                         ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.ApLightsToBeBlinked.Count);
+                        ActionPointsManager.Instance.UpdateBlinkingAP();
                         FloorGrid.instance.EmptyGridPointList();
                     }
                     else

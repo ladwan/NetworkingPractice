@@ -73,11 +73,12 @@ namespace ForverFight.Ui
 
             if (playerTurnHasEnded)
             {
+                playerTurnHasEnded = false;
+
                 if (apLightsToBeBlinked.Count > 0)
                 {
-                    apLightsToBeBlinked.Clear();
                     StopBlink();
-                    playerTurnHasEnded = false;
+                    apLightsToBeBlinked.Clear();
                 }
             }
         }
@@ -96,12 +97,17 @@ namespace ForverFight.Ui
             {
                 if (playerTurnHasEnded)
                 {
+                    StopBlink();
                     apLightsToBeBlinked.Clear();
                     playerTurnHasEnded = false;
                 }
                 else
                 {
                     apLightsToBeBlinked.RemoveAt(apLightsToBeBlinked.Count - 1);
+                    if (apLightsToBeBlinked.Count <= 0)
+                    {
+                        StopBlink();
+                    };
                 }
             }
         }
@@ -111,6 +117,14 @@ namespace ForverFight.Ui
             StopBlink();
             apLightsToBeBlinked.Clear();
             UpdateAP(0);
+        }
+
+        public void MoveWasCanceled()
+        {
+            StopBlink();
+            UpdateAP(apLightsToBeBlinked.Count);
+            apLightsToBeBlinked.Clear();
+            FloorGrid.instance.EmptyGridPointList();
         }
 
         public bool YouHaveEnoughAp(int value)
