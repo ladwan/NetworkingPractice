@@ -19,6 +19,10 @@ namespace ForverFight.FlowControl
         [SerializeField]
         private Animator player2DieAnim = null;
         [SerializeField]
+        private Animator player1CameraAnim = null;
+        [SerializeField]
+        private Animator player2CameraAnim = null;
+        [SerializeField]
         private Countdown player1Timer = null;
         [SerializeField]
         private Countdown player2Timer = null;
@@ -104,6 +108,10 @@ namespace ForverFight.FlowControl
                     player1Timer.ResetTimer(30);
                     player1TimerSubtext.text = "( Opponents turn... )";
                     isLocalPlayersTurn = false;
+                    if (!player1CameraAnim.GetCurrentAnimatorStateInfo(0).IsName("CameraIdle"))
+                    {
+                        player1CameraAnim.SetTrigger("Idle");
+                    }
                     if (!player1DieAnim.GetCurrentAnimatorStateInfo(0).IsName("Despawn"))
                     {
                         player1DieAnim.Play("Despawn", 0);
@@ -142,6 +150,10 @@ namespace ForverFight.FlowControl
                     player2Timer.ResetTimer(30);
                     player2TimerSubtext.text = "( Opponents turn... )";
                     isLocalPlayersTurn = false;
+                    if (!player2CameraAnim.GetCurrentAnimatorStateInfo(0).IsName("CameraIdle"))
+                    {
+                        player2CameraAnim.SetTrigger("Idle");
+                    }
                     if (!player2DieAnim.GetCurrentAnimatorStateInfo(0).IsName("Despawn"))
                     {
                         player2DieAnim.Play("Despawn", 0);
