@@ -14,19 +14,28 @@ public class GridPoint : MonoBehaviour
 
     [Header("Connections")]
     [SerializeField]
-    private GridPoint upperConnection;
-    [SerializeField]
-    private GridPoint lowerConnection;
-    [SerializeField]
-    private GridPoint leftConnection;
-    [SerializeField]
-    private GridPoint rightConnection;
+    private List<GridPoint> connections;
 
     [Header("Other")]
     [SerializeField]
     private GameObject highlight;
     [SerializeField]
+    private GameObject connectionAura;
+    [SerializeField]
     private Vector2 uniqueTag = new Vector2();
+    [SerializeField]
+    private DragMovement dragMovementREF = null;
+    [SerializeField]
+    private FloorGrid floorGridREF = null;
+
+
+    public List<GridPoint> Connections { get => connections; set => connections = value; }
+
+    public Vector2 UniqueTag { get => uniqueTag; set => uniqueTag = value; }
+
+    public DragMovement DragMovementREF { get => dragMovementREF; set => dragMovementREF = value; }
+
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -38,9 +47,54 @@ public class GridPoint : MonoBehaviour
     {
         highlight.SetActive(toggle);
     }
-    private void Start()
+
+    public void FindConnections(Dictionary<Vector2, GridPoint> gridDictionaryREF)
     {
+        if (gridDictionaryREF.TryGetValue(uniqueTag + new Vector2(1, 0), out GridPoint validConnection01))
+        {
+            connections.Add(validConnection01);
+        }
 
+        if (gridDictionaryREF.TryGetValue(uniqueTag + new Vector2(-1, 0), out GridPoint validConnection02))
+        {
+            connections.Add(validConnection02);
+        }
 
+        if (gridDictionaryREF.TryGetValue(uniqueTag + new Vector2(0, 1), out GridPoint validConnection03))
+        {
+            connections.Add(validConnection03);
+        }
+
+        if (gridDictionaryREF.TryGetValue(uniqueTag + new Vector2(0, -1), out GridPoint validConnection04))
+        {
+            connections.Add(validConnection04);
+        }
+    }
+
+    public void DisplayConnections(bool toggle)
+    {
+        for (int i = 0; i < connections.Count; i++)
+        {
+            connections[i].connectionAura.SetActive(toggle);
+        }
+    }
+
+    private void OnMouseEnter()
+    {
+        if (dragMovementREF.ValidDrag)
+        {
+            dragMovementREF.CurrentlyClickedGridPoint = this;
+            if (dragMovementREF.IsThisGridPointConnected())
+            {
+                //If this is a vaild connected grid point, then were going to move there, but first turn off the connection aura from the grid point we are currently on.
+                var currentLocationOfDragMover = new Vector2(dragMovementREF.transform.position.x, dragMovementREF.transform.position.z);
+                if (floorGridREF.GridDictionary.TryGetValue(currentLocationOfDragMover, out GridPoint previousGp))
+                {
+                    previousGp.DisplayConnections(false);
+                }
+                floorGridREF.TryHighlightingTest(dragMovementREF.CurrentlyClickedGridPoint);
+                dragMovementREF.UpdateDragMover();
+            }
+        }
     }
 }

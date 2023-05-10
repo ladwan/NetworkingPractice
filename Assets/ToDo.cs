@@ -5,8 +5,11 @@ using UnityEngine;
 public class ToDo : MonoBehaviour
 {
     /*
-        TODO: Put finishing touches on AP movement system
+        TODO: Start implementing the new click and drag movement system
             
-            a) Add end turn button
+            a) look over drag movement code to reduce bugs
+            b) drag mover gets lost after 1 turn ****
+            c) alreadly highlighted sqs are not disappearing when you go over them again
+            d) player 2s end turn button is not working // player 2s turn is not ending ****
     */
 }

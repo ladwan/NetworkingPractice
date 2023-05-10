@@ -26,10 +26,15 @@ public class FloorGrid : MonoBehaviour
     [SerializeField]
     public int dieValue = 0;
 
+
     public static FloorGrid instance = null;
+
+    public Dictionary<Vector2, GridPoint> GridDictionary { get => gridDictionary; set => gridDictionary = value; }
+
 
     private Vector2 currentLocation = new Vector2(0, 0);
     private bool isPlayer1 = false;
+    private GridPoint dragMoverGridPointREF = null; //this should return the gridPoint that the drag mover is on
 
 
     protected void Awake()
@@ -57,6 +62,10 @@ public class FloorGrid : MonoBehaviour
             }
         }
 
+        foreach (GridPoint gp in gridDictionary.Values)
+        {
+            gp.FindConnections(gridDictionary);
+        }
 
         //Assigning a spawn point to the player based on their ClientInfo.playerNumber
         if (ClientInfo.playerNumber == 1)
@@ -97,6 +106,11 @@ public class FloorGrid : MonoBehaviour
         hoveredOverGridPoints.Clear();
         DistributedDieValue.SetDieRollValue(DistributedDieValue.unchangingDieRollValue);
         dieValue = DistributedDieValue.unchangingDieRollValue;
+        if (dragMoverGridPointREF)
+        {
+            dragMoverGridPointREF.DisplayConnections(false);
+            dragMoverGridPointREF.DragMovementREF.UpdateDragMoverPosition(currentLocation);
+        }
 
         var player1Vector2 = new Vector2(player1Spawn.transform.position.x, player1Spawn.transform.position.z);
         var player2Vector2 = new Vector2(player2Spawn.transform.position.x, player2Spawn.transform.position.z);
@@ -307,6 +321,10 @@ public class FloorGrid : MonoBehaviour
         var moveLocalPlayer = ClientInfo.playerNumber == 1 ? player1Spawn.transform.position = currentLocationVector3 : player2Spawn.transform.position = currentLocationVector3;
         EmptyGridPointList();
         ActionPointsManager.Instance.MoveWasConfirmed();
+        if (dragMoverGridPointREF)
+        {
+            dragMoverGridPointREF.DisplayConnections(false);
+        }
         //PlayerTurnManager.Instance.EndTurn(false);
 
     }
@@ -317,6 +335,39 @@ public class FloorGrid : MonoBehaviour
 
         var moveOpponent = ClientInfo.playerNumber == 1 ? player2Spawn.transform.position = newPos : player1Spawn.transform.position = newPos;
     }
+
+    public void TryHighlightingTest(GridPoint nextDestinationsGridPoint)
+    {
+        if (nextDestinationsGridPoint != GridPointOccupiedByOpponent())
+        {
+            if (IsGridPointInList(nextDestinationsGridPoint))
+            {
+                dragMoverGridPointREF = nextDestinationsGridPoint;
+                //nextDestinationsGridPoint = gridDictionary[nextDestinationsGridPoint.UniqueTag];
+                currentLocation = nextDestinationsGridPoint.UniqueTag;
+                AddGridPointToList(nextDestinationsGridPoint);
+                nextDestinationsGridPoint.DragMovementREF.UpdateDragMoverPosition(nextDestinationsGridPoint.UniqueTag);
+            }
+            else
+            {
+                if (LocalStoredNetworkData.localPlayerCurrentAP > 0)
+                {
+                    dragMoverGridPointREF = nextDestinationsGridPoint;
+                    nextDestinationsGridPoint = gridDictionary[nextDestinationsGridPoint.UniqueTag];
+                    currentLocation = nextDestinationsGridPoint.UniqueTag;
+                    AddGridPointToList(nextDestinationsGridPoint);
+                    DistributedDieValue.SetDieRollValue(LocalStoredNetworkData.localPlayerCurrentAP);
+                    ActionPointsManager.Instance.ApMovementBlink();
+                    nextDestinationsGridPoint.DragMovementREF.UpdateDragMoverPosition(nextDestinationsGridPoint.UniqueTag);
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("That position is already taken! Please try to move elsewhere.");
+        }
+    }
+
 
     private bool AddGridPointToListBool(GridPoint gp)
     {
@@ -334,18 +385,7 @@ public class FloorGrid : MonoBehaviour
                     if (i + 1 < hoveredOverGridPoints.Count)
                     {
 
-                        for (int removeMe = i + 1; removeMe != hoveredOverGridPoints.Count;)
-                        {
-                            hoveredOverGridPoints[removeMe].ShowHighlight(false);
-                            hoveredOverGridPoints.RemoveAt(removeMe);
-                            if (LocalStoredNetworkData.localPlayerCurrentAP < 9)
-                            {
-                                LocalStoredNetworkData.localPlayerCurrentAP++;
-                            }
-                            ActionPointsManager.Instance.UpdateAP(0);
-                            ActionPointsManager.Instance.UpdateBlinkingAP();
-                            DistributedDieValue.SetDieRollValue(LocalStoredNetworkData.localPlayerCurrentAP);
-                        }
+
                     }
                     add = false;
                     break;
