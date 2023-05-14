@@ -8,9 +8,13 @@ public class DragMovement : MonoBehaviour
     private Vector2 currentLocationOfDragMover = new Vector2(0, 0);
     [SerializeField]
     private FloorGrid floorGridREF = null;
+    [SerializeField]
+    private Transform playerPositionREF = null;
+
 
     private GridPoint currentlyClickedGridPoint = null;
     private GridPoint gridPointCurrentlyDisplayingConnections = null;
+    private Vector3 YAxisOffset = new Vector3(0, 0.5f, 0);
     private bool validDrag = false;
 
 
@@ -20,31 +24,28 @@ public class DragMovement : MonoBehaviour
 
     public GridPoint GridPointCurrentlyDisplayingConnections { get => gridPointCurrentlyDisplayingConnections; set => gridPointCurrentlyDisplayingConnections = value; }
 
+    public Vector2 CurrentLocationOfDragMover { get => currentLocationOfDragMover; set => currentLocationOfDragMover = value; }
 
-    private void OnMouseDown()
+
+    protected void OnMouseDown()
     {
         UpdateDragMover();
     }
 
-    private void OnMouseUp()
+    protected void OnMouseUp()
     {
-
-        //if (gridPointCurrentlyDisplayingConnections)
-        //{
-        //  gridPointCurrentlyDisplayingConnections.DisplayConnections(false);
         validDrag = false;
         currentlyClickedGridPoint = null;
-        // }
-
     }
 
-    private void OnMouseDrag()
+    protected void OnMouseDrag()
     {
         if (validDrag)
         {
 
         }
     }
+
 
     public void UpdateDragMover()
     {
@@ -57,9 +58,14 @@ public class DragMovement : MonoBehaviour
         }
     }
 
+    public void UpdateDragMoverPosition()
+    {
+        gameObject.transform.position = playerPositionREF.position + YAxisOffset;
+    }
+
     public void UpdateDragMoverPosition(Vector2 updatedPos)
     {
-        gameObject.transform.position = new Vector3(updatedPos.x, 0.5f, updatedPos.y);
+        gameObject.transform.position = new Vector3(updatedPos.x, 0, updatedPos.y) + YAxisOffset;
     }
 
     public bool IsThisGridPointConnected()
@@ -70,16 +76,27 @@ public class DragMovement : MonoBehaviour
             {
                 if (gridPointCurrentlyDisplayingConnections.Connections[i] == currentlyClickedGridPoint)
                 {
-                    Debug.Log("GP found !");
                     return true;
                 }
             }
-
-            Debug.Log("This GP was not in the connections !");
             return false;
         }
-        Debug.Log("No currently clicked GP found !");
         return false;
+    }
+
+    public void ResetDragMover()
+    {
+        if (validDrag)
+        {
+            validDrag = false;
+        }
+        if (gridPointCurrentlyDisplayingConnections)
+        {
+            gridPointCurrentlyDisplayingConnections.DisplayConnections(false);
+            gridPointCurrentlyDisplayingConnections = null;
+        }
+        UpdateDragMoverPosition();
+        this.gameObject.SetActive(false);
     }
 
     // Start is called before the first frame update

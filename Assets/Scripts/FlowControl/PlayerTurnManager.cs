@@ -30,12 +30,15 @@ namespace ForverFight.FlowControl
         private TMP_Text player1TimerSubtext = null;
         [SerializeField]
         private TMP_Text player2TimerSubtext = null;
+        [SerializeField]
+        private DragMovement dragMovementREF = null;
 
 
         [NonSerialized]
         private static PlayerTurnManager instance = null;
         [NonSerialized]
         private bool isLocalPlayersTurn = false; //0 == unset // 1 == true // 2 == false
+
 
         public static PlayerTurnManager Instance { get => instance; set => instance = value; }
 
@@ -125,6 +128,8 @@ namespace ForverFight.FlowControl
                         ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.ApLightsToBeBlinked.Count);
                         ActionPointsManager.Instance.UpdateBlinkingAP();
                         FloorGrid.instance.EmptyGridPointList();
+                        dragMovementREF.UpdateDragMoverPosition();
+                        dragMovementREF.ResetDragMover();
                     }
                     else
                     {

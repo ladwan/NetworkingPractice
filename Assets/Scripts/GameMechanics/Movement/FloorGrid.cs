@@ -384,8 +384,18 @@ public class FloorGrid : MonoBehaviour
                 {
                     if (i + 1 < hoveredOverGridPoints.Count)
                     {
-
-
+                        for (int removeMe = i + 1; removeMe != hoveredOverGridPoints.Count;)
+                        {
+                            hoveredOverGridPoints[removeMe].ShowHighlight(false);
+                            hoveredOverGridPoints.RemoveAt(removeMe);
+                            if (LocalStoredNetworkData.localPlayerCurrentAP < 9)
+                            {
+                                LocalStoredNetworkData.localPlayerCurrentAP++;
+                            }
+                            ActionPointsManager.Instance.UpdateAP(0);
+                            ActionPointsManager.Instance.UpdateBlinkingAP();
+                            DistributedDieValue.SetDieRollValue(LocalStoredNetworkData.localPlayerCurrentAP);
+                        }
                     }
                     add = false;
                     break;
