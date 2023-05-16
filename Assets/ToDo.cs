@@ -15,6 +15,14 @@ public class ToDo : MonoBehaviour
                            also make sure to re-disable it when you hit the back or confirm buttons ***
                     make sure drag mover is fully functional on player 2 
                     removed unused ui buttons and old code for movement system
+
+
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Things that need refactored      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+
                     
     */
 }

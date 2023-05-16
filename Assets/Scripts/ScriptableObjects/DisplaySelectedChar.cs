@@ -15,13 +15,15 @@ public class DisplaySelectedChar : MonoBehaviour
     [SerializeField]
     private CharacterScriptableObject characterScriptableObjRef;
 
-    private void Awake()
+    protected void Awake()
     {
         playersIdentity = characterScriptableObjRef.selectedIdentity;
         myCharacterDictionary.Add(Character.Identity.Brawn, characterScriptableObjRef.allCharacters[0]);
         myCharacterDictionary.Add(Character.Identity.Speedster, characterScriptableObjRef.allCharacters[1]);
 
     }
+
+
     public void SpawnPlayer(Transform spawnPoint)
     {
         if (myCharacterDictionary.TryGetValue(playersIdentity, out Character value))
