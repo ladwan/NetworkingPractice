@@ -16,11 +16,9 @@ public class FloorGrid : MonoBehaviour
     [SerializeField]
     private GameObject player1Spawn;
     [SerializeField]
-    private GameObject player1Camera;
-    [SerializeField]
     private GameObject player2Spawn;
     [SerializeField]
-    private GameObject player2Camera;
+    private GameObject uiHolderREF = null;
     [SerializeField]
     private DisplaySelectedChar displaySelectedCharREF = null;
     [SerializeField]
@@ -71,11 +69,12 @@ public class FloorGrid : MonoBehaviour
         {
             case 1:
                 PreparePlayers(player1Spawn);
-                player1Camera.SetActive(true);
+                //player1Camera.SetActive(true);
                 break;
             case 2:
                 PreparePlayers(player2Spawn);
-                player2Camera.SetActive(true);
+                uiHolderREF.SetActive(false);
+                //player2Camera.SetActive(true);
                 break;
         }
     }
