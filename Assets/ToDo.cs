@@ -19,9 +19,23 @@ public class ToDo : MonoBehaviour
 
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Things that need refactored      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    continue working on spawning in both players using same ui
+    fix weird ui bugs when ending turn
+    add visual indicator of how many AP you have to background panel
+    drag mover for player 2 is using player 1 values, meaning it wont overlap the player 2 sq because it thinks its occupied by an opponent , fix this 
+    turn not ending on time run out (try to recreate this on the movement screen)
+    debug player 2 drag mover its not the tryhightlight
 
+    make smooth camera follow script to go along with the lookAt code ***
 
+    Drag mover is bugged, not showing connections properly  ***
 
+    Test to fix any bugs
+
+    reduce die anim time ***
+
+    do git stuff 
+    network both players rotation
 
                     
     */

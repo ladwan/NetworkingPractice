@@ -11,25 +11,15 @@ namespace ForverFight.FlowControl
     public class PlayerTurnManager : MonoBehaviour
     {
         [SerializeField]
-        private GameObject player1Ui = null;
+        private GameObject playerUi = null;
         [SerializeField]
-        private GameObject player2Ui = null;
+        private Animator playerDieAnim = null;
         [SerializeField]
-        private Animator player1DieAnim = null;
+        private Animator playerCameraAnim = null;
         [SerializeField]
-        private Animator player2DieAnim = null;
+        private Countdown playerTimer = null;
         [SerializeField]
-        private Animator player1CameraAnim = null;
-        [SerializeField]
-        private Animator player2CameraAnim = null;
-        [SerializeField]
-        private Countdown player1Timer = null;
-        [SerializeField]
-        private Countdown player2Timer = null;
-        [SerializeField]
-        private TMP_Text player1TimerSubtext = null;
-        [SerializeField]
-        private TMP_Text player2TimerSubtext = null;
+        private TMP_Text playerTimerSubtext = null;
         [SerializeField]
         private DragMovement dragMovementREF = null;
 
@@ -37,7 +27,7 @@ namespace ForverFight.FlowControl
         [NonSerialized]
         private static PlayerTurnManager instance = null;
         [NonSerialized]
-        private bool isLocalPlayersTurn = false; //0 == unset // 1 == true // 2 == false
+        private bool isLocalPlayersTurn = true; //0 == unset // 1 == true // 2 == false
 
 
         public static PlayerTurnManager Instance { get => instance; set => instance = value; }
@@ -56,6 +46,7 @@ namespace ForverFight.FlowControl
             }
         }
 
+
         public void Start()
         {
             if (ClientInfo.playerNumber == 1)
@@ -65,153 +56,69 @@ namespace ForverFight.FlowControl
 
             if (ClientInfo.playerNumber == 2)
             {
-                StartCoroutine(Player2Delay());
+                EndTurn(false);
             }
         }
 
 
         public void StartTurn()
         {
-            if (ClientInfo.playerNumber == 1)
+            playerUi.SetActive(true);
+            playerTimer.ResetTimer(30);
+            playerTimerSubtext.text = "( Your Go ! )";
+            isLocalPlayersTurn = true;
+            if (playerDieAnim.GetCurrentAnimatorStateInfo(0).IsName("Despawn"))
             {
-                player1Ui.gameObject.SetActive(true);
-                player1Timer.ResetTimer(30);
-                player1TimerSubtext.text = "( Your Go ! )";
-                isLocalPlayersTurn = true;
-                if (player1DieAnim.GetCurrentAnimatorStateInfo(0).IsName("Despawn"))
-                {
-                    player1DieAnim.SetTrigger("ResetDie");
-                }
-
-                return;
+                playerDieAnim.SetTrigger("ResetDie");
             }
-            if (ClientInfo.playerNumber == 2)
-            {
-                player2Ui.gameObject.SetActive(true);
-                player2Timer.ResetTimer(30);
-                player2TimerSubtext.text = "( Your Go ! )";
-                isLocalPlayersTurn = true;
-                if (player2DieAnim.GetCurrentAnimatorStateInfo(0).IsName("Despawn"))
-                {
-                    player2DieAnim.SetTrigger("ResetDie");
-                }
 
-                return;
-            }
+            return;
         }
 
         public void EndTurn(bool timeRanOut)
         {
             if (isLocalPlayersTurn)
             {
-                if (ClientInfo.playerNumber == 1)
+                CleanUpUiAfterTurn.Instance.CleanUpUi();
+                playerUi.SetActive(false);
+                playerTimer.ResetTimer(30);
+                playerTimerSubtext.text = "( Opponents turn... )";
+                isLocalPlayersTurn = false;
+                if (playerCameraAnim.GetCurrentAnimatorStateInfo(0).IsName("CameraTopView") && !playerCameraAnim.IsInTransition(0))
                 {
-                    CleanUpUiAfterTurn.Instance.CleanUpUi();
-                    player1Ui.gameObject.SetActive(false);
-                    player1Timer.ResetTimer(30);
-                    player1TimerSubtext.text = "( Opponents turn... )";
-                    isLocalPlayersTurn = false;
-                    if (!player1CameraAnim.GetCurrentAnimatorStateInfo(0).IsName("CameraIdle"))
-                    {
-                        player1CameraAnim.SetTrigger("Idle");
-                    }
-                    if (!player1DieAnim.GetCurrentAnimatorStateInfo(0).IsName("Despawn"))
-                    {
-                        player1DieAnim.Play("Despawn", 0);
-                    }
-                    DistributedDieValue.SetUnchangingDieRollValue(0);
-                    DistributedDieValue.SetDieRollValue(0);
-
-                    if (timeRanOut)
-                    {
-                        ActionPointsManager.Instance.PlayerTurnHasEnded = true;
-                        ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.ApLightsToBeBlinked.Count);
-                        ActionPointsManager.Instance.UpdateBlinkingAP();
-                        FloorGrid.instance.EmptyGridPointList();
-                        dragMovementREF.UpdateDragMoverPosition();
-                        dragMovementREF.ResetDragMover();
-                    }
-                    else
-                    {
-                        ActionPointsManager.Instance.PlayerTurnHasEnded = true;
-                        ActionPointsManager.Instance.UpdateAP(0);
-                        FloorGrid.instance.EmptyGridPointList();
-                    }
-
-                    if (LocalStoredNetworkData.localPlayerSelectAbilityToCast)
-                    {
-                        LocalStoredNetworkData.localPlayerSelectAbilityToCast.ToggleAbilityRadius(false);
-                    }
-
-                    ClientSend.EndTurn();
-                    return;
+                    Debug.Log($"camera transition : {playerCameraAnim.IsInTransition(0)}");
+                    playerCameraAnim.SetTrigger("Idle");
+                }
+                if (!playerDieAnim.GetCurrentAnimatorStateInfo(0).IsName("Despawn"))
+                {
+                    playerDieAnim.Play("Despawn", 0);
                 }
 
-
-                if (ClientInfo.playerNumber == 2)
+                if (timeRanOut)
                 {
-                    CleanUpUiAfterTurn.Instance.CleanUpUi();
-                    player2Ui.gameObject.SetActive(false);
-                    player2Timer.ResetTimer(30);
-                    player2TimerSubtext.text = "( Opponents turn... )";
-                    isLocalPlayersTurn = false;
-                    if (!player2CameraAnim.GetCurrentAnimatorStateInfo(0).IsName("CameraIdle"))
-                    {
-                        player2CameraAnim.SetTrigger("Idle");
-                    }
-                    if (!player2DieAnim.GetCurrentAnimatorStateInfo(0).IsName("Despawn"))
-                    {
-                        player2DieAnim.Play("Despawn", 0);
-                    }
-                    DistributedDieValue.SetUnchangingDieRollValue(0);
-                    DistributedDieValue.SetDieRollValue(0);
-
-                    if (timeRanOut)
-                    {
-                        ActionPointsManager.Instance.PlayerTurnHasEnded = true;
-                        ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.ApLightsToBeBlinked.Count);
-                        ActionPointsManager.Instance.UpdateBlinkingAP();
-                        FloorGrid.instance.EmptyGridPointList();
-                    }
-                    else
-                    {
-                        ActionPointsManager.Instance.PlayerTurnHasEnded = true;
-                        ActionPointsManager.Instance.UpdateAP(0);
-                        FloorGrid.instance.EmptyGridPointList();
-                    }
-
-                    if (LocalStoredNetworkData.localPlayerSelectAbilityToCast)
-                    {
-                        LocalStoredNetworkData.localPlayerSelectAbilityToCast.ToggleAbilityRadius(false);
-                        LocalStoredNetworkData.localPlayerSelectAbilityToCast = null;
-                    }
-
-                    ClientSend.EndTurn();
-                    return;
+                    ActionPointsManager.Instance.PlayerTurnHasEnded = true;
+                    ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.ApLightsToBeBlinked.Count);
+                    ActionPointsManager.Instance.UpdateBlinkingAP();
+                    FloorGrid.instance.EmptyGridPointList();
+                    dragMovementREF.UpdateDragMoverPosition();
+                    dragMovementREF.ResetDragMover();
                 }
-            }
-
-        }
-
-        IEnumerator Player2Delay()
-        {
-            if (player2DieAnim.isActiveAndEnabled)
-            {
-                if (ClientInfo.playerNumber == 2)
+                else
                 {
-                    if (!player2DieAnim.GetCurrentAnimatorStateInfo(0).IsName("Despawn"))
-                    {
-                        player2DieAnim.Play("Despawn", 0);
-                    }
+                    ActionPointsManager.Instance.PlayerTurnHasEnded = true;
+                    ActionPointsManager.Instance.UpdateAP(0);
+                    FloorGrid.instance.EmptyGridPointList();
                 }
-                StopCoroutine(Player2Delay());
-            }
-            else
-            {
-                yield return new WaitForSeconds(0.1f);
-                StartCoroutine(Player2Delay());
-            }
 
+                if (LocalStoredNetworkData.localPlayerSelectAbilityToCast)
+                {
+                    LocalStoredNetworkData.localPlayerSelectAbilityToCast.ToggleAbilityRadius(false);
+                }
+
+                isLocalPlayersTurn = false;
+                ClientSend.EndTurn();
+                return;
+            }
         }
     }
 }

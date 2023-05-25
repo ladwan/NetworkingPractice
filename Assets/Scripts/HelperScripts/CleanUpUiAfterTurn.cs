@@ -10,19 +10,11 @@ namespace ForverFight.HelperScripts
     {
         [Header("Player 1")]
         [SerializeField]
-        private List<GameObject> player1ObjectsToTurnEnable = new List<GameObject>();
+        private List<GameObject> playerObjectsToTurnEnable = new List<GameObject>();
         [SerializeField]
-        private List<GameObject> player1ObjectsToTurnDisable = new List<GameObject>();
+        private List<GameObject> playerObjectsToTurnDisable = new List<GameObject>();
         [SerializeField]
-        private UnityEvent player1TurnEndEvent = new UnityEvent();
-
-        [Header("Player 2")]
-        [SerializeField]
-        private List<GameObject> player2ObjectsToTurnEnable = new List<GameObject>();
-        [SerializeField]
-        private List<GameObject> player2ObjectsToTurnDisable = new List<GameObject>();
-        [SerializeField]
-        private UnityEvent player2TurnEndEvent = new UnityEvent();
+        private UnityEvent playerTurnEndEvent = new UnityEvent();
 
 
         [NonSerialized]
@@ -47,34 +39,17 @@ namespace ForverFight.HelperScripts
 
         public void CleanUpUi()
         {
-            if (ClientInfo.playerNumber == 1)
+            for (int i = 0; i < playerObjectsToTurnEnable.Count; i++)
             {
-                for (int i = 0; i < player1ObjectsToTurnEnable.Count; i++)
-                {
-                    player1ObjectsToTurnEnable[i].SetActive(true);
-                }
-
-                for (int i = 0; i < player1ObjectsToTurnDisable.Count; i++)
-                {
-                    player1ObjectsToTurnDisable[i].SetActive(false);
-                }
-
-                player1TurnEndEvent?.Invoke();
+                playerObjectsToTurnEnable[i].SetActive(true);
             }
-            else if (ClientInfo.playerNumber == 2)
+
+            for (int i = 0; i < playerObjectsToTurnDisable.Count; i++)
             {
-                for (int i = 0; i < player2ObjectsToTurnEnable.Count; i++)
-                {
-                    player2ObjectsToTurnEnable[i].SetActive(true);
-                }
-
-                for (int i = 0; i < player2ObjectsToTurnDisable.Count; i++)
-                {
-                    player2ObjectsToTurnDisable[i].SetActive(false);
-                }
-
-                player2TurnEndEvent?.Invoke();
+                playerObjectsToTurnDisable[i].SetActive(false);
             }
+
+            playerTurnEndEvent?.Invoke();
         }
 
         public void CleanUpAbilityRadius(bool value)

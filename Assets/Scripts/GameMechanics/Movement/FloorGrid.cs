@@ -14,9 +14,13 @@ public class FloorGrid : MonoBehaviour
     [SerializeField]
     private List<GridPoint> hoveredOverGridPoints = new List<GridPoint>();
     [SerializeField]
+    private GameObject playerREF = null;
+    [SerializeField]
     private GameObject player1Spawn;
     [SerializeField]
     private GameObject player2Spawn;
+    [SerializeField]
+    private DragMovement dragMoverREF = null;
     [SerializeField]
     private GameObject uiHolderREF = null;
     [SerializeField]
@@ -32,7 +36,7 @@ public class FloorGrid : MonoBehaviour
 
     private Vector2 currentLocation = new Vector2(0, 0);
     private GridPoint dragMoverGridPointREF = null; //this should return the gridPoint that the drag mover is on
-
+    private Transform opponentSpawn = null;
 
     protected void Awake()
     {
@@ -69,12 +73,12 @@ public class FloorGrid : MonoBehaviour
         {
             case 1:
                 PreparePlayers(player1Spawn);
-                //player1Camera.SetActive(true);
                 break;
             case 2:
                 PreparePlayers(player2Spawn);
-                uiHolderREF.SetActive(false);
-                //player2Camera.SetActive(true);
+                playerREF.transform.position = player2Spawn.transform.position;
+                playerREF.transform.rotation = player2Spawn.transform.rotation;
+                dragMoverREF.UpdateDragMoverPosition(Vector3ToVector2.ConvertToVector2(player2Spawn.transform.position));
                 break;
         }
     }
@@ -232,13 +236,14 @@ public class FloorGrid : MonoBehaviour
     {
         currentLocation = SpawnPointTransformToVector2(spawnPoint);
         displaySelectedCharREF.SpawnPlayer(spawnPoint.transform);
+        opponentSpawn = ClientInfo.playerNumber == 1 ? player2Spawn.transform : player1Spawn.transform;
     }
 
     private GridPoint GridPointOccupiedByOpponent()
     {
         if (ClientInfo.playerNumber == 1)
         {
-            if (gridDictionary.TryGetValue(Vector3ToVector2.ConvertToVector2(player2Spawn.transform.position), out GridPoint gridPointOccupiedByOpponent))
+            if (gridDictionary.TryGetValue(Vector3ToVector2.ConvertToVector2(opponentSpawn.position), out GridPoint gridPointOccupiedByOpponent))
             {
                 return gridPointOccupiedByOpponent;
             }
@@ -246,7 +251,7 @@ public class FloorGrid : MonoBehaviour
         }
         else if (ClientInfo.playerNumber == 2)
         {
-            if (gridDictionary.TryGetValue(Vector3ToVector2.ConvertToVector2(player1Spawn.transform.position), out GridPoint gridPointOccupiedByOpponent))
+            if (gridDictionary.TryGetValue(Vector3ToVector2.ConvertToVector2(opponentSpawn.position), out GridPoint gridPointOccupiedByOpponent))
             {
                 return gridPointOccupiedByOpponent;
             }

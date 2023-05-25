@@ -55,6 +55,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: eeb3298f816a0124989db8343cc00ab6, type: 2}
+    - target: {fileID: 2271406186244816877, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3662122414899896620, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
       propertyPath: m_Name
       value: The Brawn Variant
@@ -70,7 +74,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3662122414899896620, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
   m_PrefabInstance: {fileID: 2873619025433649170}
   m_PrefabAsset: {fileID: 0}
---- !u!65 &3501794049273645561
+--- !u!65 &-1135120082066301845
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

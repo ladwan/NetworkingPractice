@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ForverFight.HelperScripts;
 
 public class DragMovement : MonoBehaviour
 {
@@ -38,23 +39,21 @@ public class DragMovement : MonoBehaviour
         currentlyClickedGridPoint = null;
     }
 
-    protected void OnMouseDrag()
-    {
-        if (validDrag)
-        {
-
-        }
-    }
-
 
     public void UpdateDragMover()
     {
-        currentLocationOfDragMover = new Vector2(gameObject.transform.position.x, gameObject.transform.position.z);
+        currentLocationOfDragMover = Vector3ToVector2.ConvertToVector2(gameObject.transform.position);
+        Debug.Log($"Current Location of Drag Mover : {currentLocationOfDragMover}");
         if (floorGridREF.GridDictionary.TryGetValue(currentLocationOfDragMover, out GridPoint currentGp))
         {
+            Debug.Log(2);
             currentGp.DisplayConnections(true);
             gridPointCurrentlyDisplayingConnections = currentGp;
             validDrag = true;
+        }
+        else
+        {
+            Debug.Log($"Floor Grid Dictorary count  :  {floorGridREF.GridDictionary.Count}");
         }
     }
 
@@ -96,18 +95,6 @@ public class DragMovement : MonoBehaviour
             gridPointCurrentlyDisplayingConnections = null;
         }
         UpdateDragMoverPosition();
-        this.gameObject.SetActive(false);
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        gameObject.SetActive(false);
     }
 }

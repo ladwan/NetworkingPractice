@@ -36,51 +36,47 @@ namespace ForverFight.GameMechanics.DiceRoll
             switch (rollValue)
             {
                 case 1:
-                    DistributedDieValue.SetDieRollValue(1);
-                    DistributedDieValue.SetUnchangingDieRollValue(1);
                     apManager.UpdateAP(1);
                     sixSidedDieAnimator.SetTrigger("6sidedRoll1");
+                    DistributedDieValue.distributedDieRollValue = 1;
                     break;
 
                 case 2:
-                    DistributedDieValue.SetDieRollValue(2);
-                    DistributedDieValue.SetUnchangingDieRollValue(2);
                     apManager.UpdateAP(2);
                     sixSidedDieAnimator.SetTrigger("6sidedRoll2");
+                    DistributedDieValue.distributedDieRollValue = 2;
                     break;
 
                 case 3:
-                    DistributedDieValue.SetDieRollValue(3);
-                    DistributedDieValue.SetUnchangingDieRollValue(3);
                     apManager.UpdateAP(3);
                     sixSidedDieAnimator.SetTrigger("6sidedRoll3");
+                    DistributedDieValue.distributedDieRollValue = 3;
                     break;
 
                 case 4:
-                    DistributedDieValue.SetDieRollValue(4);
-                    DistributedDieValue.SetUnchangingDieRollValue(4);
                     apManager.UpdateAP(4);
                     sixSidedDieAnimator.SetTrigger("6sidedRoll4");
+                    DistributedDieValue.distributedDieRollValue = 4;
                     break;
 
                 case 5:
-                    DistributedDieValue.SetDieRollValue(5);
-                    DistributedDieValue.SetUnchangingDieRollValue(5);
                     apManager.UpdateAP(5);
                     sixSidedDieAnimator.SetTrigger("6sidedRoll5");
+                    DistributedDieValue.distributedDieRollValue = 5;
                     break;
 
                 case 6:
-                    DistributedDieValue.SetDieRollValue(6);
-                    DistributedDieValue.SetUnchangingDieRollValue(6);
                     apManager.UpdateAP(6);
                     sixSidedDieAnimator.SetTrigger("6sidedRoll6");
+                    DistributedDieValue.distributedDieRollValue = 6;
                     break;
             }
         }
-        IEnumerator UiDelay()
+
+        private IEnumerator UiDelay()
         {
-            yield return new WaitForSeconds(8);
+            yield return new WaitUntil(() => !sixSidedDieAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle") && !sixSidedDieAnimator.GetCurrentAnimatorStateInfo(0).IsName("Spawn") && sixSidedDieAnimator.IsInTransition(0) == false);
+            yield return new WaitForSecondsRealtime(sixSidedDieAnimator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
             uiToToggle.ToggleObjects();
         }
     }

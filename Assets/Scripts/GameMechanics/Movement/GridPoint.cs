@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ForverFight.HelperScripts;
 
 public class GridPoint : MonoBehaviour
 {
@@ -87,7 +88,7 @@ public class GridPoint : MonoBehaviour
             if (dragMovementREF.IsThisGridPointConnected())
             {
                 //If this is a vaild connected grid point, then were going to move there, but first turn off the connection aura from the grid point we are currently on.
-                var currentLocationOfDragMover = new Vector2(dragMovementREF.transform.position.x, dragMovementREF.transform.position.z);
+                var currentLocationOfDragMover = Vector3ToVector2.ConvertToVector2(dragMovementREF.transform.position);
                 if (floorGridREF.GridDictionary.TryGetValue(currentLocationOfDragMover, out GridPoint previousGp))
                 {
                     previousGp.DisplayConnections(false);

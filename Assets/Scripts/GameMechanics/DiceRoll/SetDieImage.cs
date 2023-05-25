@@ -1,16 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using ForverFight.Ui;
+using ForverFight.Networking;
 
 public class SetDieImage : MonoBehaviour
 {
     [SerializeField]
     private List<GameObject> uiDieImages = new List<GameObject>();
+    [SerializeField]
+    private TMP_Text tmpApDisplay = null;
 
     protected void OnEnable()
     {
         int value = DistributedDieValue.distributedDieRollValue;
-        Debug.Log(value + " Hey this is what value equals !");
         if (value != 0)
         {
             switch (value)
@@ -46,6 +50,9 @@ public class SetDieImage : MonoBehaviour
                     break;
             }
         }
+
+        Debug.Log(ActionPointsManager.Instance.CurrentAp.ToString() + "   ~~~~~~~~~~");
+        tmpApDisplay.text = LocalStoredNetworkData.localPlayerCurrentAP.ToString();
     }
 
 

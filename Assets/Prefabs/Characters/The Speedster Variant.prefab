@@ -945,6 +945,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: The Speedster Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 3662122414899896620, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
+      propertyPath: m_TagString
+      value: Damageable
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2271406186244816878, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
@@ -978,6 +982,19 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3662122414899896620, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
   m_PrefabInstance: {fileID: 9009304483653912117}
   m_PrefabAsset: {fileID: 0}
+--- !u!65 &2202949608704013995
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5752506705235420953}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.75, y: 0.75, z: 0.75}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7115587971985286945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1001,19 +1018,6 @@ MonoBehaviour:
   fourSqRadius: {fileID: 0}
   fiveSqRadius: {fileID: 0}
   charIdentity: 2
---- !u!65 &2202949608704013995
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5752506705235420953}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.75, y: 0.75, z: 0.75}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &7098479322308603433 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2271406186352764956, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
