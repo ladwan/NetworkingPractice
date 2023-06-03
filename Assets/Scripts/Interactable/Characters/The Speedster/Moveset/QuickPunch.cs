@@ -7,19 +7,17 @@ namespace ForverFight.Interactable.Abilities
 {
     public class QuickPunch : CharAbility
     {
-        [SerializeField]
-        private int abilityDamage = 0;
-
-
         protected void OnEnable()
         {
+            AbilityName = "Quick Punch";
             AbilityDescription = "Dayum sun where'd you find this !?";
+            AbilityDamage = 5;
         }
 
         public override void CastAbility()
         {
-            AbilityRadius.SetActive(false);
-            DamageManager.Instance.DealDamage(abilityDamage);
+            DamageManager.Instance.DealDamage(AbilityDamage);
+            //AbilityRadius.SetActive(false);
             //Do animation
             //Screen shake?
             //Deal damage to enemies health bar ui

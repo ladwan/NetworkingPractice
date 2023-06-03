@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Interactable;
+using ForverFight.Interactable;
 
 namespace ForverFight.Ui.CharacterSelection
 {

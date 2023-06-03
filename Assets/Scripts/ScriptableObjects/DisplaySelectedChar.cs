@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ForverFight.GameMechanics;
-using Interactable;
-
+using ForverFight.Interactable;
+using ForverFight.Networking;
 
 public class DisplaySelectedChar : MonoBehaviour
 {
@@ -14,6 +14,8 @@ public class DisplaySelectedChar : MonoBehaviour
     private Character.Identity playersIdentity;
     [SerializeField]
     private CharacterScriptableObject characterScriptableObjRef;
+    [SerializeField]
+    private AbilitySelectionUiManager abilitySelectionUiManagerREF = null;
 
     protected void Awake()
     {
@@ -27,8 +29,10 @@ public class DisplaySelectedChar : MonoBehaviour
     {
         if (myCharacterDictionary.TryGetValue(playersIdentity, out Character value))
         {
-            Instantiate(value, spawnPoint);
+            var charInstance = Instantiate(value, spawnPoint);
             GameMechanicsManager.Instance.HandleSpawningOpponent();
+            LocalStoredNetworkData.localPlayerCharacter = charInstance;
+            abilitySelectionUiManagerREF.PopulateAbilityData();
         }
     }
 }

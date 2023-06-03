@@ -51,7 +51,6 @@ public class SetDieImage : MonoBehaviour
             }
         }
 
-        Debug.Log(ActionPointsManager.Instance.CurrentAp.ToString() + "   ~~~~~~~~~~");
         tmpApDisplay.text = LocalStoredNetworkData.localPlayerCurrentAP.ToString();
     }
 

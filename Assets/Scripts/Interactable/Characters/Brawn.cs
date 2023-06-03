@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Interactable.Characters
+namespace ForverFight.Interactable.Characters
 {
     public class Brawn : Character
     {
@@ -24,25 +24,25 @@ namespace Interactable.Characters
         private void PopulateMoveset()
         {
             basicAbility.AbilityName = "Haymaker";
-            basicAbility.AbilityRadius = oneSqRadius;
+            basicAbility.AbilityRadius = OneSqRadius;
             basicAbility.AbilityDamage = 5;
 
             strongAbility.AbilityName = "Ire";
-            strongAbility.AbilityRadius = oneSqRadius;
+            strongAbility.AbilityRadius = OneSqRadius;
             strongAbility.AbilityDamage = 0;
 
             ultimateAbility.AbilityName = "Seismic Smash";
-            ultimateAbility.AbilityRadius = threeSqRadius;
+            ultimateAbility.AbilityRadius = ThreeSqRadius;
             ultimateAbility.AbilityDamage = 15;
 
-            Moveset.Add(basicAbility);
-            Moveset.Add(strongAbility);
-            Moveset.Add(ultimateAbility);
+            // Moveset.Add(basicAbility);
+            //Moveset.Add(strongAbility);
+            //Moveset.Add(ultimateAbility);
         }
 
         public void AttemptAbilty()
         {
-            CastAbility(Moveset, DistributedDieValue.distributedDieRollValue, this);
+            CastAbility(Moveset, AbilityNumber, this);
         }
 
         public void AttemptToTakeDamage(int damage)

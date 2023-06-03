@@ -17,7 +17,7 @@ namespace ForverFight.Interactable.Abilities
             LocalStoredNetworkData.localPlayerSelectAbilityToCast = this;
             Debug.Log("Yooo! I Ran! : 01 ");
         }
-
+        /*
         public void SelectAbility()
         {
             switch (DistributedDieValue.distributedDieRollValue)
@@ -101,6 +101,6 @@ namespace ForverFight.Interactable.Abilities
                 default:
                     break;
             }
-        }
+        }*/
     }
 }

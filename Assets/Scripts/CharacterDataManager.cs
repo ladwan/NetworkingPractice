@@ -12,7 +12,7 @@ public class CharacterDataManager : MonoBehaviour
         selectAbilityToCast = LocalStoredNetworkData.localPlayerSelectAbilityToCast;
         if (selectAbilityToCast)
         {
-            selectAbilityToCast.ToggleAbilityRadius(value);
+            //selectAbilityToCast.ToggleAbilityRadius(value);
         }
     }
 }

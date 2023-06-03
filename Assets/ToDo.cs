@@ -5,7 +5,8 @@ using UnityEngine;
 public class ToDo : MonoBehaviour
 {
     /*
-    do git stuff 
-    network both players rotation              
+        keep implementing the foundations necessary for the combat system 
+        create ui in combat section that allows players to select their abilities
+        check charather.cs for ToDo items
     */
 }
