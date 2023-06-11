@@ -81,4 +81,11 @@ public class ClientHandle : MonoBehaviour
 
         CharacterSelect.Instance.CountdownTimer.Time = 4;
     }
+
+    public static void ReceiveDamage(Packet _packet)
+    {
+        int _damageAmount = _packet.ReadInt();
+
+        DamageManager.Instance.ReceiveDamage(_damageAmount);
+    }
 }

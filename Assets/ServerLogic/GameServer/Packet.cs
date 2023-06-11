@@ -15,6 +15,7 @@ namespace GameServer
         startTurn = 6,
         relayReadyUp = 7,
         syncTimers = 8,
+        sendDamageToOpponent = 9,
     }
 
     /// <summary>Sent from client to server.</summary>
@@ -26,6 +27,7 @@ namespace GameServer
         endTurn = 4,
         sendReadyUp = 5,
         enterSyncTimerQueue = 6,
+        requestToDamageOpponentsHealth = 7,
     }
 
     public class Packet : IDisposable

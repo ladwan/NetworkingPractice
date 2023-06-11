@@ -13,6 +13,8 @@ namespace ForverFight.Interactable.Abilities
         [SerializeField]
         private int abilityDamage = 0;
         [SerializeField]
+        private int abilityCost = 0;
+        [SerializeField]
         private GameObject abilityRadius = null;
         [SerializeField]
         private List<int> intToTriggerThisAbility = new List<int>();
@@ -23,6 +25,8 @@ namespace ForverFight.Interactable.Abilities
         public string AbilityDescription { get => abilityDescription; set => abilityDescription = value; }
 
         public int AbilityDamage { get => abilityDamage; set => abilityDamage = value; }
+
+        public int AbilityCost { get => abilityCost; set => abilityCost = value; }
 
         public GameObject AbilityRadius { get => abilityRadius; set => abilityRadius = value; }
 

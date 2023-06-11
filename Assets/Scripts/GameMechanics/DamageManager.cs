@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using ForverFight.Networking;
 
 namespace ForverFight.GameMechanics
 {
@@ -13,10 +14,14 @@ namespace ForverFight.GameMechanics
         private Slider localPlayerHealthBar = null;
         [SerializeField]
         private Slider otherPlayerHealthBar = null;
+        [SerializeField]
+        private HealthUpdateNumbersManager healthUpdateNumbersManagerREF = null;
 
 
         [NonSerialized]
         private static DamageManager instance = null;
+        [NonSerialized]
+        private Action health = null;
 
 
         public static DamageManager Instance { get => instance; set => instance = value; }
@@ -38,6 +43,20 @@ namespace ForverFight.GameMechanics
         public void DealDamage(int dmg)
         {
             otherPlayerHealthBar.value -= dmg;
+            ClientSend.RequestToDamageOpponentsHealth(dmg);
+            healthUpdateNumbersManagerREF.Animator.SetTrigger("OpponentHealthEvent");
+            healthUpdateNumbersManagerREF.HealthDecreased(healthUpdateNumbersManagerREF.OpponentHealthUpdateNumber, dmg);
+        }
+
+        public void ReceiveDamage(int dmg)
+        {
+            var health = LocalStoredNetworkData.GetLocalHealthSlider();
+            if (health)
+            {
+                health.value -= dmg;
+            }
+            healthUpdateNumbersManagerREF.Animator.SetTrigger("LocalPlayerHealthEvent");
+            healthUpdateNumbersManagerREF.HealthDecreased(healthUpdateNumbersManagerREF.LocalPlayerHealthUpdateNumber, dmg);
         }
     }
 }

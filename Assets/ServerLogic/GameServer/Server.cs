@@ -64,7 +64,7 @@ namespace GameServer
                 {(int)ClientPackets.endTurn, ServerHandle.ServerRecieveEndTurnSignal},
                 {(int)ClientPackets.sendReadyUp, ServerHandle.ServerRecieveReadyUpSignal},
                 {(int)ClientPackets.enterSyncTimerQueue, ServerHandle.ServerRecieveCurrentTime},
-
+                {(int)ClientPackets.requestToDamageOpponentsHealth, ServerHandle.ServerRecieveRequestToDamageOpponent},
             };
             Console.WriteLine("Initialized Packets..");
         }

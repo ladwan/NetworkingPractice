@@ -86,7 +86,6 @@ namespace ForverFight.FlowControl
                 isLocalPlayersTurn = false;
                 if (playerCameraAnim.GetCurrentAnimatorStateInfo(0).IsName("CameraTopView") && !playerCameraAnim.IsInTransition(0))
                 {
-                    Debug.Log($"camera transition : {playerCameraAnim.IsInTransition(0)}");
                     playerCameraAnim.SetTrigger("Idle");
                 }
                 if (!playerDieAnim.GetCurrentAnimatorStateInfo(0).IsName("Despawn"))

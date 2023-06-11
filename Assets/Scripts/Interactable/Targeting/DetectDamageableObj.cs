@@ -32,7 +32,7 @@ namespace ForverFight.Interactable
                 detectionCubeMeshRenderer.material = targetFoundMat;
                 damageableObj = other.gameObject;
                 activeTargetCube.SetActive(true);
-                LocalStoredNetworkData.localPlayerAttackConfirmButton.interactable = true;
+                LocalStoredNetworkData.damageableObjectDetected = true;
             }
         }
 
@@ -43,15 +43,7 @@ namespace ForverFight.Interactable
                 detectionCubeMeshRenderer.material = noTargetMat;
                 damageableObj = null;
                 activeTargetCube.SetActive(false);
-                LocalStoredNetworkData.localPlayerAttackConfirmButton.interactable = false;
-            }
-        }
-
-        private void OnMouseDown()
-        {
-            if (damageableObj)
-            {
-                fireAbilityEvent?.Invoke();
+                LocalStoredNetworkData.damageableObjectDetected = true;
             }
         }
     }

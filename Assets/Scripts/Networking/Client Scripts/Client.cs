@@ -167,6 +167,7 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.startTurn, ClientHandle.ReceiveStartTurnSignal},
             { (int)ServerPackets.relayReadyUp, ClientHandle.ReceiveReadyUpSignal},
             { (int)ServerPackets.syncTimers, ClientHandle.ReceiveSyncedTimerTime},
+            { (int)ServerPackets.sendDamageToOpponent, ClientHandle.ReceiveDamage},
         };
         Debug.Log("Initialized Packets..");
     }

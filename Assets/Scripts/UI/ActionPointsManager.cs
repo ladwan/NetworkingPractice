@@ -57,15 +57,8 @@ namespace ForverFight.Ui
         {
             EmptyAllAP();
             LocalStoredNetworkData.localPlayerCurrentAP += value;
+            ValidateApAmount();
 
-            if (LocalStoredNetworkData.localPlayerCurrentAP < 0)
-            {
-                LocalStoredNetworkData.localPlayerCurrentAP = 0;
-            }
-            if (LocalStoredNetworkData.localPlayerCurrentAP > maxAP)
-            {
-                LocalStoredNetworkData.localPlayerCurrentAP = maxAP;
-            }
             for (int i = 0; i < LocalStoredNetworkData.localPlayerCurrentAP; i++)
             {
                 apLights[i].gameObject.SetActive(true);
@@ -80,14 +73,6 @@ namespace ForverFight.Ui
                     StopBlink();
                     apLightsToBeBlinked.Clear();
                 }
-            }
-        }
-
-        private void EmptyAllAP()
-        {
-            for (int i = 0; i < apLights.Count; i++)
-            {
-                apLights[i].gameObject.SetActive(false);
             }
         }
 
@@ -121,9 +106,7 @@ namespace ForverFight.Ui
 
         public void MoveWasCanceled()
         {
-            StopBlink();
-            UpdateAP(apLightsToBeBlinked.Count);
-            apLightsToBeBlinked.Clear();
+            ResetApUsage();
             FloorGrid.instance.EmptyGridPointList();
         }
 
@@ -150,6 +133,42 @@ namespace ForverFight.Ui
             }
         }
 
+        public void StopBlink()
+        {
+            StopAllCoroutines();
+            blinkCoroutineIsRunning = false;
+        }
+
+        public void ResetApUsage()
+        {
+            if (apLightsToBeBlinked.Count > 0)
+            {
+                StopBlink();
+                UpdateAP(apLightsToBeBlinked.Count);
+                apLightsToBeBlinked.Clear();
+            }
+        }
+
+        private void ValidateApAmount()
+        {
+            if (LocalStoredNetworkData.localPlayerCurrentAP < 0)
+            {
+                LocalStoredNetworkData.localPlayerCurrentAP = 0;
+            }
+            if (LocalStoredNetworkData.localPlayerCurrentAP > maxAP)
+            {
+                LocalStoredNetworkData.localPlayerCurrentAP = maxAP;
+            }
+        }
+
+        private void EmptyAllAP()
+        {
+            for (int i = 0; i < apLights.Count; i++)
+            {
+                apLights[i].gameObject.SetActive(false);
+            }
+        }
+
         private IEnumerator Blink()
         {
             blinkCoroutineIsRunning = true;
@@ -168,12 +187,6 @@ namespace ForverFight.Ui
             }
 
             StartCoroutine(Blink());
-        }
-
-        public void StopBlink()
-        {
-            StopAllCoroutines();
-            blinkCoroutineIsRunning = false;
         }
     }
 }

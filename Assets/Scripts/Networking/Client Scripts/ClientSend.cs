@@ -74,5 +74,15 @@ public class ClientSend : MonoBehaviour
             SendTcpData(_packet);
         }
     }
+
+    public static void RequestToDamageOpponentsHealth(int damage)
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.requestToDamageOpponentsHealth))
+        {
+            _packet.Write(damage);
+
+            SendTcpData(_packet);
+        }
+    }
     #endregion
 }

@@ -67,5 +67,11 @@ namespace GameServer
                 desyncedTimersRecived = 0;
             }
         }
+
+        public static void ServerRecieveRequestToDamageOpponent(int _fromClient, Packet _packet)
+        {
+            int _damageInt = _packet.ReadInt();
+            ServerSend.SendDamageToOpponent(_fromClient, _damageInt);
+        }
     }
 }

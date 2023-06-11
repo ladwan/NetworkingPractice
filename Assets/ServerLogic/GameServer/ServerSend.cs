@@ -130,5 +130,15 @@ namespace GameServer
                 SendTcpDataToOppositePlayer(2, _packet);
             }
         }
+
+        public static void SendDamageToOpponent(int _playerThatDoesntNeedMsgId, int _damageInt)
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.sendDamageToOpponent))
+            {
+                _packet.Write(_damageInt);
+
+                SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
+            }
+        }
     }
 }

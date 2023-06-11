@@ -12,6 +12,7 @@ namespace ForverFight.Interactable.Abilities
             AbilityName = "Quick Punch";
             AbilityDescription = "Dayum sun where'd you find this !?";
             AbilityDamage = 5;
+            AbilityCost = 2;
         }
 
         public override void CastAbility()

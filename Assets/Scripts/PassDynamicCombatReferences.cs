@@ -4,6 +4,11 @@ using UnityEngine.UI;
 
 public class PassDynamicCombatReferences : MonoBehaviour
 {
+    public void PassLocalPlayerHealthSlider(Slider value)
+    {
+        LocalStoredNetworkData.localPlayerHealthSlider = value;
+    }
+
     public void PassOpponentsHealthSlider(Slider value)
     {
         LocalStoredNetworkData.opponentHealthSlider = value;
