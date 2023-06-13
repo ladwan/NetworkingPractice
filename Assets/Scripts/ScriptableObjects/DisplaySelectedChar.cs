@@ -29,9 +29,12 @@ public class DisplaySelectedChar : MonoBehaviour
     {
         if (myCharacterDictionary.TryGetValue(playersIdentity, out Character value))
         {
-            var charInstance = Instantiate(value, spawnPoint);
-            GameMechanicsManager.Instance.HandleSpawningOpponent();
-            LocalStoredNetworkData.localPlayerCharacter = charInstance;
+            var localPlayerCharInstance = Instantiate(value, spawnPoint);
+            var opponentCharInstance = GameMechanicsManager.Instance.HandleSpawningOpponent();
+            LocalStoredNetworkData.localPlayerCharacter = localPlayerCharInstance;
+            LocalStoredNetworkData.opponentCharacter = opponentCharInstance;
+            GameMechanicsManager.Instance.UpdateHealthSliderValues(localPlayerCharInstance, LocalStoredNetworkData.GetLocalHealthSlider());
+            GameMechanicsManager.Instance.UpdateHealthSliderValues(opponentCharInstance, LocalStoredNetworkData.GetOpponentHealthSlider());
             abilitySelectionUiManagerREF.PopulateAbilityData();
         }
     }

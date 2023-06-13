@@ -20,8 +20,6 @@ namespace ForverFight.GameMechanics
 
         [NonSerialized]
         private static DamageManager instance = null;
-        [NonSerialized]
-        private Action health = null;
 
 
         public static DamageManager Instance { get => instance; set => instance = value; }
@@ -58,5 +56,7 @@ namespace ForverFight.GameMechanics
             healthUpdateNumbersManagerREF.Animator.SetTrigger("LocalPlayerHealthEvent");
             healthUpdateNumbersManagerREF.HealthDecreased(healthUpdateNumbersManagerREF.LocalPlayerHealthUpdateNumber, dmg);
         }
+
+        // ToDO : Add healing logic
     }
 }

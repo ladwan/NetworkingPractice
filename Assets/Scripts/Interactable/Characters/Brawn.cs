@@ -44,23 +44,5 @@ namespace ForverFight.Interactable.Characters
         {
             CastAbility(Moveset, AbilityNumber, this);
         }
-
-        public void AttemptToTakeDamage(int damage)
-        {
-            Health -= damage;
-        }
-
-        public void AttemptToDealDamage()
-        {
-
-        }
-
-        public void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                AttemptAbilty();
-            }
-        }
     }
 }

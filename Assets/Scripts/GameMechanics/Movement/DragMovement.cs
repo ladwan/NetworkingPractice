@@ -43,7 +43,6 @@ public class DragMovement : MonoBehaviour
     public void UpdateDragMover()
     {
         currentLocationOfDragMover = Vector3ToVector2.ConvertToVector2(gameObject.transform.position);
-        Debug.Log($"Current Location of Drag Mover : {currentLocationOfDragMover}");
         if (floorGridREF.GridDictionary.TryGetValue(currentLocationOfDragMover, out GridPoint currentGp))
         {
             Debug.Log(2);

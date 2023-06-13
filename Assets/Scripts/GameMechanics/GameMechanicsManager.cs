@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using ForverFight.Networking;
 using FlowControl;
 using ForverFight.Interactable;
@@ -38,16 +39,36 @@ namespace ForverFight.GameMechanics
             }
         }
 
-        public void HandleSpawningOpponent()
+
+        public Character HandleSpawningOpponent()
         {
             if (opponentsName != null && opponentsName != "")
             {
-                spawnOpponentScriptREF.SpawnOpponent(StringToCharIdentity.IdentifyOponent(opponentsName));
+
+                return spawnOpponentScriptREF.SpawnOpponent(StringToCharIdentity.IdentifyOponent(opponentsName));
+
             }
             else
             {
                 Debug.Log("There was no name found for opponent, so they could not be spawned ! ");
+                return null;
             }
+        }
+
+        public void UpdateHealthSliderValues(Character selectedChar, Slider healthSlider)
+        {
+            if (!selectedChar)
+            {
+                return;
+            }
+            if (!healthSlider)
+            {
+                return;
+            }
+
+            healthSlider.maxValue = selectedChar.Health;
+            healthSlider.value = healthSlider.maxValue;
+            //Debug.Log($"Health for {selectedChar.name} is now equal to : {healthSlider.value}");
         }
     }
 }

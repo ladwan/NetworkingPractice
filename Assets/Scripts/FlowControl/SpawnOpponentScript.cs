@@ -14,7 +14,7 @@ namespace FlowControl
         [SerializeField]
         private DisplaySelectedChar displaySelectedCharREF = null;
 
-        public void SpawnOpponent(Character.Identity identity)
+        public Character SpawnOpponent(Character.Identity identity)
         {
             Transform spawnPoint = null;
 
@@ -30,8 +30,10 @@ namespace FlowControl
 
             if (displaySelectedCharREF.myCharacterDictionary.TryGetValue(identity, out Character value))
             {
-                Instantiate(value, spawnPoint);
+                return Instantiate(value, spawnPoint);
             }
+
+            return null;
         }
     }
 }

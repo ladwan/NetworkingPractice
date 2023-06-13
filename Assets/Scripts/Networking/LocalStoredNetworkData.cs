@@ -69,6 +69,19 @@ namespace ForverFight.Networking
                 return null;
             }
         }
+
+        public static Slider GetOpponentHealthSlider()
+        {
+            if (opponentHealthSlider)
+            {
+                return opponentHealthSlider;
+            }
+            else
+            {
+                Debug.Log("No opponent health slider could be found");
+                return null;
+            }
+        }
     }
 }
 

@@ -25,6 +25,8 @@ namespace ForverFight.Interactable
         [SerializeField]
         private List<CharAbility> moveset = new List<CharAbility>();
         [SerializeField]
+        private List<GameObject> customUiElements = new List<GameObject>();
+        [SerializeField]
         private GameObject oneSqRadius = null;
         [SerializeField]
         private GameObject twoSqRadius = null;
@@ -48,7 +50,9 @@ namespace ForverFight.Interactable
 
         public int AbilityNumber { get => abilityNumber; set => abilityNumber = value; }
 
-        public List<CharAbility> Moveset { get => moveset; set => moveset = value; }
+        public List<CharAbility> Moveset => moveset;
+
+        public List<GameObject> CustomUiElements => customUiElements;
 
         public GameObject OneSqRadius { get => oneSqRadius; set => oneSqRadius = value; }
 
@@ -59,6 +63,7 @@ namespace ForverFight.Interactable
         public GameObject FourSqRadius { get => fourSqRadius; set => fourSqRadius = value; }
 
         public GameObject FiveSqRadius { get => fiveSqRadius; set => fiveSqRadius = value; }
+
 
         public enum Identity
         {
