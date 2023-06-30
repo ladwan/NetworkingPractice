@@ -29,9 +29,14 @@ public class FloorGrid : MonoBehaviour
     public int dieValue = 0;
 
 
-    public static FloorGrid instance = null;
+    private static FloorGrid instance = null;
+
 
     public Dictionary<Vector2, GridPoint> GridDictionary { get => gridDictionary; set => gridDictionary = value; }
+
+    public static FloorGrid Instance { get => instance; set => instance = value; }
+
+    public DragMovement DragMoverREF { get => dragMoverREF; set => dragMoverREF = value; }
 
 
     private Vector2 currentLocation = new Vector2(0, 0);
@@ -118,7 +123,7 @@ public class FloorGrid : MonoBehaviour
 
         var moveLocalPlayer = ClientInfo.playerNumber == 1 ? player1Spawn.transform.position = currentLocationVector3 : player2Spawn.transform.position = currentLocationVector3;
         EmptyGridPointList();
-        ActionPointsManager.Instance.MoveWasConfirmed();
+        ActionPointsManager.Instance.MoveWasConfirmed(ActionPointsManager.Instance.CurrentApReferenceListsREF);
         if (dragMoverGridPointREF)
         {
             dragMoverGridPointREF.DisplayConnections(false);
@@ -145,12 +150,12 @@ public class FloorGrid : MonoBehaviour
             }
             else
             {
-                if (LocalStoredNetworkData.localPlayerCurrentAP > 0)
+                if (ActionPointsManager.Instance.CurrentApReferenceListsREF.UpdateValueOfRelevantAp(0) > 0)
                 {
                     dragMoverGridPointREF = nextDestinationsGridPoint;
                     currentLocation = nextDestinationsGridPoint.UniqueTag;
                     AddGridPointToList(nextDestinationsGridPoint);
-                    ActionPointsManager.Instance.ApMovementBlink();
+                    ActionPointsManager.Instance.BlinkCurrentListReference();
                     nextDestinationsGridPoint.DragMovementREF.UpdateDragMoverPosition(nextDestinationsGridPoint.UniqueTag);
                 }
             }
@@ -193,12 +198,8 @@ public class FloorGrid : MonoBehaviour
                         {
                             hoveredOverGridPoints[removeMe].ShowHighlight(false);
                             hoveredOverGridPoints.RemoveAt(removeMe);
-                            if (LocalStoredNetworkData.localPlayerCurrentAP < 9)
-                            {
-                                LocalStoredNetworkData.localPlayerCurrentAP++;
-                            }
-                            ActionPointsManager.Instance.UpdateAP(0);
-                            ActionPointsManager.Instance.UpdateBlinkingAP();
+                            ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.CurrentApReferenceListsREF, 1);
+                            ActionPointsManager.Instance.UpdateBlinkingAP(ActionPointsManager.Instance.CurrentApReferenceListsREF);
                         }
                     }
                     add = false;

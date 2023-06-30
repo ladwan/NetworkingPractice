@@ -6,9 +6,15 @@ namespace ForverFight.Interactable.Characters
 {
     public class Speedster : Character
     {
-        public Identity charIdentity = Identity.Speedster;
+        [SerializeField]
+        private FasterPassive fasterPassive = null;
 
-        //Passive : Faster  - 3 *one use per turn* movement AP 
+
+        public FasterPassive FasterPassive { get => fasterPassive; set => fasterPassive = value; }
+
+
+        //public Identity charIdentity = Identity.Speedster;
+
 
         //Quick Punch
 
@@ -20,6 +26,7 @@ namespace ForverFight.Interactable.Characters
         //display to players how much momentum theyve built up
         protected void OnEnable()
         {
+            CharIdentity = Identity.Speedster;
             CharacterName = "The Speedster";
             Health = 100;
             RollAlotment = 5;

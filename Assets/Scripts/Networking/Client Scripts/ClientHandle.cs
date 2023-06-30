@@ -32,7 +32,7 @@ public class ClientHandle : MonoBehaviour
     {
         int x = _packet.ReadInt();
         int y = _packet.ReadInt();
-        FloorGrid.instance.UpdateOpponentPosition(new Vector2(x, y));
+        FloorGrid.Instance.UpdateOpponentPosition(new Vector2(x, y));
     }
 
     public static void ReceiveTotalPlayerUpdate(Packet _packet)

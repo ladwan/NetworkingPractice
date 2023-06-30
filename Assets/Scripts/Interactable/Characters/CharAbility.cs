@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ForverFight.Interactable.Abilities
 {
-    public class CharAbility : MonoBehaviour
+    public abstract class CharAbility : MonoBehaviour
     {
         [SerializeField]
         private string abilityName = "";

@@ -11,11 +11,11 @@ namespace ForverFight.Ui
         [SerializeField]
         private static ActionPointsManager instance = null;
         [SerializeField]
-        private List<ApLight> apLights = new List<ApLight>();
+        private ApReferenceLists mainApLists = null;
+        [SerializeField]
+        private ApReferenceLists speedsterPassiveApLists = null;
         [SerializeField]
         private int currentAp = 0;
-        [SerializeField]
-        private List<ApLight> apLightsToBeBlinked = new List<ApLight>();
         [SerializeField]
         private bool playerTurnHasEnded = false;
 
@@ -23,18 +23,22 @@ namespace ForverFight.Ui
         [NonSerialized]
         private int maxAP = 9;
         [NonSerialized]
-        private bool blinkCoroutineIsRunning = false;
+        private ApReferenceLists currentApReferenceListsREF = null;
 
 
         public static ActionPointsManager Instance { get => instance; set => instance = value; }
 
-        public List<ApLight> ApLights { get => apLights; set => apLights = value; }
-
         public int CurrentAp { get => currentAp; set => currentAp = value; }
 
-        public List<ApLight> ApLightsToBeBlinked { get => apLightsToBeBlinked; set => apLightsToBeBlinked = value; }
-
         public bool PlayerTurnHasEnded { get => playerTurnHasEnded; set => playerTurnHasEnded = value; }
+
+        public int MaxAP { get => maxAP; set => maxAP = value; }
+
+        public ApReferenceLists MainApLists { get => mainApLists; set => mainApLists = value; }
+
+        public ApReferenceLists CurrentApReferenceListsREF { get => currentApReferenceListsREF; set => currentApReferenceListsREF = value; }
+
+        public ApReferenceLists SpeedsterPassiveApLists { get => speedsterPassiveApLists; set => speedsterPassiveApLists = value; }
 
 
         protected void Awake()
@@ -49,65 +53,66 @@ namespace ForverFight.Ui
                 Destroy(instance);
                 return;
             }
-            UpdateAP(0);
+
+            UpdateAP(mainApLists, 0);
         }
 
 
-        public void UpdateAP(int value)
+        public void UpdateAP(ApReferenceLists referenceLists, int addend)
         {
-            EmptyAllAP();
-            LocalStoredNetworkData.localPlayerCurrentAP += value;
-            ValidateApAmount();
-
-            for (int i = 0; i < LocalStoredNetworkData.localPlayerCurrentAP; i++)
-            {
-                apLights[i].gameObject.SetActive(true);
-            }
+            referenceLists.EmptyAllAP();
+            SetCurrentlyActiveReferenceList(referenceLists);
+            referenceLists.UpdateValueOfRelevantAp(addend);
+            referenceLists.ShowAp(referenceLists.UpdateValueOfRelevantAp(0));
 
             if (playerTurnHasEnded)
             {
                 playerTurnHasEnded = false;
 
-                if (apLightsToBeBlinked.Count > 0)
+                if (referenceLists.ApLightsToBeBlinked.Count > 0)
                 {
-                    StopBlink();
-                    apLightsToBeBlinked.Clear();
+                    referenceLists.StopBlink();
+                    referenceLists.ApLightsToBeBlinked.Clear();
                 }
             }
         }
 
-        public void UpdateBlinkingAP()
+        public void UpdateBlinkingAP(ApReferenceLists referenceLists)
         {
-            if (apLightsToBeBlinked.Count > 0)
+            if (referenceLists.ApLightsToBeBlinked.Count > 0)
             {
                 if (playerTurnHasEnded)
                 {
-                    StopBlink();
-                    apLightsToBeBlinked.Clear();
+                    referenceLists.StopBlink();
+                    referenceLists.ApLightsToBeBlinked.Clear();
                     playerTurnHasEnded = false;
                 }
                 else
                 {
-                    apLightsToBeBlinked.RemoveAt(apLightsToBeBlinked.Count - 1);
-                    if (apLightsToBeBlinked.Count <= 0)
+                    referenceLists.ApLightsToBeBlinked.RemoveAt(referenceLists.ApLightsToBeBlinked.Count - 1);
+                    if (referenceLists.ApLightsToBeBlinked.Count <= 0)
                     {
-                        StopBlink();
+                        referenceLists.StopBlink();
                     };
                 }
             }
         }
 
-        public void MoveWasConfirmed()
+        public void MoveWasConfirmed(ApReferenceLists referenceLists)
         {
-            StopBlink();
-            apLightsToBeBlinked.Clear();
-            UpdateAP(0);
+            referenceLists.StopBlink();
+            referenceLists.ApLightsToBeBlinked.Clear();
+            UpdateAP(referenceLists, 0);
         }
 
         public void MoveWasCanceled()
         {
-            ResetApUsage();
-            FloorGrid.instance.EmptyGridPointList();
+            if (currentApReferenceListsREF)
+            {
+                ResetApUsage(currentApReferenceListsREF);
+            }
+
+            FloorGrid.Instance.EmptyGridPointList();
         }
 
         public bool YouHaveEnoughAp(int value)
@@ -118,75 +123,61 @@ namespace ForverFight.Ui
             }
             else
             {
-                Debug.Log("Insufficient AP");
                 return false;
             }
         }
 
-        public void ApMovementBlink()
+        public void ApMovementBlink(ApReferenceLists referenceLists)
         {
-            apLightsToBeBlinked.Add(apLights[LocalStoredNetworkData.localPlayerCurrentAP - 1]);
-            LocalStoredNetworkData.localPlayerCurrentAP--;
-            if (!blinkCoroutineIsRunning)
+            referenceLists.ApLightsToBeBlinked.Add(referenceLists.ApLights[referenceLists.UpdateValueOfRelevantAp(-1)]);
+            if (!referenceLists.BlinkCoroutineIsRunning)
             {
-                StartCoroutine(Blink());
+                referenceLists.StartCoroutine(referenceLists.Blink());
             }
         }
 
-        public void StopBlink()
+        public void ResetApUsage(ApReferenceLists referenceLists)
         {
-            StopAllCoroutines();
-            blinkCoroutineIsRunning = false;
-        }
-
-        public void ResetApUsage()
-        {
-            if (apLightsToBeBlinked.Count > 0)
+            if (referenceLists.ApLightsToBeBlinked.Count > 0)
             {
-                StopBlink();
-                UpdateAP(apLightsToBeBlinked.Count);
-                apLightsToBeBlinked.Clear();
+                referenceLists.StopBlink();
+                UpdateAP(referenceLists, referenceLists.ApLightsToBeBlinked.Count);
+                referenceLists.ApLightsToBeBlinked.Clear();
             }
         }
 
-        private void ValidateApAmount()
+        public void BlinkCurrentListReference()
         {
-            if (LocalStoredNetworkData.localPlayerCurrentAP < 0)
+            switch (CurrentApReferenceListsREF.CurrentApDisplayType)
             {
-                LocalStoredNetworkData.localPlayerCurrentAP = 0;
-            }
-            if (LocalStoredNetworkData.localPlayerCurrentAP > maxAP)
-            {
-                LocalStoredNetworkData.localPlayerCurrentAP = maxAP;
+                default:
+                    Debug.Log($"CurrentApDisplayType returned an abnormal value : {CurrentApReferenceListsREF.CurrentApDisplayType}");
+                    break;
+
+                case ApReferenceLists.apDisplayTypes.main:
+                    ApMovementBlink(MainApLists);
+                    break;
+
+                case ApReferenceLists.apDisplayTypes.speedster:
+                    if (SpeedsterPassiveApLists)
+                    {
+                        ApMovementBlink(SpeedsterPassiveApLists);
+                    }
+                    break;
             }
         }
 
-        private void EmptyAllAP()
+
+        private void SetCurrentlyActiveReferenceList(ApReferenceLists referenceLists)
         {
-            for (int i = 0; i < apLights.Count; i++)
+            if (referenceLists == mainApLists)
             {
-                apLights[i].gameObject.SetActive(false);
+                currentApReferenceListsREF = referenceLists;
             }
-        }
-
-        private IEnumerator Blink()
-        {
-            blinkCoroutineIsRunning = true;
-            yield return new WaitForSecondsRealtime(0.5f);
-
-            for (int i = 0; i < apLightsToBeBlinked.Count; i++)
+            if (referenceLists.currentApDisplayType == ApReferenceLists.apDisplayTypes.speedster)
             {
-                apLightsToBeBlinked[i].gameObject.SetActive(false);
+                currentApReferenceListsREF = referenceLists;
             }
-
-            yield return new WaitForSecondsRealtime(0.5f);
-
-            for (int i = 0; i < apLightsToBeBlinked.Count; i++)
-            {
-                apLightsToBeBlinked[i].gameObject.SetActive(true);
-            }
-
-            StartCoroutine(Blink());
         }
     }
 }

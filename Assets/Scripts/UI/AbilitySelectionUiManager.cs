@@ -101,8 +101,8 @@ public class AbilitySelectionUiManager : MonoBehaviour
         if (abilityValue < 3 && abilityValue >= 0)
         {
             charReference.Moveset[abilityValue].CastAbility();
-            ActionPointsManager.Instance.ResetApUsage();
-            ActionPointsManager.Instance.UpdateAP(-charReference.Moveset[abilityValue].AbilityCost);
+            ActionPointsManager.Instance.ResetApUsage(ActionPointsManager.Instance.MainApLists);
+            ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.MainApLists, -charReference.Moveset[abilityValue].AbilityCost);
         }
         else
         {
@@ -112,7 +112,7 @@ public class AbilitySelectionUiManager : MonoBehaviour
 
     public void ResetApUsageUiManager()
     {
-        ActionPointsManager.Instance.ResetApUsage();
+        ActionPointsManager.Instance.ResetApUsage(ActionPointsManager.Instance.MainApLists);
     }
 
 
@@ -159,7 +159,7 @@ public class AbilitySelectionUiManager : MonoBehaviour
                 LocalStoredNetworkData.localPlayerAttackConfirmButton.interactable = true;
                 for (int i = 0; i < charReference.Moveset[abilityValue].AbilityCost; i++)
                 {
-                    ActionPointsManager.Instance.ApMovementBlink();
+                    ActionPointsManager.Instance.ApMovementBlink(ActionPointsManager.Instance.MainApLists);
                 }
 
                 //Debug.Log("Damageable Object Detected , Turning Button On!");

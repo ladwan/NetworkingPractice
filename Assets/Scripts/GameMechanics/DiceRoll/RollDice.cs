@@ -36,37 +36,37 @@ namespace ForverFight.GameMechanics.DiceRoll
             switch (rollValue)
             {
                 case 1:
-                    apManager.UpdateAP(1);
+                    apManager.UpdateAP(apManager.MainApLists, 1);
                     sixSidedDieAnimator.SetTrigger("6sidedRoll1");
                     DistributedDieValue.distributedDieRollValue = 1;
                     break;
 
                 case 2:
-                    apManager.UpdateAP(2);
+                    apManager.UpdateAP(apManager.MainApLists, 2);
                     sixSidedDieAnimator.SetTrigger("6sidedRoll2");
                     DistributedDieValue.distributedDieRollValue = 2;
                     break;
 
                 case 3:
-                    apManager.UpdateAP(3);
+                    apManager.UpdateAP(apManager.MainApLists, 3);
                     sixSidedDieAnimator.SetTrigger("6sidedRoll3");
                     DistributedDieValue.distributedDieRollValue = 3;
                     break;
 
                 case 4:
-                    apManager.UpdateAP(4);
+                    apManager.UpdateAP(apManager.MainApLists, 4);
                     sixSidedDieAnimator.SetTrigger("6sidedRoll4");
                     DistributedDieValue.distributedDieRollValue = 4;
                     break;
 
                 case 5:
-                    apManager.UpdateAP(5);
+                    apManager.UpdateAP(apManager.MainApLists, 5);
                     sixSidedDieAnimator.SetTrigger("6sidedRoll5");
                     DistributedDieValue.distributedDieRollValue = 5;
                     break;
 
                 case 6:
-                    apManager.UpdateAP(6);
+                    apManager.UpdateAP(apManager.MainApLists, 6);
                     sixSidedDieAnimator.SetTrigger("6sidedRoll6");
                     DistributedDieValue.distributedDieRollValue = 6;
                     break;

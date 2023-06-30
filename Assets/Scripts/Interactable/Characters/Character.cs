@@ -8,8 +8,10 @@ using ForverFight.Interactable.Abilities;
 
 namespace ForverFight.Interactable
 {
-    public class Character : MonoBehaviour
+    public abstract class Character : MonoBehaviour
     {
+        [SerializeField]
+        private Identity charIdentity = Identity.NoIdentity;
         [SerializeField]
         private GameObject characterModel = null;
         [SerializeField]
@@ -37,6 +39,8 @@ namespace ForverFight.Interactable
         [SerializeField]
         private GameObject fiveSqRadius = null;
 
+
+        public Identity CharIdentity { get => charIdentity; set => charIdentity = value; }
 
         public GameObject CharacterModel { get => characterModel; set => characterModel = value; }
 

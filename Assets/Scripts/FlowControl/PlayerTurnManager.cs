@@ -22,6 +22,8 @@ namespace ForverFight.FlowControl
         private TMP_Text playerTimerSubtext = null;
         [SerializeField]
         private DragMovement dragMovementREF = null;
+        [SerializeField]
+        private Action onTurnEnd = null;
 
 
         [NonSerialized]
@@ -31,6 +33,8 @@ namespace ForverFight.FlowControl
 
 
         public static PlayerTurnManager Instance { get => instance; set => instance = value; }
+
+        public Action OnTurnEnd { get => onTurnEnd; set => onTurnEnd = value; }
 
 
         protected void Awake()
@@ -96,17 +100,17 @@ namespace ForverFight.FlowControl
                 if (timeRanOut)
                 {
                     ActionPointsManager.Instance.PlayerTurnHasEnded = true;
-                    ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.ApLightsToBeBlinked.Count);
-                    ActionPointsManager.Instance.UpdateBlinkingAP();
-                    FloorGrid.instance.EmptyGridPointList();
+                    ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.MainApLists, ActionPointsManager.Instance.MainApLists.ApLightsToBeBlinked.Count);
+                    ActionPointsManager.Instance.UpdateBlinkingAP(ActionPointsManager.Instance.MainApLists);
+                    FloorGrid.Instance.EmptyGridPointList();
                     dragMovementREF.UpdateDragMoverPosition();
                     dragMovementREF.ResetDragMover();
                 }
                 else
                 {
                     ActionPointsManager.Instance.PlayerTurnHasEnded = true;
-                    ActionPointsManager.Instance.UpdateAP(0);
-                    FloorGrid.instance.EmptyGridPointList();
+                    ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.MainApLists, 0);
+                    FloorGrid.Instance.EmptyGridPointList();
                 }
 
                 if (LocalStoredNetworkData.localPlayerSelectAbilityToCast)
@@ -114,6 +118,7 @@ namespace ForverFight.FlowControl
                     // LocalStoredNetworkData.localPlayerSelectAbilityToCast.ToggleAbilityRadius(false);
                 }
 
+                onTurnEnd?.Invoke();
                 isLocalPlayersTurn = false;
                 ClientSend.EndTurn();
                 return;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,7 @@ public class DragMovement : MonoBehaviour
     private Transform playerPositionREF = null;
 
 
+    private Action onDragMoverPosUpdated = null;
     private GridPoint currentlyClickedGridPoint = null;
     private GridPoint gridPointCurrentlyDisplayingConnections = null;
     private Vector3 YAxisOffset = new Vector3(0, 0.5f, 0);
@@ -26,6 +28,8 @@ public class DragMovement : MonoBehaviour
     public GridPoint GridPointCurrentlyDisplayingConnections { get => gridPointCurrentlyDisplayingConnections; set => gridPointCurrentlyDisplayingConnections = value; }
 
     public Vector2 CurrentLocationOfDragMover { get => currentLocationOfDragMover; set => currentLocationOfDragMover = value; }
+
+    public Action OnDragMoverPosUpdated { get => onDragMoverPosUpdated; set => onDragMoverPosUpdated = value; }
 
 
     protected void OnMouseDown()
@@ -45,14 +49,9 @@ public class DragMovement : MonoBehaviour
         currentLocationOfDragMover = Vector3ToVector2.ConvertToVector2(gameObject.transform.position);
         if (floorGridREF.GridDictionary.TryGetValue(currentLocationOfDragMover, out GridPoint currentGp))
         {
-            Debug.Log(2);
             currentGp.DisplayConnections(true);
             gridPointCurrentlyDisplayingConnections = currentGp;
             validDrag = true;
-        }
-        else
-        {
-            Debug.Log($"Floor Grid Dictorary count  :  {floorGridREF.GridDictionary.Count}");
         }
     }
 

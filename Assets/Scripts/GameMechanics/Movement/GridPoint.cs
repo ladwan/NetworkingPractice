@@ -36,6 +36,8 @@ public class GridPoint : MonoBehaviour
 
     public DragMovement DragMovementREF { get => dragMovementREF; set => dragMovementREF = value; }
 
+    public GameObject Highlight { get => highlight; set => highlight = value; }
+
 
     // Start is called before the first frame update
     void Awake()
@@ -95,6 +97,7 @@ public class GridPoint : MonoBehaviour
                 }
                 floorGridREF.TryHighlighting(dragMovementREF.CurrentlyClickedGridPoint);
                 dragMovementREF.UpdateDragMover();
+                dragMovementREF.OnDragMoverPosUpdated?.Invoke();
             }
         }
     }

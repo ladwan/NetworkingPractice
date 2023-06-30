@@ -6,14 +6,13 @@ namespace ForverFight.Interactable.Characters
 {
     public class Brawn : Character
     {
-        public Identity charIdentity = Identity.Brawn;
-
         private Abilty basicAbility = new Abilty();
         private Abilty strongAbility = new Abilty();
         private Abilty ultimateAbility = new Abilty();
 
         protected void OnEnable()
         {
+            CharIdentity = Identity.Brawn;
             CharacterName = "The Brawn";
             Health = 150;
             RollAlotment = 3;

@@ -8,25 +8,5 @@ namespace ForverFight.Ui
     {
         [SerializeField]
         private Image apLightImage = null;
-
-
-        public void StartBlink()
-        {
-            StartCoroutine(Blink());
-        }
-
-        public void StopBlink()
-        {
-            StopAllCoroutines();
-        }
-
-        private IEnumerator Blink()
-        {
-            yield return new WaitForSecondsRealtime(1);
-            apLightImage.enabled = false;
-            yield return new WaitForSecondsRealtime(1);
-            apLightImage.enabled = true;
-            StartCoroutine(Blink());
-        }
     }
 }

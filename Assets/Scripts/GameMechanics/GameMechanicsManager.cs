@@ -68,7 +68,6 @@ namespace ForverFight.GameMechanics
 
             healthSlider.maxValue = selectedChar.Health;
             healthSlider.value = healthSlider.maxValue;
-            //Debug.Log($"Health for {selectedChar.name} is now equal to : {healthSlider.value}");
         }
     }
 }
