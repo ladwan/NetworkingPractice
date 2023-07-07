@@ -205,6 +205,8 @@ MonoBehaviour:
   - {fileID: 6058825904170682742}
   - {fileID: 6058825904368483334}
   - {fileID: 6058825905946753954}
+  passiveHightlightColor: {r: 0, g: 0.7291813, b: 1, a: 0.5882353}
+  defaultHightlightColor: {r: 0.043137256, g: 1, b: 0, a: 0.41960785}
 --- !u!1001 &5271434
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1397,6 +1399,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94942699e6f75fd41a476ddd5c790f2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  charIdentity: 2
   characterModel: {fileID: 0}
   characterIcon: {fileID: 0}
   characterName: 
@@ -1414,7 +1417,6 @@ MonoBehaviour:
   fourSqRadius: {fileID: 0}
   fiveSqRadius: {fileID: 0}
   fasterPassive: {fileID: 7833643300699085498}
-  charIdentity: 2
 --- !u!4 &7098479322308603433 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2271406186352764956, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}

@@ -25,6 +25,15 @@ namespace ForverFight.Interactable
         public GameObject DamageableObj { get => damageableObj; set => damageableObj = value; }
 
 
+        protected void OnDisable()
+        {
+            detectionCubeMeshRenderer.material = noTargetMat;
+            damageableObj = null;
+            activeTargetCube.SetActive(false);
+            LocalStoredNetworkData.damageableObjectDetected = false;
+        }
+
+
         private void OnTriggerEnter(Collider other)
         {
             if (other.gameObject.tag == "Damageable")
@@ -43,7 +52,7 @@ namespace ForverFight.Interactable
                 detectionCubeMeshRenderer.material = noTargetMat;
                 damageableObj = null;
                 activeTargetCube.SetActive(false);
-                LocalStoredNetworkData.damageableObjectDetected = true;
+                LocalStoredNetworkData.damageableObjectDetected = false;
             }
         }
     }
