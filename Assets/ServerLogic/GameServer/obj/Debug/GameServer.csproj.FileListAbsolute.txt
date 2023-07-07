@@ -20,3 +20,10 @@ D:\Program Files (x86)\Github Projects\NetworkingPractice\Assets\ServerLogic\Gam
 D:\Program Files (x86)\Github Projects\NetworkingPractice\Assets\ServerLogic\GameServer\obj\Debug\GameServer.csproj.CoreCompileInputs.cache
 D:\Program Files (x86)\Github Projects\NetworkingPractice\Assets\ServerLogic\GameServer\obj\Debug\GameSever.exe
 D:\Program Files (x86)\Github Projects\NetworkingPractice\Assets\ServerLogic\GameServer\obj\Debug\GameSever.pdb
+C:\Users\chewb\OneDrive\Documents\GitHub\NetworkingPractice\Assets\ServerLogic\GameServer\bin\Debug\GameSever.exe.config
+C:\Users\chewb\OneDrive\Documents\GitHub\NetworkingPractice\Assets\ServerLogic\GameServer\bin\Debug\GameSever.exe
+C:\Users\chewb\OneDrive\Documents\GitHub\NetworkingPractice\Assets\ServerLogic\GameServer\bin\Debug\GameSever.pdb
+C:\Users\chewb\OneDrive\Documents\GitHub\NetworkingPractice\Assets\ServerLogic\GameServer\obj\Debug\GameServer.csproj.AssemblyReference.cache
+C:\Users\chewb\OneDrive\Documents\GitHub\NetworkingPractice\Assets\ServerLogic\GameServer\obj\Debug\GameServer.csproj.CoreCompileInputs.cache
+C:\Users\chewb\OneDrive\Documents\GitHub\NetworkingPractice\Assets\ServerLogic\GameServer\obj\Debug\GameSever.exe
+C:\Users\chewb\OneDrive\Documents\GitHub\NetworkingPractice\Assets\ServerLogic\GameServer\obj\Debug\GameSever.pdb

@@ -24,6 +24,9 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
     private int passiveAp = 3;
     private int maxPassiveAp = 3;
     private Coroutine coroutineREF = null;
+    private MeshRenderer meshRendererREF = null;
+    private List<MeshRenderer> passiveHighlightedMeshRenderers = new List<MeshRenderer>();
+
 
     #region Public Properties
     public int PassiveAp
@@ -88,14 +91,12 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
         ActionPointsManager.Instance.SpeedsterPassiveApLists = referenceLists;
         CombatUiStatesManager.Instance.onCombatUiStateChange += ApplyPassive;
         PlayerTurnManager.Instance.OnTurnEnd += ResetPassiveAp;
-        FloorGrid.Instance.DragMoverREF.OnDragMoverPosUpdated += ChangeColorOfHighlight;
     }
 
     protected void OnDisable()
     {
         CombatUiStatesManager.Instance.onCombatUiStateChange -= ApplyPassive;
         PlayerTurnManager.Instance.OnTurnEnd -= ResetPassiveAp;
-        FloorGrid.Instance.DragMoverREF.OnDragMoverPosUpdated -= ChangeColorOfHighlight;
     }
 
 
@@ -106,11 +107,14 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
             if (passiveAp > 0)
             {
                 ActionPointsManager.Instance.UpdateAP(referenceLists, 0);
+                FloorGrid.Instance.DragMoverREF.OnDragMoverPosUpdated += ChangeColorOfHighlight;
                 UpdateApBackgrounds();
                 ChangeColorOfHighlight();
             }
             else
             {
+                FloorGrid.Instance.DragMoverREF.OnDragMoverPosUpdated -= ChangeColorOfHighlight;
+                ResetPropertyBlocks();
                 ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.MainApLists, 0);
             }
         }
@@ -118,10 +122,9 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
         {
             ToggleApBackgrounds(false);
             referenceLists.EmptyAllAP();
-            //make visuals go away
-            //this will probably keep running when it shouldnt , fix this !
         }
 
+        Debug.Log($"Passive AP : {passiveAp}");
     }
 
     public void ToggleApBackgrounds(bool toggle)
@@ -146,11 +149,23 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
     {
         if (FloorGrid.Instance.GridDictionary.TryGetValue(FloorGrid.Instance.DragMoverREF.CurrentLocationOfDragMover, out GridPoint changeHightlightColorGp))
         {
-            var meshRendererREF = changeHightlightColorGp.Highlight.GetComponent<MeshRenderer>();
+            meshRendererREF = changeHightlightColorGp.Highlight.GetComponent<MeshRenderer>();
             var propertyBlock = new MaterialPropertyBlock();
-            meshRendererREF.SetPropertyBlock(propertyBlock);
             propertyBlock.SetColor("_Color", passiveHightlightColor);
-            Debug.Log("Yoo I  Ran!");
+            meshRendererREF.SetPropertyBlock(propertyBlock);
+            passiveHighlightedMeshRenderers.Add(meshRendererREF);
+        }
+    }
+
+    private void ResetPropertyBlocks()
+    {
+        if (passiveHighlightedMeshRenderers.Count > 0)
+        {
+            foreach (MeshRenderer meshRenderer in passiveHighlightedMeshRenderers)
+            {
+                meshRenderer.SetPropertyBlock(null);
+            }
+            passiveHighlightedMeshRenderers.Clear();
         }
     }
 
@@ -158,7 +173,6 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
     {
         passiveAp = maxPassiveAp;
     }
-
 
     private void BeginCoroutine()
     {
@@ -183,19 +197,8 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
         if (tempChar.CharIdentity != Character.Identity.Speedster)
         {
             this.enabled = false;
-            //  Destroy(this);
         }
     }
 
-    //Passive : Faster  - 3 *one use per turn* movement AP
-    //if youre not in the movement ui, disable passive ap
-
-    //need something to toggle on passive visual as a whole
-    //need to be able to only display ap slot that are full
-
-    //handle keeping track of what the current passive ap value is then turning on the visuals for the background. then turn on the ap light
-
-    //we want to ApplyPassive(); when the movement menu is clicked, and make it disappear when the menu goes down
-    //make sure to keep track of the passive ap amount , display the correct amount if they use any.
-    //rest to 3 when turn ends
+    // if yo use the passive ap in increments instead of all at once the highlights will not work proper;y, fix this ! 
 }
