@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,6 +27,7 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
     private Coroutine coroutineREF = null;
     private MeshRenderer meshRendererREF = null;
     private List<MeshRenderer> passiveHighlightedMeshRenderers = new List<MeshRenderer>();
+    private bool isChangeColorSubscribed = false;
 
 
     #region Public Properties
@@ -106,14 +108,24 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
         {
             if (passiveAp > 0)
             {
+                if (!isChangeColorSubscribed)
+                {
+                    FloorGrid.Instance.DragMoverREF.OnDragMoverPosUpdated += ChangeColorOfHighlight;
+                    isChangeColorSubscribed = true;
+                }
+
                 ActionPointsManager.Instance.UpdateAP(referenceLists, 0);
-                FloorGrid.Instance.DragMoverREF.OnDragMoverPosUpdated += ChangeColorOfHighlight;
                 UpdateApBackgrounds();
                 ChangeColorOfHighlight();
             }
             else
             {
-                FloorGrid.Instance.DragMoverREF.OnDragMoverPosUpdated -= ChangeColorOfHighlight;
+                if (isChangeColorSubscribed)
+                {
+                    FloorGrid.Instance.DragMoverREF.OnDragMoverPosUpdated -= ChangeColorOfHighlight;
+                    isChangeColorSubscribed = false;
+                }
+
                 ResetPropertyBlocks();
                 ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.MainApLists, 0);
             }
@@ -123,8 +135,6 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
             ToggleApBackgrounds(false);
             referenceLists.EmptyAllAP();
         }
-
-        Debug.Log($"Passive AP : {passiveAp}");
     }
 
     public void ToggleApBackgrounds(bool toggle)
@@ -200,5 +210,5 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
         }
     }
 
-    // if yo use the passive ap in increments instead of all at once the highlights will not work proper;y, fix this ! 
+    // if you use the passive ap in increments instead of all at once the highlights will not work properly, fix this ! 
 }
