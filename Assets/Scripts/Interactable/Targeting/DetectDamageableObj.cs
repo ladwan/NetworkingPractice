@@ -16,7 +16,8 @@ namespace ForverFight.Interactable
         [SerializeField]
         private GameObject activeTargetCube = null;
         [SerializeField]
-        private UnityEvent fireAbilityEvent = new UnityEvent();
+        private bool isTargetingSelf = false;
+
 
         [NonSerialized]
         private GameObject damageableObj = null;
@@ -24,6 +25,14 @@ namespace ForverFight.Interactable
 
         public GameObject DamageableObj { get => damageableObj; set => damageableObj = value; }
 
+
+        protected void OnEnable()
+        {
+            if (isTargetingSelf)
+            {
+                LocalStoredNetworkData.damageableObjectDetected = true;
+            }
+        }
 
         protected void OnDisable()
         {
@@ -36,23 +45,29 @@ namespace ForverFight.Interactable
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.tag == "Damageable")
+            if (!isTargetingSelf)
             {
-                detectionCubeMeshRenderer.material = targetFoundMat;
-                damageableObj = other.gameObject;
-                activeTargetCube.SetActive(true);
-                LocalStoredNetworkData.damageableObjectDetected = true;
+                if (other.gameObject.tag == "Damageable")
+                {
+                    detectionCubeMeshRenderer.material = targetFoundMat;
+                    damageableObj = other.gameObject;
+                    activeTargetCube.SetActive(true);
+                    LocalStoredNetworkData.damageableObjectDetected = true;
+                }
             }
         }
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.gameObject.tag == "Damageable")
+            if (!isTargetingSelf)
             {
-                detectionCubeMeshRenderer.material = noTargetMat;
-                damageableObj = null;
-                activeTargetCube.SetActive(false);
-                LocalStoredNetworkData.damageableObjectDetected = false;
+                if (other.gameObject.tag == "Damageable")
+                {
+                    detectionCubeMeshRenderer.material = noTargetMat;
+                    damageableObj = null;
+                    activeTargetCube.SetActive(false);
+                    LocalStoredNetworkData.damageableObjectDetected = false;
+                }
             }
         }
     }

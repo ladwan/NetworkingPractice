@@ -4,6 +4,7 @@ using UnityEngine;
 using ForverFight.GameMechanics;
 using ForverFight.Interactable;
 using ForverFight.Networking;
+using ForverFight.Ui;
 
 public class DisplaySelectedChar : MonoBehaviour
 {

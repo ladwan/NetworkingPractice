@@ -1,9 +1,10 @@
-﻿using ForverFight.FlowControl;
-using ForverFight.HelperScripts;
-using ForverFight.Networking;
-using ForverFight.Ui;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using ForverFight.Ui;
+using ForverFight.Networking;
+using ForverFight.FlowControl;
+using ForverFight.HelperScripts;
 
 public class FloorGrid : MonoBehaviour
 {
@@ -27,9 +28,8 @@ public class FloorGrid : MonoBehaviour
     private DisplaySelectedChar displaySelectedCharREF = null;
     [SerializeField]
     public int dieValue = 0;
-
-
-    private static FloorGrid instance = null;
+    [SerializeField]
+    private Action<int> onMoveConfirmed = null;
 
 
     public Dictionary<Vector2, GridPoint> GridDictionary { get => gridDictionary; set => gridDictionary = value; }
@@ -38,7 +38,10 @@ public class FloorGrid : MonoBehaviour
 
     public DragMovement DragMoverREF { get => dragMoverREF; set => dragMoverREF = value; }
 
+    public Action<int> OnMoveConfirmed { get => onMoveConfirmed; set => onMoveConfirmed = value; }
 
+
+    private static FloorGrid instance = null;
     private Vector2 currentLocation = new Vector2(0, 0);
     private GridPoint dragMoverGridPointREF = null; //this should return the gridPoint that the drag mover is on
     private Transform opponentSpawn = null;
@@ -122,12 +125,11 @@ public class FloorGrid : MonoBehaviour
         var currentLocationVector3 = new Vector3(currentLocation.x, 0, currentLocation.y);
 
         var moveLocalPlayer = ClientInfo.playerNumber == 1 ? player1Spawn.transform.position = currentLocationVector3 : player2Spawn.transform.position = currentLocationVector3;
+
+        BroadcastHoveredOverGridPointsCount();
         EmptyGridPointList();
+
         ActionPointsManager.Instance.MoveWasConfirmed(ActionPointsManager.Instance.CurrentApReferenceListsREF);
-        if (dragMoverGridPointREF)
-        {
-            dragMoverGridPointREF.DisplayConnections(false);
-        }
     }
 
     public void UpdateOpponentPosition(Vector2 value)
@@ -176,6 +178,11 @@ public class FloorGrid : MonoBehaviour
         {
             Debug.Log("Starting sq not found !");
         }
+    }
+
+    public void BroadcastHoveredOverGridPointsCount()
+    {
+        onMoveConfirmed?.Invoke(hoveredOverGridPoints.Count);
     }
 
 

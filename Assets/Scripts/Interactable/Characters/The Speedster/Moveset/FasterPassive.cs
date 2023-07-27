@@ -91,20 +91,20 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
         PassiveAbilityName = "Faster";
         PassiveAbilityDescription = "You can move 3 extra squares each turn";
         ActionPointsManager.Instance.SpeedsterPassiveApLists = referenceLists;
-        CombatUiStatesManager.Instance.onCombatUiStateChange += ApplyPassive;
+        CombatUiStatesManager.Instance.OnCombatUiStateChange += ApplyPassive;
         PlayerTurnManager.Instance.OnTurnEnd += ResetPassiveAp;
     }
 
     protected void OnDisable()
     {
-        CombatUiStatesManager.Instance.onCombatUiStateChange -= ApplyPassive;
+        CombatUiStatesManager.Instance.OnCombatUiStateChange -= ApplyPassive;
         PlayerTurnManager.Instance.OnTurnEnd -= ResetPassiveAp;
     }
 
 
     public void ApplyPassive()
     {
-        if (CombatUiStatesManager.Instance.CurrentCombatUiState == CombatUiStatesManager.combatUiState.movement)
+        if (CombatUiStatesManager.Instance.CurrentCombatUiState == CombatUiStatesManager.CombatUiState.movement)
         {
             if (passiveAp > 0)
             {
@@ -133,7 +133,6 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
         else
         {
             ToggleApBackgrounds(false);
-            referenceLists.EmptyAllAP();
         }
     }
 
@@ -209,6 +208,4 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
             this.enabled = false;
         }
     }
-
-    // if you use the passive ap in increments instead of all at once the highlights will not work properly, fix this ! 
 }

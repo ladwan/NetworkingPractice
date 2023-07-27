@@ -37,7 +37,7 @@ Transform:
   - {fileID: 4289649503517721121}
   - {fileID: 4289649501779715707}
   m_Father: {fileID: 7098479322308603433}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &428092030
 GameObject:
@@ -48,8 +48,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 428092031}
+  - component: {fileID: 6802778721011314917}
   m_Layer: 0
-  m_Name: (4-5) Faster
+  m_Name: Momentum
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -70,6 +71,30 @@ Transform:
   m_Father: {fileID: 2852465711971634605}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6802778721011314917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 428092030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c937a290a252054faaf188f603debcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  abilityName: Momentum
+  abilityDescription: Im fast as fuck boiii !?
+  abilityDamage: 0
+  abilityDuration: 3
+  abilityCost: 4
+  abilityRadius: {fileID: 1093007782179111487}
+  intToTriggerThisAbility: 
+  storedMomentum: 0
+  multiplier: 2
+  product: 0
+  momentumDisplayUi: {fileID: 5730032930054460824, guid: 4afbde4a955f58046aba3910536a5985, type: 3}
+  momentumDisplayReferencesREF: {fileID: 0}
 --- !u!1 &491710907
 GameObject:
   m_ObjectHideFlags: 0
@@ -81,7 +106,7 @@ GameObject:
   - component: {fileID: 491710908}
   - component: {fileID: 491710909}
   m_Layer: 0
-  m_Name: (1-3) Quick Punch
+  m_Name: Quick Punch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -116,10 +141,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilityName: Quick Punch
   abilityDescription: Dayum sun where'd you find this !?
-  abilityDamage: 15
-  abilityCost: 0
+  abilityDamage: 5
+  abilityDuration: 0
+  abilityCost: 2
   abilityRadius: {fileID: 101378328}
   intToTriggerThisAbility: 010000000200000003000000
+  momentumREF: {fileID: 6802778721011314917}
 --- !u!1 &931232967
 GameObject:
   m_ObjectHideFlags: 0
@@ -130,7 +157,7 @@ GameObject:
   m_Component:
   - component: {fileID: 931232968}
   m_Layer: 0
-  m_Name: (6) Tornado
+  m_Name: Tornado
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -150,6 +177,38 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2852465711971634605}
   m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1093007782179111487
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3650573428539752612}
+  m_Layer: 0
+  m_Name: ' Self Radius'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &3650573428539752612
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1093007782179111487}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 720292846865693636}
+  m_Father: {fileID: 7098479322308603433}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5300471774423929097
 GameObject:
@@ -206,7 +265,6 @@ MonoBehaviour:
   - {fileID: 6058825904368483334}
   - {fileID: 6058825905946753954}
   passiveHightlightColor: {r: 0, g: 0.7291813, b: 1, a: 0.5882353}
-  defaultHightlightColor: {r: 0.043137256, g: 1, b: 0, a: 0.41960785}
 --- !u!1001 &5271434
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1241,6 +1299,112 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4289649503520861611, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
   m_PrefabInstance: {fileID: 1509172377211556822}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &3636968933894231663
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 3650573428539752612}
+    m_Modifications:
+    - target: {fileID: 4004632824781905355, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: m_Name
+      value: Active Target Cube
+      objectReference: {fileID: 0}
+    - target: {fileID: 4004632824781905355, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289649503520861268, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: m_Name
+      value: 'Damageable Detection Trigger '
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289649503520861271, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: isTargetingSelf
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289649503520861271, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: fireAbilityEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289649503520861271, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: fireAbilityEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289649503520861271, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: fireAbilityEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1400129267}
+    - target: {fileID: 4289649503520861271, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: fireAbilityEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289649503520861271, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: fireAbilityEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SelectAbility
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289649503520861271, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: fireAbilityEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SelectAbilityToCast, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289649503520861271, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: fireAbilityEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289649503520861609, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 483e114e74eb4db4799221c89b24bd85, type: 2}
+    - target: {fileID: 4289649503520861611, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289649503520861611, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289649503520861611, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289649503520861611, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289649503520861611, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289649503520861611, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289649503520861611, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289649503520861611, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289649503520861611, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289649503520861611, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289649503520861611, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+--- !u!4 &720292846865693636 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4289649503520861611, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
+  m_PrefabInstance: {fileID: 3636968933894231663}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &9009304483653912117
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1408,7 +1572,7 @@ MonoBehaviour:
   abilityNumber: 0
   moveset:
   - {fileID: 491710909}
-  - {fileID: 491710909}
+  - {fileID: 6802778721011314917}
   - {fileID: 491710909}
   customUiElements: []
   oneSqRadius: {fileID: 0}

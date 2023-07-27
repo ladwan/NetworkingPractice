@@ -4,47 +4,53 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class CombatUiStatesManager : MonoBehaviour
+namespace ForverFight.Ui
 {
-    [SerializeField]
-    private combatUiState currentCombatUiState = combatUiState.unselected;
-
-
-    public delegate void CombatUiStatesDelegate();
-    public event CombatUiStatesDelegate onCombatUiStateChange;
-    public enum combatUiState
+    public class CombatUiStatesManager : MonoBehaviour
     {
-        unselected = 0,
-        main = 1,
-        movement = 2,
-        attack = 3,
-    };
-
-
-    private static CombatUiStatesManager instance;
-
-    public static CombatUiStatesManager Instance { get => instance; set => instance = value; }
-
-    public combatUiState CurrentCombatUiState => currentCombatUiState;
-
-
-    protected void Awake()
-    {
-        if (instance == null)
+        public enum CombatUiState
         {
-            instance = this;
-        }
-        else if (instance != this)
+            unselected = 0,
+            main = 1,
+            movement = 2,
+            attack = 3,
+        };
+
+
+        [SerializeField]
+        private CombatUiState currentCombatUiState = CombatUiState.unselected;
+        [SerializeField]
+        private Action onCombatUiStateChange = null;
+
+
+        private static CombatUiStatesManager instance;
+
+
+        public CombatUiState CurrentCombatUiState => currentCombatUiState;
+
+        public Action OnCombatUiStateChange { get => onCombatUiStateChange; set => onCombatUiStateChange = value; }
+
+        public static CombatUiStatesManager Instance { get => instance; set => instance = value; }
+
+
+        protected void Awake()
         {
-            Debug.Log("Instance already exsists, destroying object!");
-            Destroy(this);
+            if (instance == null)
+            {
+                instance = this;
+            }
+            else if (instance != this)
+            {
+                Debug.Log("Instance already exsists, destroying object!");
+                Destroy(this);
+            }
         }
-    }
 
 
-    public void SetCombatUiState(int value)
-    {
-        currentCombatUiState = (combatUiState)value;
-        onCombatUiStateChange?.Invoke();
+        public void SetCombatUiState(int value)
+        {
+            currentCombatUiState = (CombatUiState)value;
+            onCombatUiStateChange?.Invoke();
+        }
     }
 }

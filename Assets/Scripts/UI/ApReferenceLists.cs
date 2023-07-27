@@ -90,7 +90,7 @@ public class ApReferenceLists : MonoBehaviour
         }
     }
 
-    public void EmptyAllAP()
+    public void HideAllApLights()
     {
         for (int i = 0; i < apLights.Count; i++)
         {

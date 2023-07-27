@@ -60,10 +60,9 @@ namespace ForverFight.Ui
 
         public void UpdateAP(ApReferenceLists referenceLists, int addend)
         {
-            referenceLists.EmptyAllAP();
             SetCurrentlyActiveReferenceList(referenceLists);
-            referenceLists.UpdateValueOfRelevantAp(addend);
-            referenceLists.ShowAp(referenceLists.UpdateValueOfRelevantAp(0));
+            referenceLists.HideAllApLights();
+            DetermineIfUpdatedApShouldBeShown(referenceLists, addend);
 
             if (playerTurnHasEnded)
             {
@@ -144,6 +143,10 @@ namespace ForverFight.Ui
                 UpdateAP(referenceLists, referenceLists.ApLightsToBeBlinked.Count);
                 referenceLists.ApLightsToBeBlinked.Clear();
             }
+            else
+            {
+                UpdateAP(referenceLists, 0);
+            }
         }
 
         public void BlinkCurrentListReference()
@@ -167,6 +170,25 @@ namespace ForverFight.Ui
             }
         }
 
+
+        private void DetermineIfUpdatedApShouldBeShown(ApReferenceLists referenceLists, int addend)
+        {
+            if (referenceLists.currentApDisplayType != ApReferenceLists.apDisplayTypes.speedster)
+            {
+                referenceLists.ShowAp(referenceLists.UpdateValueOfRelevantAp(addend)); //First UpdateValueOfRelevantAp() will return the sum of our current Ap and the added // Then ShowAp() will display aplights equal to that sum
+            }
+            else
+            {
+                if (CombatUiStatesManager.Instance.CurrentCombatUiState == CombatUiStatesManager.CombatUiState.movement)
+                {
+                    referenceLists.ShowAp(referenceLists.UpdateValueOfRelevantAp(addend));
+                }
+                else
+                {
+                    referenceLists.UpdateValueOfRelevantAp(addend);
+                }
+            }
+        }
 
         private void SetCurrentlyActiveReferenceList(ApReferenceLists referenceLists)
         {
