@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using ForverFight.Networking;
+using ForverFight.Ui;
 
 namespace ForverFight.GameMechanics
 {

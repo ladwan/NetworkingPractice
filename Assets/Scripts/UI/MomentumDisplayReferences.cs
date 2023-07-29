@@ -21,6 +21,7 @@ namespace ForverFight.Ui
 
         public Momentum MomentumREF { get => momentumREF; set => momentumREF = value; }
 
+
         protected void OnEnable()
         {
             BeginCoroutine();

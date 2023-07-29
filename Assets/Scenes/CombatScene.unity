@@ -233,6 +233,7 @@ MonoBehaviour:
   parentTransform: {fileID: 22784689}
   characterSpecificUi: {fileID: 0}
   statusEffectDurationTmp: {fileID: 950917292}
+  formatter: {fileID: 0}
   isOccupied: 0
 --- !u!1 &32644997
 GameObject:
@@ -24387,6 +24388,7 @@ MonoBehaviour:
   parentTransform: {fileID: 962850672}
   characterSpecificUi: {fileID: 0}
   statusEffectDurationTmp: {fileID: 1400175525}
+  formatter: {fileID: 0}
   isOccupied: 0
 --- !u!1 &963194225
 GameObject:
@@ -26800,7 +26802,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -26814,7 +26816,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1894161449}
   m_FillRect: {fileID: 1894161448}
   m_HandleRect: {fileID: 0}
@@ -27202,6 +27204,7 @@ MonoBehaviour:
   parentTransform: {fileID: 1365734225}
   characterSpecificUi: {fileID: 0}
   statusEffectDurationTmp: {fileID: 221595247}
+  formatter: {fileID: 0}
   isOccupied: 0
 --- !u!1 &1397647818
 GameObject:
@@ -28239,6 +28242,7 @@ MonoBehaviour:
   parentTransform: {fileID: 1527489845}
   characterSpecificUi: {fileID: 0}
   statusEffectDurationTmp: {fileID: 1056159940}
+  formatter: {fileID: 0}
   isOccupied: 0
 --- !u!1 &1535058858
 GameObject:
@@ -31094,6 +31098,7 @@ MonoBehaviour:
   parentTransform: {fileID: 1951778147}
   characterSpecificUi: {fileID: 0}
   statusEffectDurationTmp: {fileID: 1928457232}
+  formatter: {fileID: 0}
   isOccupied: 0
 --- !u!1 &1953178007
 GameObject:
@@ -31247,7 +31252,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -31261,7 +31266,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1898352986}
   m_FillRect: {fileID: 1898352985}
   m_HandleRect: {fileID: 0}
@@ -31930,6 +31935,7 @@ MonoBehaviour:
   parentTransform: {fileID: 2025603972}
   characterSpecificUi: {fileID: 0}
   statusEffectDurationTmp: {fileID: 1141898701}
+  formatter: {fileID: 0}
   isOccupied: 0
 --- !u!1 &2033176565
 GameObject:

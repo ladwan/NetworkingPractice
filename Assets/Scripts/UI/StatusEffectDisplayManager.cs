@@ -32,6 +32,7 @@ namespace ForverFight.Ui
             }
         }
 
+
         public void AddStatusEffectDisplay(GameObject uiToDisplay, int duration)
         {
             for (int i = 0; i < statusEffectDisplays.Count; i++)
@@ -74,6 +75,7 @@ namespace ForverFight.Ui
         }
 
 
+        //This is populating a StatusEffectDisplay(class) with values passed in from the Ui taken in from the characther
         private void HandleIncomingStatusEffectUi(GameObject uiToDisplay, int i, int duration)
         {
             var statusEffectDisplay = statusEffectDisplays[i];
@@ -82,19 +84,14 @@ namespace ForverFight.Ui
             statusEffectDisplay.CharacterSpecificUi.transform.SetAsFirstSibling();
             statusEffectDisplay.Formatter = uiToDisplay.GetComponent<StatusEffectDisplayFormatter>();
 
-
             if (statusEffectDisplay.Formatter)
             {
-                uiToDisplay.transform.localEulerAngles = statusEffectDisplay.Formatter.LocalEulerAngles;
-
                 uiToDisplay.transform.localScale = statusEffectDisplay.Formatter.LocalScale;
+                uiToDisplay.transform.localEulerAngles = statusEffectDisplay.Formatter.LocalEulerAngles;
             }
 
             UpdateDuration(statusEffectDisplay, duration);
             statusEffectDisplay.IsOccupied = true;
         }
-        //make slot not occupied when status effect ends
-        //take in ui elements
-        //get and display their remaining durations 
     }
 }

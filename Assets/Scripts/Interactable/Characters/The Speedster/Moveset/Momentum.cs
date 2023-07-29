@@ -39,6 +39,7 @@ namespace ForverFight.Interactable.Abilities
             }
         }
 
+
         protected Momentum()
         {
             AbilityName = "Momentum";
@@ -142,7 +143,7 @@ namespace ForverFight.Interactable.Abilities
                 }
             }
         }
-        //Once you use a damaging ability momentum is over
+
         //momentum is lost if immobilized
     }
 }

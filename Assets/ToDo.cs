@@ -15,15 +15,10 @@ public class ToDo : MonoBehaviour
 
     DO TODAY:
 
-        1) Health bars are click interactable , they should NOT be , fix this
-
-        2) Test current working abilities fix any edge cases you find
-     
-        3) Clean up the scripts from the new ui status effect displayer
+        1) Start working on the ult for the speedster
 
     ---------------------------------------------------------------------------
 
 
-        Start working on the ult for the speedster
     */
 }
