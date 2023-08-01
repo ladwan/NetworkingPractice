@@ -49,7 +49,7 @@ namespace ForverFight.Ui
         private GameObject currentAbilityRadius = null;
         private Button currentlyClickedButton = null;
         private int abilityValue = 99; // 99 is an arbitary value, we set it to this by default so we know we will get an error if we dont properly set this value before using it
-        private string infoPlaceholderText = "Please selcet an ability to display its info!";
+        private string infoPlaceholderText = "Please select an ability to display its info!";
 
 
         protected AbilitySelectionUiManager()
@@ -93,11 +93,12 @@ namespace ForverFight.Ui
             currentlyClickedButton = clickedButton;
         }
 
-        public void UpdateAbilityDescriptionIfno(int value)
+        public void UpdateAbilityDescriptionInfo(int value)
         {
             abilityDescriptionText.text = charReference.Moveset[value].AbilityDescription;
             abilityValue = value;
 
+            //When you click an ability, it triggers the AP to blink, once blinking in the background the AP value is decremented. So we reset that unused AP each time we click an ability to give player back ap they didnt spend
             ResetApUsageUiManager();
 
             if (!currentAbilityRadius)

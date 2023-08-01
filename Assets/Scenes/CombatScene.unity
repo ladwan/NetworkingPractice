@@ -5956,8 +5956,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1397647820}
-        m_TargetAssemblyTypeName: AbilitySelectionUiManager, Assembly-CSharp
-        m_MethodName: UpdateAbilityDescriptionIfno
+        m_TargetAssemblyTypeName: ForverFight.Ui.AbilitySelectionUiManager, Assembly-CSharp
+        m_MethodName: UpdateAbilityDescriptionInfo
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11869,8 +11869,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1397647820}
-        m_TargetAssemblyTypeName: AbilitySelectionUiManager, Assembly-CSharp
-        m_MethodName: UpdateAbilityDescriptionIfno
+        m_TargetAssemblyTypeName: ForverFight.Ui.AbilitySelectionUiManager, Assembly-CSharp
+        m_MethodName: UpdateAbilityDescriptionInfo
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -28083,8 +28083,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1397647820}
-        m_TargetAssemblyTypeName: AbilitySelectionUiManager, Assembly-CSharp
-        m_MethodName: UpdateAbilityDescriptionIfno
+        m_TargetAssemblyTypeName: ForverFight.Ui.AbilitySelectionUiManager, Assembly-CSharp
+        m_MethodName: UpdateAbilityDescriptionInfo
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

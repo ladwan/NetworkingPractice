@@ -8,7 +8,7 @@ using ForverFight.FlowControl;
 
 namespace ForverFight.Interactable.Abilities
 {
-    public class Momentum : CharAbility
+    public class Momentum : StatusEffect
     {
         [SerializeField]
         private int storedMomentum = 0;
@@ -93,7 +93,7 @@ namespace ForverFight.Interactable.Abilities
             AbilitySelectionUiManager.Instance.AbilityBlockers[index].SetActive(!toggle);
             AbilitySelectionUiManager.Instance.CharacterSpecificUiDisplays[index].SetActive(!toggle);
 
-            if (toggle == false)
+            if (!toggle)
             {
                 if (AbilitySelectionUiManager.Instance.CharacterSpecificUiDisplays[index].transform.childCount == 0)
                 {
@@ -143,7 +143,6 @@ namespace ForverFight.Interactable.Abilities
                 }
             }
         }
-
         //momentum is lost if immobilized
     }
 }

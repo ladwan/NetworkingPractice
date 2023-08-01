@@ -10,7 +10,6 @@ public class DisplaySelectedChar : MonoBehaviour
 {
     [SerializeField]
     public Dictionary<Character.Identity, Character> myCharacterDictionary = new Dictionary<Character.Identity, Character>();
-
     [SerializeField]
     private Character.Identity playersIdentity;
     [SerializeField]

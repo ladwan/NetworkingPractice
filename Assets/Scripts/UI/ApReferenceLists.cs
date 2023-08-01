@@ -54,6 +54,7 @@ public class ApReferenceLists : MonoBehaviour
                 if (tempCharacter)
                 {
                     speedsterREF = tempCharacter;
+                    maxAP = SpeedsterREF.FasterPassive.MaxPassiveAp;
                     return speedsterREF;
                 }
                 else
@@ -74,9 +75,6 @@ public class ApReferenceLists : MonoBehaviour
                 break;
             case apDisplayTypes.main:
                 maxAP = 9;
-                break;
-            case apDisplayTypes.speedster:
-                maxAP = 3;
                 break;
         }
     }
