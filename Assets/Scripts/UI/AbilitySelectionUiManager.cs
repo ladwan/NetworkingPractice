@@ -1,10 +1,12 @@
-using ForverFight.Interactable;
-using ForverFight.Networking;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using ForverFight.Networking;
+using ForverFight.Interactable;
+
 
 namespace ForverFight.Ui
 {
@@ -26,9 +28,13 @@ namespace ForverFight.Ui
         private TMP_Text abilityDescriptionText = null;
 
 
+        private Action<int> onSpawnButtonUi = null;
+        private Action onReadyToBeFormatted = null;
         private static AbilitySelectionUiManager instance = null;
 
 
+        public Action<int> OnSpawnButtonUi { get => onSpawnButtonUi; set => onSpawnButtonUi = value; }
+        public Action OnReadyToBeFormatted { get => onReadyToBeFormatted; set => onReadyToBeFormatted = value; }
         public List<Button> AbilityButtons => abilityButtons;
 
         public List<TMP_Text> AbilityTexts => abilityTexts;
@@ -154,11 +160,32 @@ namespace ForverFight.Ui
             ActionPointsManager.Instance.ResetApUsage(ActionPointsManager.Instance.MainApLists);
         }
 
+        public void ToggleAbilityDisplay(int index, bool toggle)
+        {
+            apCostDisplays[index].SetActive(toggle);
+            abilityBlockers[index].SetActive(!toggle);
+            characterSpecificUiDisplays[index].SetActive(!toggle);
+
+
+            if (!toggle)
+            {
+                if (GetTransformOfCharacterSpecificUiAtIndex(index).childCount == 0)
+                {
+                    onSpawnButtonUi?.Invoke(index);
+                }
+
+                onReadyToBeFormatted?.Invoke();
+            }
+        }
+
+        public Transform GetTransformOfCharacterSpecificUiAtIndex(int index) => characterSpecificUiDisplays[index].transform;
+
 
         private void ToggleAbilityRadius(bool toggle)
         {
             currentAbilityRadius.SetActive(toggle);
         }
+
         private void ToggleAbilityRadius(bool toggle, IEnumerator delayCallback)
         {
             currentAbilityRadius.SetActive(toggle);

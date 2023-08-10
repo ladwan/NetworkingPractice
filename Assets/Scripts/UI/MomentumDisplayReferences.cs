@@ -14,7 +14,6 @@ namespace ForverFight.Ui
 
 
         private Momentum momentumREF = null;
-        private Coroutine coroutineREF;
 
 
         public TMP_Text StoredMomentumDisplayTmp { get => storedMomentumDisplayTmp; set => storedMomentumDisplayTmp = value; }
@@ -22,33 +21,12 @@ namespace ForverFight.Ui
         public Momentum MomentumREF { get => momentumREF; set => momentumREF = value; }
 
 
-        protected void OnEnable()
+        public void SubscribeToOnMoveConfirmed(Momentum momentumInstance)
         {
-            BeginCoroutine();
-        }
-
-
-        private void BeginCoroutine()
-        {
-            EndCoroutine();
-            coroutineREF = StartCoroutine(WaitForMomentumReference());
-        }
-
-        private void EndCoroutine()
-        {
-            if (coroutineREF != null)
-            {
-                StopCoroutine(coroutineREF);
-                coroutineREF = null;
-            }
-        }
-
-        private IEnumerator WaitForMomentumReference()
-        {
-            yield return new WaitUntil(() => momentumREF);
-
+            momentumREF = momentumInstance;
             momentumREF.OnMoveConfirmed += UpdateMomentumDisplayText;
         }
+
 
         private void UpdateMomentumDisplayText()
         {

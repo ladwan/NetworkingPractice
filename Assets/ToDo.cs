@@ -30,5 +30,13 @@ public class ToDo : MonoBehaviour
 
     Continue refctoring  Status Effect logic , genericize momentum logic
 
+    // Status Effect Ui Displays are made for both the status effect manager and the ability button itsself, these are two separate instatiations (which is likely necessary) that are update in two separate ways (which is likely unnecessary)
+
+
+    Format ui after it is parented under the status effect display manager!
+
+
+    decoulpe attack ui logic from attack ui visuals
+
     */
 }

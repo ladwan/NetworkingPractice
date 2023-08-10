@@ -233,6 +233,7 @@ MonoBehaviour:
   parentTransform: {fileID: 22784689}
   characterSpecificUi: {fileID: 0}
   statusEffectDurationTmp: {fileID: 950917292}
+  displayedStatusEffectType: 0
   formatter: {fileID: 0}
   isOccupied: 0
 --- !u!1 &32644997
@@ -5812,7 +5813,6 @@ Transform:
   - {fileID: 2003473787}
   - {fileID: 1241826874}
   - {fileID: 1893315688}
-  - {fileID: 1187727700}
   m_Father: {fileID: 311792656}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -24388,6 +24388,7 @@ MonoBehaviour:
   parentTransform: {fileID: 962850672}
   characterSpecificUi: {fileID: 0}
   statusEffectDurationTmp: {fileID: 1400175525}
+  displayedStatusEffectType: 0
   formatter: {fileID: 0}
   isOccupied: 0
 --- !u!1 &963194225
@@ -26433,13 +26434,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1187727699}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 195005822}
-  m_RootOrder: 8
+  m_Father: {fileID: 1893315688}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1187727701
 MonoBehaviour:
@@ -27204,6 +27205,7 @@ MonoBehaviour:
   parentTransform: {fileID: 1365734225}
   characterSpecificUi: {fileID: 0}
   statusEffectDurationTmp: {fileID: 221595247}
+  displayedStatusEffectType: 0
   formatter: {fileID: 0}
   isOccupied: 0
 --- !u!1 &1397647818
@@ -28242,6 +28244,7 @@ MonoBehaviour:
   parentTransform: {fileID: 1527489845}
   characterSpecificUi: {fileID: 0}
   statusEffectDurationTmp: {fileID: 1056159940}
+  displayedStatusEffectType: 0
   formatter: {fileID: 0}
   isOccupied: 0
 --- !u!1 &1535058858
@@ -29542,7 +29545,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99f52b9b459b51d47ade053bd1078463, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  statusEffectDisplays:
+  statusEffectDisplaySlots:
   - {fileID: 2025603977}
   - {fileID: 962850676}
   - {fileID: 1951778151}
@@ -30466,6 +30469,7 @@ Transform:
   m_Children:
   - {fileID: 484594182}
   - {fileID: 547977244}
+  - {fileID: 1187727700}
   m_Father: {fileID: 195005822}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -31098,6 +31102,7 @@ MonoBehaviour:
   parentTransform: {fileID: 1951778147}
   characterSpecificUi: {fileID: 0}
   statusEffectDurationTmp: {fileID: 1928457232}
+  displayedStatusEffectType: 0
   formatter: {fileID: 0}
   isOccupied: 0
 --- !u!1 &1953178007
@@ -31492,7 +31497,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.14047, y: 0.00000047684}
+  m_AnchoredPosition: {x: -0.5955, y: 0.00000047684}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1992690346
@@ -31935,6 +31940,7 @@ MonoBehaviour:
   parentTransform: {fileID: 2025603972}
   characterSpecificUi: {fileID: 0}
   statusEffectDurationTmp: {fileID: 1141898701}
+  displayedStatusEffectType: 0
   formatter: {fileID: 0}
   isOccupied: 0
 --- !u!1 &2033176565

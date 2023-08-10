@@ -1,20 +1,20 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ForverFight.Interactable.Abilities;
 
 namespace ForverFight.Ui
 {
     public class StatusEffectDisplayManager : MonoBehaviour
     {
         [SerializeField]
-        private List<StatusEffectDisplay> statusEffectDisplays = new List<StatusEffectDisplay>();
+        private List<StatusEffectDisplay> statusEffectDisplaySlots = new List<StatusEffectDisplay>();
 
 
         private static StatusEffectDisplayManager instance = null;
 
 
-        public List<StatusEffectDisplay> StatusEffectDisplays { get => statusEffectDisplays; set => statusEffectDisplays = value; }
+        public List<StatusEffectDisplay> StatusEffectDisplaySlots { get => statusEffectDisplaySlots; set => statusEffectDisplaySlots = value; }
 
         public static StatusEffectDisplayManager Instance { get => instance; set => instance = value; }
 
@@ -33,13 +33,13 @@ namespace ForverFight.Ui
         }
 
 
-        public void AddStatusEffectDisplay(GameObject uiToDisplay, int duration)
+        public void AddStatusEffectDisplay(StatusEffect.StatusEffectStruct formattedStatusEffectData)
         {
-            for (int i = 0; i < statusEffectDisplays.Count; i++)
+            for (int i = 0; i < statusEffectDisplaySlots.Count; i++)
             {
-                if (!statusEffectDisplays[i].IsOccupied)
+                if (!statusEffectDisplaySlots[i].IsOccupied)
                 {
-                    HandleIncomingStatusEffectUi(uiToDisplay, i, duration);
+                    HandleIncomingStatusEffectUi(formattedStatusEffectData, i);
                     break;
                 }
             }
@@ -52,17 +52,17 @@ namespace ForverFight.Ui
 
         public void ReduceDurations()
         {
-            for (int i = 0; i < statusEffectDisplays.Count; i++)
+            for (int i = 0; i < statusEffectDisplaySlots.Count; i++)
             {
-                if (Int32.TryParse(statusEffectDisplays[i].StatusEffectDurationTmp.text, out int n))
+                if (Int32.TryParse(statusEffectDisplaySlots[i].StatusEffectDurationTmp.text, out int n))
                 {
                     n--;
                     if (n <= 0)
                     {
-                        CleanUpExpiredStatusEffect(statusEffectDisplays[i]);
+                        CleanUpExpiredStatusEffect(statusEffectDisplaySlots[i]);
                         continue;
                     }
-                    statusEffectDisplays[i].StatusEffectDurationTmp.text = n.ToString();
+                    statusEffectDisplaySlots[i].StatusEffectDurationTmp.text = n.ToString();
                 }
             }
         }
@@ -71,27 +71,23 @@ namespace ForverFight.Ui
         {
             Destroy(display.CharacterSpecificUi);
             display.StatusEffectDurationTmp.text = "";
+            display.DisplayedStatusEffectType = StatusEffect.StatusEffectType.None;
             display.IsOccupied = false;
         }
 
 
-        //This is populating a StatusEffectDisplay(class) with values passed in from the Ui taken in from the characther
-        private void HandleIncomingStatusEffectUi(GameObject uiToDisplay, int i, int duration)
+        //This is populating a StatusEffectDisplay(class) with values passed in from the formattedStatusEffectData taken in from the status effect.cs
+        private void HandleIncomingStatusEffectUi(StatusEffect.StatusEffectStruct formattedStatusEffectData, int i)
         {
-            var statusEffectDisplay = statusEffectDisplays[i];
-            statusEffectDisplay.CharacterSpecificUi = uiToDisplay;
-            uiToDisplay.transform.SetParent(statusEffectDisplay.ParentTransform);
-            statusEffectDisplay.CharacterSpecificUi.transform.SetAsFirstSibling();
-            statusEffectDisplay.Formatter = uiToDisplay.GetComponent<StatusEffectDisplayFormatter>();
-
-            if (statusEffectDisplay.Formatter)
-            {
-                uiToDisplay.transform.localScale = statusEffectDisplay.Formatter.LocalScale;
-                uiToDisplay.transform.localEulerAngles = statusEffectDisplay.Formatter.LocalEulerAngles;
-            }
-
-            UpdateDuration(statusEffectDisplay, duration);
-            statusEffectDisplay.IsOccupied = true;
+            var statusEffectDisplaySlot = statusEffectDisplaySlots[i];
+            statusEffectDisplaySlot.DisplayedStatusEffectType = formattedStatusEffectData.effectType;
+            statusEffectDisplaySlot.CharacterSpecificUi = formattedStatusEffectData.characterSpecificUi;
+            statusEffectDisplaySlot.CharacterSpecificUi.transform.SetParent(statusEffectDisplaySlot.ParentTransform);
+            statusEffectDisplaySlot.CharacterSpecificUi.transform.SetAsFirstSibling();
+            statusEffectDisplaySlot.CharacterSpecificUi.transform.localScale = formattedStatusEffectData.formatter.LocalScale;
+            statusEffectDisplaySlot.CharacterSpecificUi.transform.localEulerAngles = formattedStatusEffectData.formatter.LocalEulerAngles;
+            UpdateDuration(statusEffectDisplaySlot, formattedStatusEffectData.duration);
+            statusEffectDisplaySlot.IsOccupied = true;
         }
     }
 }

@@ -19,8 +19,6 @@ namespace ForverFight.Interactable.Abilities
         [SerializeField]
         private GameObject momentumDisplayUi = null;
         [SerializeField]
-        private MomentumDisplayReferences momentumDisplayReferencesREF = null;
-        [SerializeField]
         private Action onMoveConfirmed = null;
 
 
@@ -47,25 +45,32 @@ namespace ForverFight.Interactable.Abilities
             AbilityDamage = 0;
             AbilityDuration = 3;
             AbilityCost = 4;
+            CurrentStatusEffectType = StatusEffectType.Momentum;
         }
 
         protected void OnEnable()
         {
             FloorGrid.Instance.OnMoveConfirmed += GetHoveredOverGridPointsCount;
             PlayerTurnManager.Instance.OnTurnEnd += UpdateAbilityDuration;
+            AbilitySelectionUiManager.Instance.OnSpawnButtonUi += InstantiateStatusEffectUiOnButton;
+            AbilitySelectionUiManager.Instance.OnReadyToBeFormatted += SendStatusEffectDataToBeFormatted;
+            OnStatusEffectFormatted += PassReferences;
         }
 
         protected void OnDisable()
         {
             FloorGrid.Instance.OnMoveConfirmed -= GetHoveredOverGridPointsCount;
             PlayerTurnManager.Instance.OnTurnEnd -= UpdateAbilityDuration;
+            AbilitySelectionUiManager.Instance.OnSpawnButtonUi -= InstantiateStatusEffectUiOnButton;
+            AbilitySelectionUiManager.Instance.OnReadyToBeFormatted -= SendStatusEffectDataToBeFormatted;
+            OnStatusEffectFormatted -= PassReferences;
         }
 
 
         public override void CastAbility()
         {
             statusActive = true;
-            ToggleAbilityDisplay(1, false);
+            AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(1, false); // Pass a 1 because you want the second index of the list because this is the second ability
         }
 
         public void StopAbility()
@@ -87,29 +92,29 @@ namespace ForverFight.Interactable.Abilities
         }
 
 
-        private void ToggleAbilityDisplay(int index, bool toggle)
+        private void InstantiateStatusEffectUiOnButton(int index)
         {
-            AbilitySelectionUiManager.Instance.ApCostDisplays[index].SetActive(toggle);
-            AbilitySelectionUiManager.Instance.AbilityBlockers[index].SetActive(!toggle);
-            AbilitySelectionUiManager.Instance.CharacterSpecificUiDisplays[index].SetActive(!toggle);
-
-            if (!toggle)
-            {
-                if (AbilitySelectionUiManager.Instance.CharacterSpecificUiDisplays[index].transform.childCount == 0)
-                {
-                    InstantiateMomentumUi(AbilitySelectionUiManager.Instance.CharacterSpecificUiDisplays[index].transform);
-                }
-
-                StatusEffectDisplayManager.Instance.AddStatusEffectDisplay(InstantiateMomentumUi(transform), AbilityDuration);
-            }
+            var tempMomentumDisplay = Instantiate(momentumDisplayUi, AbilitySelectionUiManager.Instance.GetTransformOfCharacterSpecificUiAtIndex(index));
+            var momentumDisplayReferencesREF = tempMomentumDisplay.GetComponent<MomentumDisplayReferences>();
+            momentumDisplayReferencesREF.SubscribeToOnMoveConfirmed(this);
         }
 
-        private GameObject InstantiateMomentumUi(Transform parentTransform)
+        private void SendStatusEffectDataToBeFormatted()
         {
-            var tempMomentumDisplay = Instantiate(momentumDisplayUi, parentTransform);
-            var momentumDisplayReferencesREF = tempMomentumDisplay.GetComponent<MomentumDisplayReferences>();
-            momentumDisplayReferencesREF.MomentumREF = this;
-            return tempMomentumDisplay;
+            FormatStatusEffectDisplayData(momentumDisplayUi, AbilityDuration, CurrentStatusEffectType);
+        }
+
+        private void PassReferences()
+        {
+            var momentumDisplayReferencesREF = FormattedStatusEffectData.characterSpecificUi.GetComponent<MomentumDisplayReferences>();
+            try
+            {
+                momentumDisplayReferencesREF.SubscribeToOnMoveConfirmed(this);
+            }
+            catch (Exception error)
+            {
+                Debug.LogError($"No 'MomentumDisplayReferences' component found! {error}");
+            }
         }
 
         private void UpdateAbilityDuration()
@@ -123,26 +128,11 @@ namespace ForverFight.Interactable.Abilities
                     statusActive = false;
                     storedMomentum = 0;
                     AbilityDuration = 3;
-                    ToggleAbilityDisplay(1, true);
-                    CheckForStatusEffectCleanup();
+                    AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(1, true);
                 }
             }
         }
 
-        private void CheckForStatusEffectCleanup()
-        {
-            for (int i = 0; i < StatusEffectDisplayManager.Instance.StatusEffectDisplays.Count; i++)
-            {
-                var display = StatusEffectDisplayManager.Instance.StatusEffectDisplays[i];
-                if (display.IsOccupied)
-                {
-                    if (display.Formatter.CurrentStatusEffectType == StatusEffectDisplayFormatter.StatusEffectType.Momentum)
-                    {
-                        StatusEffectDisplayManager.Instance.CleanUpExpiredStatusEffect(display);
-                    }
-                }
-            }
-        }
         //momentum is lost if immobilized
     }
 }
