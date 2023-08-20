@@ -14,6 +14,7 @@ namespace ForverFight.Interactable.Abilities
         {
             None = 0,
             Momentum = 1,
+            Haste = 2,
         }
 
 
@@ -29,17 +30,28 @@ namespace ForverFight.Interactable.Abilities
 
         [SerializeField]
         private StatusEffectType currentStatusEffectType = StatusEffectType.None;
+        [SerializeField]
+        private int maxAbilityDuration = 0;
+        [SerializeField]
+        private int currentAbilityDuration = 0;
 
 
-        private Action onStatusEffectFormatted = null;
+        private Action<StatusEffectType> onStatusEffectFormatted = null;
+        private Action<StatusEffectType> onStatusEffectEnded = null;
         private StatusEffectStruct formattedStatusEffectData = new();
 
 
-        public Action OnStatusEffectFormatted { get => onStatusEffectFormatted; set => onStatusEffectFormatted = value; }
+        public Action<StatusEffectType> OnStatusEffectFormatted { get => onStatusEffectFormatted; set => onStatusEffectFormatted = value; }
+
+        public Action<StatusEffectType> OnStatusEffectEnded { get => onStatusEffectEnded; set => onStatusEffectEnded = value; }
 
         public StatusEffectStruct FormattedStatusEffectData => formattedStatusEffectData;
 
         public StatusEffectType CurrentStatusEffectType { get => currentStatusEffectType; set => currentStatusEffectType = value; }
+
+        public int MaxAbilityDuration { get => maxAbilityDuration; set => maxAbilityDuration = value; }
+
+        public int CurrentAbilityDuration { get => currentAbilityDuration; set => currentAbilityDuration = value; }
 
 
         public void FormatStatusEffectDisplayData(GameObject uiToBeInstantiated, int currentDuration, StatusEffectType abilityStatusEffectType)
@@ -52,7 +64,7 @@ namespace ForverFight.Interactable.Abilities
 
             if (formattedStatusEffectData.formatter)
             {
-                onStatusEffectFormatted?.Invoke();
+                onStatusEffectFormatted?.Invoke(abilityStatusEffectType);
                 SendFormattedDataToManager();
             }
             else
@@ -60,6 +72,50 @@ namespace ForverFight.Interactable.Abilities
                 Debug.LogError("A 'StatusEffectDisplayFormatter' component could not be found !");
             }
         }
+
+        public int UpdateStatusEffectDuration(int abilityIndex, int currentAbilityDuration, int maxAbilityDuration, StatusEffectType type)
+        {
+            if (currentAbilityDuration > 0)
+            {
+                currentAbilityDuration--;
+                if (currentAbilityDuration == 0)
+                {
+                    onStatusEffectEnded?.Invoke(type);
+                    currentAbilityDuration = maxAbilityDuration;
+                    AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(abilityIndex, true, type);
+                    return currentAbilityDuration;
+                }
+                else
+                {
+                    return currentAbilityDuration;
+                }
+            }
+
+            Debug.Log("Status was not active or duration is already 0!");
+            return 0;
+        }
+
+        public bool IsTheMostRecentlyClickedAbilty(int statusEffectIdentiferInt)
+        {
+            return AbilitySelectionUiManager.Instance.SelectedAbilityInt == statusEffectIdentiferInt;
+        }
+
+        public StatusEffectDisplay GetMatchingStatusEffectSlot(StatusEffectType type)
+        {
+            for (int i = 0; i < StatusEffectDisplayManager.Instance.StatusEffectDisplaySlots.Count; i++)
+            {
+                var displaySlot = StatusEffectDisplayManager.Instance.StatusEffectDisplaySlots[i];
+
+                if (displaySlot.DisplayedStatusEffectType == type)
+                {
+                    return displaySlot;
+                }
+            }
+
+            Debug.LogError("No slot with matching type was found !");
+            return null;
+        }
+
 
 
         private GameObject InstantiateStatusEffectUi(GameObject uiPrefab, Transform parentTransform)

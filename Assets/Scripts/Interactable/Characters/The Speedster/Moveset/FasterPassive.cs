@@ -22,8 +22,8 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
     private Color passiveHightlightColor = Color.black;
 
 
-    private int passiveAp = 6;
-    private int maxPassiveAp = 6;
+    private int passiveAp = 3;
+    private int maxPassiveAp = 3;
     private Coroutine coroutineREF = null;
     private MeshRenderer meshRendererREF = null;
     private List<MeshRenderer> passiveHighlightedMeshRenderers = new List<MeshRenderer>();
@@ -83,7 +83,7 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
 
     public Color PassiveHightlightColor { get => passiveHightlightColor; set => passiveHightlightColor = value; }
 
-    public int MaxPassiveAp => maxPassiveAp;
+    public int MaxPassiveAp { get => maxPassiveAp; set => maxPassiveAp = value; }
 
     #endregion
 
@@ -159,6 +159,14 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
     public void UpdateMaxApValue(int value)
     {
         maxPassiveAp = value;
+    }
+
+    public void SetMaxPassiveApPool(int value)
+    {
+        var spentAp = maxPassiveAp - passiveAp;
+        maxPassiveAp = value;
+        var difference = (maxPassiveAp - passiveAp) - spentAp;
+        ActionPointsManager.Instance.UpdateAP(referenceLists, difference);
     }
 
 

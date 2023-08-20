@@ -10,12 +10,24 @@ namespace ForverFight.Interactable.Abilities
         [SerializeField]
         private Momentum momentumREF = null;
 
+
+        private GameObject originalRadius = null;
+
+
+        public GameObject OriginalRadius { get => originalRadius; set => originalRadius = value; }
+
+
         protected QuickPunch()
         {
             AbilityName = "Quick Punch";
             AbilityDescription = "Dayum sun where'd you find this !?";
             AbilityDamage = 5;
             AbilityCost = 2;
+        }
+
+        protected void Awake()
+        {
+            originalRadius = AbilityRadius;
         }
 
 
@@ -28,6 +40,11 @@ namespace ForverFight.Interactable.Abilities
             //Screen shake?
             //Deal damage to enemies health bar ui
             //End turn
+        }
+
+        public void SetAbilityRadius(GameObject radius)
+        {
+            AbilityRadius = radius;
         }
     }
 }

@@ -14,29 +14,12 @@ public class ToDo : MonoBehaviour
 
     DO TODAY:
 
-        1) Start working on the ult for the speedster
+      If status effect 1 ends before status effect 2, slide that status effect back to the first open slot
+      Shorten die roll anim
+      Test game and refactor code
+      Look for edge cases 
 
     ---------------------------------------------------------------------------
-
-     Make status effect middle man
-     Meaning, make a class generic enough to handle all the base functionality EVERY status effect will have
-       Spawning in a ui, formatting that ui for the display manager, updating durations etc
-    
-    Define what a status effect is
-        is that better served by an interface or abstract class?
-
-    Char Abilty > Status Effect > Momentum needs to be the inheiritence chain
-    Status effect needs to be the layer that holds all of the logic for the status effect display manager
-
-    Continue refctoring  Status Effect logic , genericize momentum logic
-
-    // Status Effect Ui Displays are made for both the status effect manager and the ability button itsself, these are two separate instatiations (which is likely necessary) that are update in two separate ways (which is likely unnecessary)
-
-
-    Format ui after it is parented under the status effect display manager!
-
-
-    decoulpe attack ui logic from attack ui visuals
 
     */
 }

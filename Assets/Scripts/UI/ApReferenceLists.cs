@@ -14,7 +14,7 @@ public class ApReferenceLists : MonoBehaviour
     [SerializeField]
     private List<GameObject> apLights = new List<GameObject>();
     [SerializeField]
-    private int maxAP = 0;
+    private int mainApBarMaxAP = 9;
 
     public enum apDisplayTypes
     {
@@ -36,7 +36,7 @@ public class ApReferenceLists : MonoBehaviour
 
     public bool BlinkCoroutineIsRunning { get => blinkCoroutineIsRunning; set => blinkCoroutineIsRunning = value; }
 
-    public int MaxAP { get => maxAP; set => maxAP = value; }
+    public int MaxAP { get => mainApBarMaxAP; set => mainApBarMaxAP = value; }
 
     public apDisplayTypes CurrentApDisplayType => currentApDisplayType;
 
@@ -54,7 +54,6 @@ public class ApReferenceLists : MonoBehaviour
                 if (tempCharacter)
                 {
                     speedsterREF = tempCharacter;
-                    maxAP = SpeedsterREF.FasterPassive.MaxPassiveAp;
                     return speedsterREF;
                 }
                 else
@@ -63,19 +62,6 @@ public class ApReferenceLists : MonoBehaviour
                     return null;
                 }
             }
-        }
-    }
-
-
-    protected void Awake()
-    {
-        switch (currentApDisplayType)
-        {
-            case apDisplayTypes.unselected:
-                break;
-            case apDisplayTypes.main:
-                maxAP = 9;
-                break;
         }
     }
 
@@ -126,13 +112,13 @@ public class ApReferenceLists : MonoBehaviour
     {
         if (currentApDisplayType == apDisplayTypes.main)
         {
-            LocalStoredNetworkData.localPlayerCurrentAP = Mathf.Clamp(LocalStoredNetworkData.localPlayerCurrentAP + addend, 0, maxAP);
+            LocalStoredNetworkData.localPlayerCurrentAP = Mathf.Clamp(LocalStoredNetworkData.localPlayerCurrentAP + addend, 0, mainApBarMaxAP);
             return LocalStoredNetworkData.localPlayerCurrentAP;
         }
 
         if (currentApDisplayType == apDisplayTypes.speedster)
         {
-            SpeedsterREF.FasterPassive.PassiveAp = Mathf.Clamp(SpeedsterREF.FasterPassive.PassiveAp + addend, 0, maxAP);
+            SpeedsterREF.FasterPassive.PassiveAp = Mathf.Clamp(SpeedsterREF.FasterPassive.PassiveAp + addend, 0, SpeedsterREF.FasterPassive.MaxPassiveAp);
             return SpeedsterREF.FasterPassive.PassiveAp;
         }
         Debug.Log("Value to update was abnormal");
@@ -143,13 +129,13 @@ public class ApReferenceLists : MonoBehaviour
     {
         if (currentApDisplayType == apDisplayTypes.main)
         {
-            LocalStoredNetworkData.localPlayerCurrentAP = Mathf.Clamp(value, 0, maxAP);
+            LocalStoredNetworkData.localPlayerCurrentAP = Mathf.Clamp(value, 0, mainApBarMaxAP);
             return LocalStoredNetworkData.localPlayerCurrentAP;
         }
 
         if (currentApDisplayType == apDisplayTypes.speedster)
         {
-            SpeedsterREF.FasterPassive.PassiveAp = Mathf.Clamp(value, 0, maxAP);
+            SpeedsterREF.FasterPassive.PassiveAp = Mathf.Clamp(value, 0, SpeedsterREF.FasterPassive.MaxPassiveAp);
             return SpeedsterREF.FasterPassive.PassiveAp;
         }
 

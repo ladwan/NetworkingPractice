@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using ForverFight.FlowControl;
 using ForverFight.Interactable.Abilities;
 
 namespace ForverFight.Ui
@@ -32,6 +33,15 @@ namespace ForverFight.Ui
             }
         }
 
+        protected void OnEnable()
+        {
+            PlayerTurnManager.Instance.OnTurnEnd += ReduceDurations;
+        }
+        protected void OnDisable()
+        {
+            PlayerTurnManager.Instance.OnTurnEnd -= ReduceDurations;
+        }
+
 
         public void AddStatusEffectDisplay(StatusEffect.StatusEffectStruct formattedStatusEffectData)
         {
@@ -48,23 +58,6 @@ namespace ForverFight.Ui
         public void UpdateDuration(StatusEffectDisplay display, int value)
         {
             display.StatusEffectDurationTmp.text = value.ToString();
-        }
-
-        public void ReduceDurations()
-        {
-            for (int i = 0; i < statusEffectDisplaySlots.Count; i++)
-            {
-                if (Int32.TryParse(statusEffectDisplaySlots[i].StatusEffectDurationTmp.text, out int n))
-                {
-                    n--;
-                    if (n <= 0)
-                    {
-                        CleanUpExpiredStatusEffect(statusEffectDisplaySlots[i]);
-                        continue;
-                    }
-                    statusEffectDisplaySlots[i].StatusEffectDurationTmp.text = n.ToString();
-                }
-            }
         }
 
         public void CleanUpExpiredStatusEffect(StatusEffectDisplay display)
@@ -88,6 +81,23 @@ namespace ForverFight.Ui
             statusEffectDisplaySlot.CharacterSpecificUi.transform.localEulerAngles = formattedStatusEffectData.formatter.LocalEulerAngles;
             UpdateDuration(statusEffectDisplaySlot, formattedStatusEffectData.duration);
             statusEffectDisplaySlot.IsOccupied = true;
+        }
+
+        private void ReduceDurations()  // This does not actually decrement the duration of a status effect. It parses its duration into an int, then decrements that int in the local scope of this method
+        {
+            for (int i = 0; i < statusEffectDisplaySlots.Count; i++)
+            {
+                if (Int32.TryParse(statusEffectDisplaySlots[i].StatusEffectDurationTmp.text, out int n))
+                {
+                    n--;
+                    if (n <= 0)
+                    {
+                        CleanUpExpiredStatusEffect(statusEffectDisplaySlots[i]);
+                        continue;
+                    }
+                    statusEffectDisplaySlots[i].StatusEffectDurationTmp.text = n.ToString();
+                }
+            }
         }
     }
 }

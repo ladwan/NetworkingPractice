@@ -13,7 +13,7 @@ namespace ForverFight.Ui
             unselected = 0,
             main = 1,
             movement = 2,
-            attack = 3,
+            combat = 3,
         };
 
 

@@ -563,8 +563,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 45}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 397.40125, y: -60.05548}
-  m_SizeDelta: {x: 104.80249, y: 100.11096}
+  m_AnchoredPosition: {x: 402.5, y: -60.05548}
+  m_SizeDelta: {x: 105, y: 100.11096}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &97224476
 MonoBehaviour:
@@ -579,11 +579,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: -1
+  m_MinWidth: 105
   m_MinHeight: -1
-  m_PreferredWidth: -1
+  m_PreferredWidth: 104.80249
   m_PreferredHeight: -1
-  m_FlexibleWidth: 1
+  m_FlexibleWidth: -1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
 --- !u!114 &97224477
@@ -12910,6 +12910,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 1187727702}
+        m_TargetAssemblyTypeName: ForverFight.Ui.CombatUiStatesManager, Assembly-CSharp
+        m_MethodName: SetCombatUiState
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!1 &683877670
 GameObject:
   m_ObjectHideFlags: 0
@@ -13723,18 +13735,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 92420964}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
       - m_Target: {fileID: 766723295}
         m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
         m_MethodName: SetTrigger
@@ -13758,6 +13758,18 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 92420964}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 32644997}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
@@ -25006,7 +25018,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 172.5, y: -60.05548}
+  m_AnchoredPosition: {x: 182.5, y: -60.05548}
   m_SizeDelta: {x: 325, y: 100.11096}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1038216684
@@ -25083,7 +25095,7 @@ MonoBehaviour:
   m_fontSizeMin: 35
   m_fontSizeMax: 50
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -25546,7 +25558,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 172.5, y: -60.05548}
+  m_AnchoredPosition: {x: 182.5, y: -60.05548}
   m_SizeDelta: {x: 325, y: 100.11096}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1093060033
@@ -25603,7 +25615,7 @@ MonoBehaviour:
   m_fontSizeMin: 35
   m_fontSizeMax: 50
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -26536,12 +26548,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 10
+    m_Left: 20
     m_Right: 10
     m_Top: 10
     m_Bottom: 10
   m_ChildAlignment: 4
-  m_Spacing: 10
+  m_Spacing: 5
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
@@ -27288,6 +27300,7 @@ MonoBehaviour:
   - {fileID: 759765185}
   - {fileID: 416653635}
   abilityDescriptionText: {fileID: 987854976}
+  selectedAbilityInt: 0
 --- !u!1 &1397651739
 GameObject:
   m_ObjectHideFlags: 0
@@ -28694,12 +28707,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 10
+    m_Left: 20
     m_Right: 10
     m_Top: 10
     m_Bottom: 10
   m_ChildAlignment: 4
-  m_Spacing: 10
+  m_Spacing: 5
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
@@ -28743,7 +28756,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 172.5, y: -60.05548}
+  m_AnchoredPosition: {x: 182.5, y: -60.05548}
   m_SizeDelta: {x: 325, y: 100.11096}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1594655762
@@ -28820,7 +28833,7 @@ MonoBehaviour:
   m_fontSizeMin: 35
   m_fontSizeMax: 50
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -30118,8 +30131,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 45}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 397.40125, y: -60.05548}
-  m_SizeDelta: {x: 104.80249, y: 100.11096}
+  m_AnchoredPosition: {x: 402.5, y: -60.05548}
+  m_SizeDelta: {x: 105, y: 100.11096}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1834377736
 MonoBehaviour:
@@ -30134,11 +30147,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: -1
+  m_MinWidth: 105
   m_MinHeight: -1
-  m_PreferredWidth: -1
+  m_PreferredWidth: 105
   m_PreferredHeight: -1
-  m_FlexibleWidth: 1
+  m_FlexibleWidth: -1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
 --- !u!114 &1834377737
@@ -31321,8 +31334,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 45}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 397.40125, y: -60.05548}
-  m_SizeDelta: {x: 104.80249, y: 100.11096}
+  m_AnchoredPosition: {x: 402.5, y: -60.05548}
+  m_SizeDelta: {x: 105, y: 100.11096}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1958062065
 MonoBehaviour:
@@ -31337,11 +31350,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: -1
+  m_MinWidth: 105
   m_MinHeight: -1
-  m_PreferredWidth: -1
+  m_PreferredWidth: 104.80249
   m_PreferredHeight: -1
-  m_FlexibleWidth: 1
+  m_FlexibleWidth: -1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
 --- !u!114 &1958062066
@@ -31448,12 +31461,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 10
+    m_Left: 20
     m_Right: 10
     m_Top: 10
     m_Bottom: 10
   m_ChildAlignment: 4
-  m_Spacing: 10
+  m_Spacing: 5
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
@@ -31813,7 +31826,7 @@ MonoBehaviour:
   - {fileID: 1477957819}
   - {fileID: 991497348}
   - {fileID: 1837954118}
-  maxAP: 9
+  mainApBarMaxAP: 9
 --- !u!114 &2003473789
 MonoBehaviour:
   m_ObjectHideFlags: 0

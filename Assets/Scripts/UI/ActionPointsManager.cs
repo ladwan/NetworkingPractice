@@ -195,10 +195,12 @@ namespace ForverFight.Ui
             if (referenceLists == mainApLists)
             {
                 currentApReferenceListsREF = referenceLists;
+                Debug.Log("~~~  List changed to : MAIN  ~~~");
             }
             if (referenceLists.currentApDisplayType == ApReferenceLists.apDisplayTypes.speedster)
             {
                 currentApReferenceListsREF = referenceLists;
+                Debug.Log("~~~  List changed to : SPEEDSTER  ~~~");
             }
         }
     }

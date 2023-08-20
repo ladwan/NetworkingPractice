@@ -203,7 +203,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b651095ff66f194e8ffd14ff4b39e36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentStatusEffectType: 1
   localScale: {x: 0.7, y: 0.7, z: 0.7}
   localEulerAngles: {x: 0, y: 0, z: 45}
 --- !u!1 &5730032931070448932

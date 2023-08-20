@@ -100,8 +100,7 @@ namespace ForverFight.FlowControl
                 if (timeRanOut)
                 {
                     ActionPointsManager.Instance.PlayerTurnHasEnded = true;
-                    ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.MainApLists, ActionPointsManager.Instance.MainApLists.ApLightsToBeBlinked.Count);
-                    ActionPointsManager.Instance.UpdateBlinkingAP(ActionPointsManager.Instance.MainApLists);
+                    ActionPointsManager.Instance.MoveWasCanceled();
                     FloorGrid.Instance.EmptyGridPointList();
                     dragMovementREF.UpdateDragMoverPosition();
                     dragMovementREF.ResetDragMover();

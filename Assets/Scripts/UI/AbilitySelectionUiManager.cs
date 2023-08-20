@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using ForverFight.Networking;
 using ForverFight.Interactable;
-
+using ForverFight.Interactable.Abilities;
 
 namespace ForverFight.Ui
 {
@@ -26,15 +26,17 @@ namespace ForverFight.Ui
         List<GameObject> characterSpecificUiDisplays = new List<GameObject>();
         [SerializeField]
         private TMP_Text abilityDescriptionText = null;
+        [SerializeField]
+        private int selectedAbilityInt = 0;
 
 
-        private Action<int> onSpawnButtonUi = null;
-        private Action onReadyToBeFormatted = null;
+        private Action<int, StatusEffect.StatusEffectType> onSpawnButtonUi = null;
+        private Action<StatusEffect.StatusEffectType> onReadyToBeFormatted = null;
         private static AbilitySelectionUiManager instance = null;
 
 
-        public Action<int> OnSpawnButtonUi { get => onSpawnButtonUi; set => onSpawnButtonUi = value; }
-        public Action OnReadyToBeFormatted { get => onReadyToBeFormatted; set => onReadyToBeFormatted = value; }
+        public Action<int, StatusEffect.StatusEffectType> OnSpawnButtonUi { get => onSpawnButtonUi; set => onSpawnButtonUi = value; }
+        public Action<StatusEffect.StatusEffectType> OnReadyToBeFormatted { get => onReadyToBeFormatted; set => onReadyToBeFormatted = value; }
         public List<Button> AbilityButtons => abilityButtons;
 
         public List<TMP_Text> AbilityTexts => abilityTexts;
@@ -48,6 +50,8 @@ namespace ForverFight.Ui
         public List<GameObject> CharacterSpecificUiDisplays => characterSpecificUiDisplays;
 
         public static AbilitySelectionUiManager Instance => instance;
+
+        public int SelectedAbilityInt { get => selectedAbilityInt; set => selectedAbilityInt = value; }
 
 
         private Coroutine delaySub = null;
@@ -122,23 +126,26 @@ namespace ForverFight.Ui
 
         public void ResetCombatUi()
         {
-            abilityDescriptionText.text = infoPlaceholderText;
-
-            if (currentlyClickedButton)
+            if (CombatUiStatesManager.Instance.CurrentCombatUiState == CombatUiStatesManager.CombatUiState.combat)
             {
-                if (currentlyClickedButton.interactable == false)
+                abilityDescriptionText.text = infoPlaceholderText;
+
+                if (currentlyClickedButton)
                 {
-                    currentlyClickedButton.interactable = true;
+                    if (currentlyClickedButton.interactable == false)
+                    {
+                        currentlyClickedButton.interactable = true;
+                    }
                 }
-            }
 
-            if (currentAbilityRadius)
-            {
-                ToggleAbilityRadius(false);
-            }
+                if (currentAbilityRadius)
+                {
+                    ToggleAbilityRadius(false);
+                }
 
-            ResetApUsageUiManager();
-            DisableConfirmButtonInteractable();
+                ResetApUsageUiManager();
+                DisableConfirmButtonInteractable();
+            }
         }
 
         public void CastSelectedAbility()
@@ -160,7 +167,7 @@ namespace ForverFight.Ui
             ActionPointsManager.Instance.ResetApUsage(ActionPointsManager.Instance.MainApLists);
         }
 
-        public void ToggleAbilityDisplay(int index, bool toggle)
+        public void ToggleAbilityDisplay(int index, bool toggle, StatusEffect.StatusEffectType type)
         {
             apCostDisplays[index].SetActive(toggle);
             abilityBlockers[index].SetActive(!toggle);
@@ -171,10 +178,10 @@ namespace ForverFight.Ui
             {
                 if (GetTransformOfCharacterSpecificUiAtIndex(index).childCount == 0)
                 {
-                    onSpawnButtonUi?.Invoke(index);
+                    onSpawnButtonUi?.Invoke(index, type);
                 }
 
-                onReadyToBeFormatted?.Invoke();
+                onReadyToBeFormatted?.Invoke(type);
             }
         }
 

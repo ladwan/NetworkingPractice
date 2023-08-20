@@ -1,9 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using ForverFight.Interactable.Abilities;
-using System;
+using ForverFight.FlowControl;
 
 namespace ForverFight.Ui
 {
@@ -12,7 +13,8 @@ namespace ForverFight.Ui
         [SerializeField]
         private TMP_Text storedMomentumDisplayTmp = null;
 
-
+        private Action onMoveConfirmedSub = null;
+        private Action onTurnEndSub = null;
         private Momentum momentumREF = null;
 
 
@@ -24,13 +26,33 @@ namespace ForverFight.Ui
         public void SubscribeToOnMoveConfirmed(Momentum momentumInstance)
         {
             momentumREF = momentumInstance;
-            momentumREF.OnMoveConfirmed += UpdateMomentumDisplayText;
+
+            if (onMoveConfirmedSub == null)
+            {
+                momentumREF.OnMoveConfirmed += UpdateMomentumDisplayText;
+            }
+            if (onTurnEndSub == null)
+            {
+                PlayerTurnManager.Instance.OnTurnEnd += UpdateMomentumDisplayText;
+            }
         }
 
 
         private void UpdateMomentumDisplayText()
         {
             StoredMomentumDisplayTmp.text = momentumREF.StoredMomentum.ToString();
+        }
+
+        private void OnDestroy()
+        {
+            if (onMoveConfirmedSub != null)
+            {
+                momentumREF.OnMoveConfirmed -= UpdateMomentumDisplayText;
+            }
+            if (onTurnEndSub != null)
+            {
+                PlayerTurnManager.Instance.OnTurnEnd -= UpdateMomentumDisplayText;
+            }
         }
     }
 }
