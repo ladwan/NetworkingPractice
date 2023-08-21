@@ -13,6 +13,7 @@ namespace ForverFight.Ui
 
 
         private static StatusEffectDisplayManager instance = null;
+        private int indexOfDisplayToBeDeleted = 99; //99 is an arbitrary number, meant to cause an out of range expection if we dont set it properly before using it
 
 
         public List<StatusEffectDisplay> StatusEffectDisplaySlots { get => statusEffectDisplaySlots; set => statusEffectDisplaySlots = value; }
@@ -66,6 +67,9 @@ namespace ForverFight.Ui
             display.StatusEffectDurationTmp.text = "";
             display.DisplayedStatusEffectType = StatusEffect.StatusEffectType.None;
             display.IsOccupied = false;
+
+
+            // UpdateStatusEffectDisplayOrder();
         }
 
 
@@ -92,6 +96,7 @@ namespace ForverFight.Ui
                     n--;
                     if (n <= 0)
                     {
+                        indexOfDisplayToBeDeleted = i;
                         CleanUpExpiredStatusEffect(statusEffectDisplaySlots[i]);
                         continue;
                     }
@@ -99,5 +104,67 @@ namespace ForverFight.Ui
                 }
             }
         }
+
+        /* // Finish this system later
+         * 
+         * 
+        private List<StatusEffectDisplay> GetAllActiveStatusEffectDisplays(int index)
+        {
+            var slots = new List<StatusEffectDisplay>();
+            for (int i = index; i < statusEffectDisplaySlots.Count; i++)
+            {
+                if (statusEffectDisplaySlots[i].IsOccupied)
+                {
+                    slots.Add(statusEffectDisplaySlots[i]);
+                }
+            }
+
+            return slots;
+        }
+
+
+        private void UpdateStatusEffectDisplayOrder()
+        {
+            if (indexOfDisplayToBeDeleted + 1 <= statusEffectDisplaySlots.Count)
+            {
+                var slots = GetAllActiveStatusEffectDisplays(indexOfDisplayToBeDeleted + 1);
+                for (int i = 0; i < statusEffectDisplaySlots.Count; i++)
+                {
+                    //we get indexOfDisplayToBeDeleted because it will be the first empty slot base on the logic this far, then we increment it by i so it will work with the rest of the slots to come
+                    //basically the flow will be to check if the slot before you is empty , then move your logic there, then empty your old slot, increment the list, then repeat
+                    if (!statusEffectDisplaySlots[indexOfDisplayToBeDeleted + i].IsOccupied)
+                    {
+                        TransferSlotInformationToPreviousSlot(indexOfDisplayToBeDeleted + i);
+                    }
+                    else
+                    {
+                        Debug.Log($"Previous Slot was occuiped at index {indexOfDisplayToBeDeleted + i}  Ended loop!");
+                    }
+                }
+
+            }
+        }
+
+
+        private void TransferSlotInformationToPreviousSlot(int indexAddend)
+        {
+            statusEffectDisplaySlots[indexAddend + 1].CharacterSpecificUi.transform.SetParent(statusEffectDisplaySlots[indexAddend].ParentTransform);
+            statusEffectDisplaySlots[indexAddend + 1].transform.SetAsFirstSibling();
+
+            //display.StatusEffectDurationTmp.text = "";
+            //display.DisplayedStatusEffectType = StatusEffect.StatusEffectType.None;
+            //display.IsOccupied = false;
+        }
+
+         * Status effect displays will update themselves to go to the first open empty slot, when a status effect is deleted
+         * Make sure slot before your index is empty
+         * move your data to the slot before you
+         * clear out the preivous slot you occupied
+         * repeat on the next index
+         * 
+         * 
+         * check to see if there are status effects slot taken after your index
+         * 
+         */
     }
 }
