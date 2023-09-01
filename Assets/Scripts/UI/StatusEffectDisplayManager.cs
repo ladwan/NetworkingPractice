@@ -8,31 +8,28 @@ namespace ForverFight.Ui
 {
     public class StatusEffectDisplayManager : MonoBehaviour
     {
+        public enum StatusEffectDisplayManagerType
+        {
+            None = 0,
+            Local = 1,
+            Remote = 2,
+        }
+
+        [SerializeField]
+        private StatusEffectDisplayManagerType type = StatusEffectDisplayManagerType.None;
         [SerializeField]
         private List<StatusEffectDisplay> statusEffectDisplaySlots = new List<StatusEffectDisplay>();
 
+        private bool rightSideIsBeingUpdated;
 
-        private static StatusEffectDisplayManager instance = null;
-        private int indexOfDisplayToBeDeleted = 99; //99 is an arbitrary number, meant to cause an out of range expection if we dont set it properly before using it
 
+        public StatusEffectDisplayManagerType Type { get => type; set => type = value; }
 
         public List<StatusEffectDisplay> StatusEffectDisplaySlots { get => statusEffectDisplaySlots; set => statusEffectDisplaySlots = value; }
 
-        public static StatusEffectDisplayManager Instance { get => instance; set => instance = value; }
+        public bool RightSideIsBeingUpdated { get => rightSideIsBeingUpdated; set => rightSideIsBeingUpdated = value; }
 
 
-        protected StatusEffectDisplayManager()
-        {
-            if (instance == null)
-            {
-                instance = this;
-            }
-            else
-            {
-                Debug.Log("More Than 1 Status Effect Display Manager detected, Destroying self...");
-                Destroy(instance);
-            }
-        }
 
         protected void OnEnable()
         {
@@ -67,11 +64,24 @@ namespace ForverFight.Ui
             display.StatusEffectDurationTmp.text = "";
             display.DisplayedStatusEffectType = StatusEffect.StatusEffectType.None;
             display.IsOccupied = false;
-
-
             // UpdateStatusEffectDisplayOrder();
         }
 
+        public StatusEffectDisplay GetMatchingStatusEffectSlot(StatusEffect.StatusEffectType type)
+        {
+            for (int i = 0; i < statusEffectDisplaySlots.Count; i++)
+            {
+                var displaySlot = StatusEffectDisplaySlots[i];
+
+                if (displaySlot.DisplayedStatusEffectType == type)
+                {
+                    return displaySlot;
+                }
+            }
+
+            Debug.LogError("No slot with matching type was found !");
+            return null;
+        }
 
         //This is populating a StatusEffectDisplay(class) with values passed in from the formattedStatusEffectData taken in from the status effect.cs
         private void HandleIncomingStatusEffectUi(StatusEffect.StatusEffectStruct formattedStatusEffectData, int i)
@@ -87,22 +97,30 @@ namespace ForverFight.Ui
             statusEffectDisplaySlot.IsOccupied = true;
         }
 
-        private void ReduceDurations()  // This does not actually decrement the duration of a status effect. It parses its duration into an int, then decrements that int in the local scope of this method
+        public void ReduceDurations()  // This does not actually decrement the duration of a status effect. It parses its duration into an int, then decrements that int in the local scope of this method
         {
-            for (int i = 0; i < statusEffectDisplaySlots.Count; i++)
+            if (type == StatusEffectDisplayManagerType.Local || rightSideIsBeingUpdated)
             {
-                if (Int32.TryParse(statusEffectDisplaySlots[i].StatusEffectDurationTmp.text, out int n))
+                for (int i = 0; i < statusEffectDisplaySlots.Count; i++)
                 {
-                    n--;
-                    if (n <= 0)
+                    if (Int32.TryParse(statusEffectDisplaySlots[i].StatusEffectDurationTmp.text, out int n))
                     {
-                        indexOfDisplayToBeDeleted = i;
-                        CleanUpExpiredStatusEffect(statusEffectDisplaySlots[i]);
-                        continue;
+                        n--;
+                        if (n <= 0)
+                        {
+                            CleanUpExpiredStatusEffect(statusEffectDisplaySlots[i]);
+                            continue;
+                        }
+                        statusEffectDisplaySlots[i].StatusEffectDurationTmp.text = n.ToString();
                     }
-                    statusEffectDisplaySlots[i].StatusEffectDurationTmp.text = n.ToString();
+                }
+
+                if (rightSideIsBeingUpdated)
+                {
+                    rightSideIsBeingUpdated = false;
                 }
             }
+
         }
 
         /* // Finish this system later

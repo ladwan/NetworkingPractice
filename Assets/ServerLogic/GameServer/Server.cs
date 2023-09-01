@@ -65,6 +65,9 @@ namespace GameServer
                 {(int)ClientPackets.sendReadyUp, ServerHandle.ServerRecieveReadyUpSignal},
                 {(int)ClientPackets.enterSyncTimerQueue, ServerHandle.ServerRecieveCurrentTime},
                 {(int)ClientPackets.requestToDamageOpponentsHealth, ServerHandle.ServerRecieveRequestToDamageOpponent},
+                {(int)ClientPackets.clientSendStatusEffectData, ServerHandle.ServerRecieveStatusEffectData},
+                {(int)ClientPackets.sendCurrentStatusEffectDuration, ServerHandle.ServerRecieveStatusEffectCurrentDuration},
+                {(int)ClientPackets.sendStoredMomentumValue, ServerHandle.ServerRecieveStoredMomentumValue},
             };
             Console.WriteLine("Initialized Packets..");
         }

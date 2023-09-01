@@ -73,5 +73,26 @@ namespace GameServer
             int _damageInt = _packet.ReadInt();
             ServerSend.SendDamageToOpponent(_fromClient, _damageInt);
         }
+
+        public static void ServerRecieveStatusEffectData(int _fromClient, Packet _packet)
+        {
+            int _statusEffectIdentifier = _packet.ReadInt();
+            int _duration = _packet.ReadInt();
+            int _ownership = _packet.ReadInt();
+            bool _endThisStatusEffect = _packet.ReadBool();
+            ServerSend.ServerSendStatusEffectData(_fromClient, _statusEffectIdentifier, _duration, _ownership, _endThisStatusEffect);
+        }
+
+        public static void ServerRecieveStatusEffectCurrentDuration(int _fromClient, Packet _packet)
+        {
+            int _currentDuration = _packet.ReadInt();
+            ServerSend.ServerSendCurrentStatusEffectDuration(_fromClient, _currentDuration);
+        }
+
+        public static void ServerRecieveStoredMomentumValue(int _fromClient, Packet _packet)
+        {
+            int _storedMomentum = _packet.ReadInt();
+            ServerSend.ServerSendStoredMomentumValue(_fromClient, _storedMomentum);
+        }
     }
 }

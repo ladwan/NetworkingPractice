@@ -30,11 +30,15 @@ namespace ForverFight.FlowControl
         private static PlayerTurnManager instance = null;
         [NonSerialized]
         private bool isLocalPlayersTurn = true; //0 == unset // 1 == true // 2 == false
+        [NonSerialized]
+        private Action onTurnStart = null;
 
 
         public static PlayerTurnManager Instance { get => instance; set => instance = value; }
 
         public Action OnTurnEnd { get => onTurnEnd; set => onTurnEnd = value; }
+
+        public Action OnTurnStart { get => onTurnStart; set => onTurnStart = value; }
 
 
         protected void Awake()
@@ -76,6 +80,7 @@ namespace ForverFight.FlowControl
                 playerDieAnim.SetTrigger("ResetDie");
             }
 
+            onTurnStart?.Invoke();
             return;
         }
 

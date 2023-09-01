@@ -15,6 +15,8 @@ namespace ForverFight.Interactable.Abilities
             None = 0,
             Momentum = 1,
             Haste = 2,
+            Stunned = 3,
+            OffBalance = 4,
         }
 
 
@@ -100,23 +102,6 @@ namespace ForverFight.Interactable.Abilities
             return AbilitySelectionUiManager.Instance.SelectedAbilityInt == statusEffectIdentiferInt;
         }
 
-        public StatusEffectDisplay GetMatchingStatusEffectSlot(StatusEffectType type)
-        {
-            for (int i = 0; i < StatusEffectDisplayManager.Instance.StatusEffectDisplaySlots.Count; i++)
-            {
-                var displaySlot = StatusEffectDisplayManager.Instance.StatusEffectDisplaySlots[i];
-
-                if (displaySlot.DisplayedStatusEffectType == type)
-                {
-                    return displaySlot;
-                }
-            }
-
-            Debug.LogError("No slot with matching type was found !");
-            return null;
-        }
-
-
 
         private GameObject InstantiateStatusEffectUi(GameObject uiPrefab, Transform parentTransform)
         {
@@ -126,7 +111,7 @@ namespace ForverFight.Interactable.Abilities
 
         private void SendFormattedDataToManager()
         {
-            StatusEffectDisplayManager.Instance.AddStatusEffectDisplay(formattedStatusEffectData);
+            StatusEffectStaticManager.Instance.LocalStatusEffectDisplayManager.AddStatusEffectDisplay(formattedStatusEffectData);
         }
     }
 }

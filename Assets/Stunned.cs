@@ -8,31 +8,28 @@ using ForverFight.FlowControl;
 
 namespace ForverFight.Interactable.Abilities
 {
-    public class Haste : StatusEffect
+    public class Stunned : StatusEffect
     {
         [SerializeField]
-        private FasterPassive fasterPassiveREF = null;
+        private GameObject stunnedDisplayUi = null;
         [SerializeField]
-        private QuickPunch quickPunchREF = null;
+        private GameObject stunnedPopup = null;
         [SerializeField]
-        private GameObject hasteDisplayUi = null;
-        [SerializeField]
-        private GameObject increasedQuickPunchRadius = null;
-        [SerializeField]
-        private MonoBehaviour thisScript = null;
+        private bool isStunned = false; // make a system for the remote character to set status effects on the local player , vice versa. Local stored networked data or a similar class seems like a good place to  put the logic 
+
 
         private bool statusActive = false;
+        private int delayUntilStunEndsTurn = 3;
 
-
-        protected Haste()
+        protected Stunned()
         {
-            AbilityName = "Haste";
-            AbilityDescription = "Are you winning son !?";
+            AbilityName = "Stunned";
+            AbilityDescription = "Yolo !?";
             AbilityDamage = 0;
-            MaxAbilityDuration = 4;
+            MaxAbilityDuration = 1;
             CurrentAbilityDuration = MaxAbilityDuration;
-            AbilityCost = 7;
-            CurrentStatusEffectType = StatusEffectType.Haste;
+            AbilityCost = 0;
+            CurrentStatusEffectType = StatusEffectType.Stunned;
         }
 
         protected void OnEnable()
@@ -55,9 +52,7 @@ namespace ForverFight.Interactable.Abilities
         public override void CastAbility()
         {
             statusActive = true;
-            AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(2, false, CurrentStatusEffectType); // Pass a 2 because you want the third index of the list because this is the third ability
             AbilityFunctionality();
-            ClientSend.SendStatusEffectData(2, CurrentAbilityDuration, 0, false);
         }
 
         public void StopAbility()
@@ -68,7 +63,6 @@ namespace ForverFight.Interactable.Abilities
                 CurrentAbilityDuration = UpdateStatusEffectDuration(2, CurrentAbilityDuration, MaxAbilityDuration, CurrentStatusEffectType);
                 var localStatusEffectDisplayManager = StatusEffectStaticManager.Instance.LocalStatusEffectDisplayManager;
                 localStatusEffectDisplayManager.CleanUpExpiredStatusEffect(localStatusEffectDisplayManager.GetMatchingStatusEffectSlot(CurrentStatusEffectType));
-                ClientSend.SendStatusEffectData(2, CurrentAbilityDuration, 0, true);
             }
         }
 
@@ -77,8 +71,8 @@ namespace ForverFight.Interactable.Abilities
         {
             if (statusActive)
             {
-                fasterPassiveREF.SetMaxPassiveApPool(6);
-                quickPunchREF.SetAbilityRadius(increasedQuickPunchRadius);
+                stunnedPopup.SetActive(true);
+                StartCoroutine(Delay(delayUntilStunEndsTurn));
             }
         }
 
@@ -86,7 +80,7 @@ namespace ForverFight.Interactable.Abilities
         {
             if (type == CurrentStatusEffectType)
             {
-                Instantiate(hasteDisplayUi, AbilitySelectionUiManager.Instance.GetTransformOfCharacterSpecificUiAtIndex(index));
+                Instantiate(stunnedDisplayUi, AbilitySelectionUiManager.Instance.GetTransformOfCharacterSpecificUiAtIndex(index));
             }
         }
 
@@ -94,7 +88,7 @@ namespace ForverFight.Interactable.Abilities
         {
             if (type == CurrentStatusEffectType)
             {
-                FormatStatusEffectDisplayData(hasteDisplayUi, CurrentAbilityDuration, CurrentStatusEffectType);
+                FormatStatusEffectDisplayData(stunnedDisplayUi, CurrentAbilityDuration, CurrentStatusEffectType);
             }
         }
 
@@ -113,19 +107,16 @@ namespace ForverFight.Interactable.Abilities
                 if (CurrentAbilityDuration <= 1)
                 {
                     statusActive = false;
-                    fasterPassiveREF.SetMaxPassiveApPool(3);
-                    quickPunchREF.SetAbilityRadius(quickPunchREF.OriginalRadius);
+                    stunnedPopup.SetActive(false);
+                    PlayerTurnManager.Instance.EndTurn(false);
                 }
             }
         }
+
+        private IEnumerator Delay(int value)
+        {
+            yield return new WaitForSecondsRealtime(value);
+            CleanUp(CurrentStatusEffectType);
+        }
     }
-
-    /*
-    The ult cost X amount of Ap
-    After this turn for the next 3 turn you turn up!
-    Passive action point pool doubles to 6
-    attack radius doubles to 2sq's
-
-    after those 3 turn, undo this effect
-    */
 }

@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class Client : MonoBehaviour
 {
+    //This is the client we want to update
+
     public static Client localClientInstance;
     public static int dataBufferSize = 4096;
 
@@ -168,6 +170,9 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.relayReadyUp, ClientHandle.ReceiveReadyUpSignal},
             { (int)ServerPackets.syncTimers, ClientHandle.ReceiveSyncedTimerTime},
             { (int)ServerPackets.sendDamageToOpponent, ClientHandle.ReceiveDamage},
+            { (int)ServerPackets.serverSendStatusEffectData, ClientHandle.ClientReceiveStatusEffectData},
+            { (int)ServerPackets.serverSendCurrentStatusEffectDuration, ClientHandle.ClientReceiveCurrentStatusEffectDuration},
+            { (int)ServerPackets.serverSendStoredMomentumValue, ClientHandle.ClientReceiveStoredMomentumValue},
         };
         Debug.Log("Initialized Packets..");
     }

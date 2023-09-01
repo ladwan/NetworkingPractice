@@ -20,5 +20,12 @@ public class ToDo : MonoBehaviour
 
     ---------------------------------------------------------------------------
 
+    We need to make a class that takes in an int and out a formatted status effect
+     
+    finish the networking of the status effect data 
+
+    Start debugging the refactoring you were doing on line 54 in StatusEffectStaticManager
+
+
     */
 }

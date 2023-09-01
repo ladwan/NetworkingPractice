@@ -16,6 +16,9 @@ namespace GameServer
         relayReadyUp = 7,
         syncTimers = 8,
         sendDamageToOpponent = 9,
+        serverSendStatusEffectData = 10,
+        serverSendCurrentStatusEffectDuration = 11,
+        serverSendStoredMomentumValue = 12,
     }
 
     /// <summary>Sent from client to server.</summary>
@@ -28,6 +31,9 @@ namespace GameServer
         sendReadyUp = 5,
         enterSyncTimerQueue = 6,
         requestToDamageOpponentsHealth = 7,
+        clientSendStatusEffectData = 8,
+        sendCurrentStatusEffectDuration = 9,
+        sendStoredMomentumValue = 10,
     }
 
     public class Packet : IDisposable

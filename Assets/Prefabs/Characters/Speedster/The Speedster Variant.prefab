@@ -192,7 +192,7 @@ MonoBehaviour:
   abilityName: Haste
   abilityDescription: Are you winning son !?
   abilityDamage: 0
-  abilityCost: 7
+  abilityCost: 1
   abilityRadius: {fileID: 1093007782179111487}
   currentStatusEffectType: 2
   maxAbilityDuration: 4
@@ -201,6 +201,7 @@ MonoBehaviour:
   quickPunchREF: {fileID: 491710909}
   hasteDisplayUi: {fileID: 5730032930054460824, guid: 8db9afa71273aed47af1995d40f273ab, type: 3}
   increasedQuickPunchRadius: {fileID: 2903982421141336467}
+  thisScript: {fileID: 0}
 --- !u!1 &705518648247848405
 GameObject:
   m_ObjectHideFlags: 0

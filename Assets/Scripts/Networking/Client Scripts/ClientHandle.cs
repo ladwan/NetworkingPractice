@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using ForverFight.GameMechanics;
 using ForverFight.Movement;
+using ForverFight.Ui;
 using ForverFight.Ui.CharacterSelection;
 using ForverFight.Networking;
 using ForverFight.FlowControl;
+using ForverFight.Interactable.Abilities;
 
 public class ClientHandle : MonoBehaviour
 {
@@ -72,7 +74,6 @@ public class ClientHandle : MonoBehaviour
         {
             ClientSend.EnterSyncTimerQueue();
         }
-
     }
 
     public static void ReceiveSyncedTimerTime(Packet _packet)
@@ -87,5 +88,40 @@ public class ClientHandle : MonoBehaviour
         int _damageAmount = _packet.ReadInt();
 
         DamageManager.Instance.ReceiveDamage(_damageAmount);
+    }
+
+    public static void ClientReceiveStatusEffectData(Packet _packet)
+    {
+        int _statusEffectIdentifier = _packet.ReadInt();
+        int _duration = _packet.ReadInt();
+        int _ownership = _packet.ReadInt();
+        bool _endThisStatusEffect = _packet.ReadBool();
+
+        StatusEffectStaticManager.Instance.Test(_statusEffectIdentifier, _duration, _ownership, _endThisStatusEffect);
+        //Debug.Log($"Status Effect Identifer : {_statusEffectIdentifier} Ownership is Player {_ownership}");
+    }
+
+    public static void ClientReceiveCurrentStatusEffectDuration(Packet _packet)
+    {
+        int _currentDuration = _packet.ReadInt();
+
+        //StatusEffectStaticManager.Instance.Test(_statusEffectIdentifier, _duration, _ownership);
+        //Debug.Log($"Status Effect Identifer : {_statusEffectIdentifier} Ownership is Player {_ownership}");
+    }
+
+    public static void ClientReceiveStoredMomentumValue(Packet _packet)
+    {
+        int _storedMomentum = _packet.ReadInt();
+
+        var slot = StatusEffectStaticManager.Instance.RemoteStatusEffectDisplayManager.GetMatchingStatusEffectSlot(StatusEffect.StatusEffectType.Momentum);
+        var displayReferences = slot.CharacterSpecificUi.GetComponent<MomentumDisplayReferences>();
+        if (displayReferences)
+        {
+            displayReferences.StoredMomentumDisplayTmp.text = _storedMomentum.ToString();
+        }
+        else
+        {
+            Debug.Log("Could not find display references!");
+        }
     }
 }

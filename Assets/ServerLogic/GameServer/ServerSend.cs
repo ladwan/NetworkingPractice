@@ -140,5 +140,36 @@ namespace GameServer
                 SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
             }
         }
+
+        public static void ServerSendStatusEffectData(int _playerThatDoesntNeedMsgId, int _statusEffectIdentifier, int _duration, int _ownership, bool _endThisStatusEffect)
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.serverSendStatusEffectData))
+            {
+                _packet.Write(_statusEffectIdentifier);
+                _packet.Write(_duration);
+                _packet.Write(_ownership);
+                _packet.Write(_endThisStatusEffect);
+
+                SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
+            }
+        }
+
+        public static void ServerSendCurrentStatusEffectDuration(int _playerThatDoesntNeedMsgId, int _currentDuration)
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.serverSendCurrentStatusEffectDuration))
+            {
+                _packet.Write(_currentDuration);
+                SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
+            }
+        }
+
+        public static void ServerSendStoredMomentumValue(int _playerThatDoesntNeedMsgId, int _storedMomentum)
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.serverSendStoredMomentumValue))
+            {
+                _packet.Write(_storedMomentum);
+                SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
+            }
+        }
     }
 }

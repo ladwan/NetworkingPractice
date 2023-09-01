@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using ForverFight.Movement;
 using ForverFight.Ui.CharacterSelection;
+using ForverFight.Interactable.Abilities;
+
 public class ClientSend : MonoBehaviour
 {
     private static void SendTcpData(Packet _packet)
@@ -81,6 +83,37 @@ public class ClientSend : MonoBehaviour
         {
             _packet.Write(damage);
 
+            SendTcpData(_packet);
+        }
+    }
+
+    public static void SendStatusEffectData(int statusEffectIdentifier, int duration, int ownership, bool endThisStatusEffect)
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.clientSendStatusEffectData))
+        {
+            _packet.Write(statusEffectIdentifier);
+            _packet.Write(duration);
+            _packet.Write(ownership);
+            _packet.Write(endThisStatusEffect);
+
+            SendTcpData(_packet);
+        }
+    }
+
+    public static void SendStatusEffectCurrentDuration(int currentDuration)
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.sendCurrentStatusEffectDuration))
+        {
+            _packet.Write(currentDuration);
+            SendTcpData(_packet);
+        }
+    }
+
+    public static void SendStoredMomentumValue(int storedMomentum)
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.sendStoredMomentumValue))
+        {
+            _packet.Write(storedMomentum);
             SendTcpData(_packet);
         }
     }
