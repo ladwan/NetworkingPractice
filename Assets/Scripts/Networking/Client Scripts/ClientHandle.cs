@@ -97,7 +97,7 @@ public class ClientHandle : MonoBehaviour
         int _ownership = _packet.ReadInt();
         bool _endThisStatusEffect = _packet.ReadBool();
 
-        StatusEffectStaticManager.Instance.Test(_statusEffectIdentifier, _duration, _ownership, _endThisStatusEffect);
+        StatusEffectStaticManager.Instance.UpdateNetworkedStatusEffectDisplay(_statusEffectIdentifier, _duration, _ownership, _endThisStatusEffect);
         //Debug.Log($"Status Effect Identifer : {_statusEffectIdentifier} Ownership is Player {_ownership}");
     }
 
@@ -123,5 +123,14 @@ public class ClientHandle : MonoBehaviour
         {
             Debug.Log("Could not find display references!");
         }
+    }
+
+    public static void RecieveOverrodePosition(Packet _packet)
+    {
+        int x = _packet.ReadInt();
+        int y = _packet.ReadInt();
+        Vector2 gridPointVector2 = new Vector2(x, y);
+
+        FloorGrid.Instance.ProceduralGridManipulationREF.IsVector2AValidGridPoint(gridPointVector2);
     }
 }

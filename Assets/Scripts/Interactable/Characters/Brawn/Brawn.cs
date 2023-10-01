@@ -9,7 +9,7 @@ namespace ForverFight.Interactable.Characters
         /*
         Passive : Hard Knock Life
         ---------------------------
-            Dealing damage will build 'Off-Balanced' stacks on enemy at 5* stacks enemy will be stunned for a turn
+            Dealing damage will build 'Off-Balanced' stacks on enemy at 9* stacks enemy will be stunned for a turn
             Once per Turn the second time you damage an enemy an additional stack of off balance is applied to them
                 Functionally a stun will skip a players turn
                     +50 base life
@@ -24,12 +24,16 @@ namespace ForverFight.Interactable.Characters
 
 
         ---------------------------    
-        2nd Ability : Leap
+        2nd Ability : Ground Pound
         ---------------------------
-            jump in the air to target sq
-            can jump 3 sqs away
-            cost 5* AP
+            smash the ground near you 
+            enemies in 1 sq radius take 10 damage
+                     enemies in 2 sq radius are pulled in 1 sq
+
+            cost 4* AP
             Deals 0 damage  
+            Pulls enemies in 1 sq towards the brawn
+            dash and grab
 
 
         ---------------------------    
@@ -44,9 +48,10 @@ namespace ForverFight.Interactable.Characters
                 Leap : 
                     can leap 5 sq
                         damage radius when landing is a 2 sq radius
-                             Now deals 10* damage and pulls enemies in 1 sq towards the brawn, applies two stacks of off balance to the enemy.
+                             Now deals 10* damage , applies two stacks of off balance to the enemy.
 
         */
+
         protected void OnEnable()
         {
             CharIdentity = Identity.Brawn;

@@ -17,6 +17,8 @@ namespace ForverFight.Interactable.Abilities
             Haste = 2,
             Stunned = 3,
             OffBalance = 4,
+            Ire = 5,
+            StunImmunity = 6,
         }
 
 
@@ -56,7 +58,7 @@ namespace ForverFight.Interactable.Abilities
         public int CurrentAbilityDuration { get => currentAbilityDuration; set => currentAbilityDuration = value; }
 
 
-        public void FormatStatusEffectDisplayData(GameObject uiToBeInstantiated, int currentDuration, StatusEffectType abilityStatusEffectType)
+        public void FormatStatusEffectDisplayData(GameObject uiToBeInstantiated, int currentDuration, StatusEffectType abilityStatusEffectType, bool isCalledFromRemote)
         {
             var instantiatedUi = InstantiateStatusEffectUi(uiToBeInstantiated, transform);
             formattedStatusEffectData.effectType = abilityStatusEffectType;
@@ -64,18 +66,18 @@ namespace ForverFight.Interactable.Abilities
             formattedStatusEffectData.duration = currentDuration;
             formattedStatusEffectData.formatter = instantiatedUi.GetComponent<StatusEffectDisplayFormatter>();
 
-            if (formattedStatusEffectData.formatter)
+            if (formattedStatusEffectData.formatter && !isCalledFromRemote)
             {
                 onStatusEffectFormatted?.Invoke(abilityStatusEffectType);
                 SendFormattedDataToManager();
             }
-            else
+            if (!formattedStatusEffectData.formatter)
             {
                 Debug.LogError("A 'StatusEffectDisplayFormatter' component could not be found !");
             }
         }
 
-        public int UpdateStatusEffectDuration(int abilityIndex, int currentAbilityDuration, int maxAbilityDuration, StatusEffectType type)
+        public int UpdateStatusEffectDuration(int abilityIndex, int currentAbilityDuration, int maxAbilityDuration, StatusEffectType type, bool hasAbilityDisplay)
         {
             if (currentAbilityDuration > 0)
             {
@@ -84,7 +86,10 @@ namespace ForverFight.Interactable.Abilities
                 {
                     onStatusEffectEnded?.Invoke(type);
                     currentAbilityDuration = maxAbilityDuration;
-                    AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(abilityIndex, true, type);
+                    if (hasAbilityDisplay)
+                    {
+                        AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(abilityIndex, true, type);
+                    }
                     return currentAbilityDuration;
                 }
                 else

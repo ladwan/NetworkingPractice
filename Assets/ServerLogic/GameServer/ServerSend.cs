@@ -64,6 +64,7 @@ namespace GameServer
                 SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
             }
         }
+
         public static void SendTotalPlayerUpdate(int _playerThatDoesntNeedMsgId, int _playerCount)
         {
             using (Packet _packet = new Packet((int)ServerPackets.totalPlayers))
@@ -168,6 +169,17 @@ namespace GameServer
             using (Packet _packet = new Packet((int)ServerPackets.serverSendStoredMomentumValue))
             {
                 _packet.Write(_storedMomentum);
+                SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
+            }
+        }
+
+        public static void SendOverrodePosition(int _playerThatDoesntNeedMsgId, int x, int y)
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.serverSendOverrodePos))
+            {
+                _packet.Write(x);
+                _packet.Write(y);
+
                 SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
             }
         }

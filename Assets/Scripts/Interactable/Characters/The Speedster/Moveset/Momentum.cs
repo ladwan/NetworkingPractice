@@ -74,7 +74,7 @@ namespace ForverFight.Interactable.Abilities
         {
             statusActive = true;
             AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(1, false, CurrentStatusEffectType); // Pass a 1 because you want the second index of the list because this is the second ability
-            ClientSend.SendStatusEffectData(1, CurrentAbilityDuration, 0, false);
+            ClientSend.SendStatusEffectData(StatusEffect.StatusEffectType.Momentum, CurrentAbilityDuration, 0, false);
         }
 
         public void StopAbility()
@@ -82,10 +82,10 @@ namespace ForverFight.Interactable.Abilities
             if (statusActive)
             {
                 CurrentAbilityDuration = 1;
-                CurrentAbilityDuration = UpdateStatusEffectDuration(1, CurrentAbilityDuration, MaxAbilityDuration, CurrentStatusEffectType);
+                CurrentAbilityDuration = UpdateStatusEffectDuration(1, CurrentAbilityDuration, MaxAbilityDuration, CurrentStatusEffectType, true);
                 var localStatusEffectDisplayManager = StatusEffectStaticManager.Instance.LocalStatusEffectDisplayManager;
                 localStatusEffectDisplayManager.CleanUpExpiredStatusEffect(localStatusEffectDisplayManager.GetMatchingStatusEffectSlot(CurrentStatusEffectType));
-                ClientSend.SendStatusEffectData(1, CurrentAbilityDuration, 0, true);
+                ClientSend.SendStatusEffectData(StatusEffect.StatusEffectType.Momentum, CurrentAbilityDuration, 0, true);
             }
         }
 
@@ -114,7 +114,7 @@ namespace ForverFight.Interactable.Abilities
         {
             if (type == CurrentStatusEffectType)
             {
-                FormatStatusEffectDisplayData(momentumDisplayUi, CurrentAbilityDuration, CurrentStatusEffectType);
+                FormatStatusEffectDisplayData(momentumDisplayUi, CurrentAbilityDuration, CurrentStatusEffectType, false);
             }
         }
 
@@ -138,7 +138,7 @@ namespace ForverFight.Interactable.Abilities
         {
             if (statusActive)
             {
-                CurrentAbilityDuration = UpdateStatusEffectDuration(1, CurrentAbilityDuration, MaxAbilityDuration, CurrentStatusEffectType);
+                CurrentAbilityDuration = UpdateStatusEffectDuration(1, CurrentAbilityDuration, MaxAbilityDuration, CurrentStatusEffectType, true);
             }
         }
 

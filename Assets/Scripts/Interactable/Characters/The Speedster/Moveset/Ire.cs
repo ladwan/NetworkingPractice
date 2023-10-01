@@ -8,28 +8,33 @@ using ForverFight.FlowControl;
 
 namespace ForverFight.Interactable.Abilities
 {
-    public class Stunned : StatusEffect
+    public class Ire : StatusEffect
     {
         [SerializeField]
-        private GameObject stunnedDisplayUi = null;
+        private GroundPound groundPoundREF = null;
         [SerializeField]
-        private GameObject stunnedPopup = null;
+        private Haymaker haymakerREF = null;
         [SerializeField]
-        private bool isStunned = false; // make a system for the remote character to set status effects on the local player , vice versa. Local stored networked data or a similar class seems like a good place to  put the logic 
+        private GameObject ireDisplayUi = null;
+        [SerializeField]
+        private GameObject increasedGroundPoundRadius = null;
 
 
         private bool statusActive = false;
-        private int delayUntilStunEndsTurn = 3;
 
-        protected Stunned()
+
+        public bool StatusActive { get => statusActive; set => statusActive = value; }
+
+
+        protected Ire()
         {
-            AbilityName = "Stunned";
-            AbilityDescription = "Yolo !?";
+            AbilityName = "Ire";
+            AbilityDescription = "Its over 9000 !?";
             AbilityDamage = 0;
-            MaxAbilityDuration = 1;
+            MaxAbilityDuration = 4;
             CurrentAbilityDuration = MaxAbilityDuration;
-            AbilityCost = 0;
-            CurrentStatusEffectType = StatusEffectType.Stunned;
+            AbilityCost = 4;
+            CurrentStatusEffectType = StatusEffectType.Ire;
         }
 
         protected void OnEnable()
@@ -52,7 +57,9 @@ namespace ForverFight.Interactable.Abilities
         public override void CastAbility()
         {
             statusActive = true;
+            AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(2, false, CurrentStatusEffectType); // Pass a 2 because you want the third index of the list because this is the third ability
             AbilityFunctionality();
+            ClientSend.SendStatusEffectData(StatusEffect.StatusEffectType.Ire, CurrentAbilityDuration, 0, false);
         }
 
         public void StopAbility()
@@ -60,9 +67,10 @@ namespace ForverFight.Interactable.Abilities
             if (statusActive)
             {
                 CurrentAbilityDuration = 1;
-                CurrentAbilityDuration = UpdateStatusEffectDuration(2, CurrentAbilityDuration, MaxAbilityDuration, CurrentStatusEffectType);
+                CurrentAbilityDuration = UpdateStatusEffectDuration(2, CurrentAbilityDuration, MaxAbilityDuration, CurrentStatusEffectType, true);
                 var localStatusEffectDisplayManager = StatusEffectStaticManager.Instance.LocalStatusEffectDisplayManager;
                 localStatusEffectDisplayManager.CleanUpExpiredStatusEffect(localStatusEffectDisplayManager.GetMatchingStatusEffectSlot(CurrentStatusEffectType));
+                ClientSend.SendStatusEffectData(StatusEffect.StatusEffectType.Ire, CurrentAbilityDuration, 0, true);
             }
         }
 
@@ -71,8 +79,9 @@ namespace ForverFight.Interactable.Abilities
         {
             if (statusActive)
             {
-                stunnedPopup.SetActive(true);
-                StartCoroutine(Delay(delayUntilStunEndsTurn));
+                groundPoundREF.SetAbilityRadius(increasedGroundPoundRadius);
+                groundPoundREF.AbilityDamage = 20;
+                haymakerREF.AbilityDamage = 25;
             }
         }
 
@@ -80,7 +89,7 @@ namespace ForverFight.Interactable.Abilities
         {
             if (type == CurrentStatusEffectType)
             {
-                Instantiate(stunnedDisplayUi, AbilitySelectionUiManager.Instance.GetTransformOfCharacterSpecificUiAtIndex(index));
+                Instantiate(ireDisplayUi, AbilitySelectionUiManager.Instance.GetTransformOfCharacterSpecificUiAtIndex(index));
             }
         }
 
@@ -88,7 +97,7 @@ namespace ForverFight.Interactable.Abilities
         {
             if (type == CurrentStatusEffectType)
             {
-                FormatStatusEffectDisplayData(stunnedDisplayUi, CurrentAbilityDuration, CurrentStatusEffectType);
+                FormatStatusEffectDisplayData(ireDisplayUi, CurrentAbilityDuration, CurrentStatusEffectType, false);
             }
         }
 
@@ -96,27 +105,28 @@ namespace ForverFight.Interactable.Abilities
         {
             if (statusActive)
             {
-                CurrentAbilityDuration = UpdateStatusEffectDuration(2, CurrentAbilityDuration, MaxAbilityDuration, CurrentStatusEffectType);
+                CurrentAbilityDuration = UpdateStatusEffectDuration(2, CurrentAbilityDuration, MaxAbilityDuration, CurrentStatusEffectType, true);
             }
         }
 
         private void CleanUp(StatusEffectType type)
         {
-            if (type == CurrentStatusEffectType)
+            if (type == CurrentStatusEffectType && CurrentAbilityDuration <= 1)
             {
-                if (CurrentAbilityDuration <= 1)
-                {
-                    statusActive = false;
-                    stunnedPopup.SetActive(false);
-                    PlayerTurnManager.Instance.EndTurn(false);
-                }
+                statusActive = false;
+                groundPoundREF.SetAbilityRadius(groundPoundREF.OriginalRadius);
+                groundPoundREF.AbilityDamage = 10;
+                haymakerREF.AbilityDamage = 15;
             }
         }
-
-        private IEnumerator Delay(int value)
-        {
-            yield return new WaitForSecondsRealtime(value);
-            CleanUp(CurrentStatusEffectType);
-        }
     }
+
+    /*
+    The ult cost X amount of Ap
+    After this turn for the next 3 turn you turn up!
+    Passive action point pool doubles to 6
+    attack radius doubles to 2sq's
+
+    after those 3 turn, undo this effect
+    */
 }

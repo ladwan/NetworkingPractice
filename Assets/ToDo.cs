@@ -5,6 +5,8 @@ using UnityEngine;
 public class ToDo : MonoBehaviour
 {
     /*
+     * 2 Ap = 5 points of damage
+     * 
         If status effect 1 ends before status effect 2, slide that status effect back to the first open slot
         Occasionally the charather selection screen will throw a null ref
         Green mat for availible targeting looked a bit odd, maybe update this to look better 
@@ -20,12 +22,13 @@ public class ToDo : MonoBehaviour
 
     ---------------------------------------------------------------------------
 
-    We need to make a class that takes in an int and out a formatted status effect
-     
-    finish the networking of the status effect data 
+    Maybe dont need toggle becuase ui blockers can clean themselves up
 
-    Start debugging the refactoring you were doing on line 54 in StatusEffectStaticManager
+    Start in on the brawn Ultimate ability logic, get it to a a point where you can test the knockback functionality
+    make ground pound always deal damage if you are in the ult
 
+    Make camera move with drag mover while in movement
+    brawns ground pound while ulted does wayy too much daamge fix this
 
     */
 }

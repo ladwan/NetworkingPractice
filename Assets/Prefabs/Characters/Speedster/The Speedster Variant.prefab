@@ -192,7 +192,7 @@ MonoBehaviour:
   abilityName: Haste
   abilityDescription: Are you winning son !?
   abilityDamage: 0
-  abilityCost: 1
+  abilityCost: 7
   abilityRadius: {fileID: 1093007782179111487}
   currentStatusEffectType: 2
   maxAbilityDuration: 4

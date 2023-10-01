@@ -17,6 +17,7 @@ public enum ServerPackets
     serverSendStatusEffectData = 10,
     serverSendCurrentStatusEffectDuration = 11,
     serverSendStoredMomentumValue = 12,
+    serverSendOverrodePos = 13,
 }
 
 /// <summary>Sent from client to server.</summary>
@@ -32,6 +33,7 @@ public enum ClientPackets
     clientSendStatusEffectData = 8,
     sendCurrentStatusEffectDuration = 9,
     sendStoredMomentumValue = 10,
+    overrideOppositePlayersPos = 11,
 }
 
 public class Packet : IDisposable

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,8 @@ namespace ForverFight.Ui
         private StatusEffectDisplayManager remoteStatusEffectDisplayManager = null;
         [SerializeField]
         private List<GameObject> statusEffectDisplayPrefabs = null;
+        [SerializeField]
+        private UiBlockers uiBlockersREF = null;
 
 
         private static StatusEffectStaticManager instance = null;
@@ -26,6 +29,8 @@ namespace ForverFight.Ui
         public List<GameObject> StatusEffectDisplayPrefabs { get => statusEffectDisplayPrefabs; set => statusEffectDisplayPrefabs = value; }
 
         public static StatusEffectStaticManager Instance { get => instance; set => instance = value; }
+
+        public UiBlockers UiBlockersREF { get => uiBlockersREF; set => uiBlockersREF = value; }
 
 
         protected StatusEffectStaticManager()
@@ -51,7 +56,7 @@ namespace ForverFight.Ui
         }
 
 
-        public void Test(int statusEffectIdentifier, int duration, int ownership, bool endThisStatusEffect)
+        public void UpdateNetworkedStatusEffectDisplay(int statusEffectIdentifier, int duration, int ownership, bool endThisStatusEffect)
         {
             var type = (StatusEffect.StatusEffectType)statusEffectIdentifier;
             if (endThisStatusEffect)
@@ -59,31 +64,44 @@ namespace ForverFight.Ui
                 StopLocalPlayerNetworkedStatusEffect(ownership, type);
                 return;
             }
-            var tempStatusEffect = new StatusEffect();
-            tempStatusEffect.FormatStatusEffectDisplayData(statusEffectDisplayPrefabs[statusEffectIdentifier], duration, type);
+
+            if (ownership == 1)
+            {
+                uiBlockersREF.IsThisTypeAUiBlocker(type);
+            }
+
+            var slot = ReturnMatchingStatusEffectSlot(type, ownership);
+            if (slot)
+            {
+                if (Int32.TryParse(slot.StatusEffectDurationTmp.text, out int currentDuration))
+                {
+                    currentDuration += duration;
+                    if (currentDuration > 9)
+                    {
+                        currentDuration = 9;
+                    }
+                    slot.StatusEffectDurationTmp.text = currentDuration.ToString();
+                    return;
+                }
+            }
+
+            var tempStatusEffect = gameObject.AddComponent<StatusEffect>();
+            tempStatusEffect.FormatStatusEffectDisplayData(statusEffectDisplayPrefabs[statusEffectIdentifier], duration, type, true);
             var formattedStatusEffectData = tempStatusEffect.FormattedStatusEffectData;
-            //var formattedStatusEffectData = Test2(statusEffectDisplayPrefabs[statusEffectIdentifier], duration, type);
             GetCurrentDisplayManager(ownership).AddStatusEffectDisplay(formattedStatusEffectData);
+            Destroy(tempStatusEffect);
+
         }
 
-        private StatusEffect.StatusEffectStruct Test2(GameObject uiToBeInstantiated, int currentDuration, StatusEffect.StatusEffectType abilityStatusEffectType)
+        public StatusEffectDisplay ReturnMatchingStatusEffectSlot(StatusEffect.StatusEffectType type, int ownership)
         {
-            var formattedStatusEffectData = new StatusEffect.StatusEffectStruct();
-            var instantiatedUi = InstantiateStatusEffectUi(uiToBeInstantiated, transform);
-            formattedStatusEffectData.effectType = abilityStatusEffectType;
-            formattedStatusEffectData.characterSpecificUi = instantiatedUi;
-            formattedStatusEffectData.duration = currentDuration;
-            formattedStatusEffectData.formatter = instantiatedUi.GetComponent<StatusEffectDisplayFormatter>();
+            var slot = GetCurrentDisplayManager(ownership).GetMatchingStatusEffectSlot(type);
+            if (!slot)
+            {
+                return null;
+            }
 
-            if (formattedStatusEffectData.formatter)
-            {
-                return formattedStatusEffectData;
-            }
-            else
-            {
-                Debug.LogError("A 'StatusEffectDisplayFormatter' component could not be found !");
-                return formattedStatusEffectData;
-            }
+            return slot;
         }
 
 
@@ -102,17 +120,11 @@ namespace ForverFight.Ui
             currentDisplayManager.CleanUpExpiredStatusEffect(currentDisplayManager.GetMatchingStatusEffectSlot(type));
         }
 
-
+        //From local player to enemy = 1 // From local player to there remote selves = 0
         private StatusEffectDisplayManager GetCurrentDisplayManager(int ownership)
         {
             var currentDisplayManager = ownership == 0 ? remoteStatusEffectDisplayManager : localStatusEffectDisplayManager;
             return currentDisplayManager;
-        }
-
-        private GameObject InstantiateStatusEffectUi(GameObject uiPrefab, Transform parentTransform)
-        {
-            var tempUiDisplay = Instantiate(uiPrefab, parentTransform);
-            return tempUiDisplay;
         }
     }
 }

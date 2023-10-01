@@ -94,5 +94,13 @@ namespace GameServer
             int _storedMomentum = _packet.ReadInt();
             ServerSend.ServerSendStoredMomentumValue(_fromClient, _storedMomentum);
         }
+
+        public static void ServerRecieveOverrodePosition(int _fromClient, Packet _packet)
+        {
+            int _playerUpdatedX = _packet.ReadInt();
+            int _playerUpdatedY = _packet.ReadInt();
+
+            ServerSend.SendOverrodePosition(_fromClient, _playerUpdatedX, _playerUpdatedY);
+        }
     }
 }

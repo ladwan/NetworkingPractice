@@ -30,9 +30,11 @@ public class FloorGrid : MonoBehaviour
     public int dieValue = 0;
     [SerializeField]
     private Action<int> onMoveConfirmed = null;
+    [SerializeField]
+    private ProceduralGridManipulation proceduralGridManipulationREF = null;
 
 
-    public Dictionary<Vector2, GridPoint> GridDictionary { get => gridDictionary; set => gridDictionary = value; }
+    public Dictionary<Vector2, GridPoint> GridDictionary => gridDictionary;
 
     public static FloorGrid Instance { get => instance; set => instance = value; }
 
@@ -40,11 +42,18 @@ public class FloorGrid : MonoBehaviour
 
     public Action<int> OnMoveConfirmed { get => onMoveConfirmed; set => onMoveConfirmed = value; }
 
+    public GameObject Player1Spawn { get => player1Spawn; set => player1Spawn = value; }
+
+    public GameObject Player2Spawn { get => player2Spawn; set => player2Spawn = value; }
+
+    public ProceduralGridManipulation ProceduralGridManipulationREF { get => proceduralGridManipulationREF; set => proceduralGridManipulationREF = value; }
+
 
     private static FloorGrid instance = null;
     private Vector2 currentLocation = new Vector2(0, 0);
     private GridPoint dragMoverGridPointREF = null; //this should return the gridPoint that the drag mover is on
     private Transform opponentSpawn = null;
+
 
     protected void Awake()
     {
@@ -88,6 +97,9 @@ public class FloorGrid : MonoBehaviour
                 playerREF.transform.rotation = player2Spawn.transform.rotation;
                 dragMoverREF.UpdateDragMoverPosition(Vector3ToVector2.ConvertToVector2(player2Spawn.transform.position));
                 break;
+            default:
+                Debug.Log("Nope");
+                break;
         }
     }
 
@@ -117,19 +129,6 @@ public class FloorGrid : MonoBehaviour
         {
             hoveredOverGridPoints.Add(gp);
         }
-    }
-
-    public void ConfirmMove()
-    {
-        ClientSend.UpdatePlayerCurrentPostition((int)currentLocation.x, (int)currentLocation.y);
-        var currentLocationVector3 = new Vector3(currentLocation.x, 0, currentLocation.y);
-
-        var moveLocalPlayer = ClientInfo.playerNumber == 1 ? player1Spawn.transform.position = currentLocationVector3 : player2Spawn.transform.position = currentLocationVector3;
-
-        BroadcastHoveredOverGridPointsCount();
-        EmptyGridPointList();
-
-        ActionPointsManager.Instance.MoveWasConfirmed(ActionPointsManager.Instance.CurrentApReferenceListsREF);
     }
 
     public void UpdateOpponentPosition(Vector2 value)
@@ -166,6 +165,29 @@ public class FloorGrid : MonoBehaviour
         {
             Debug.Log("That position is already taken! Please try to move elsewhere.");
         }
+    }
+
+    //Use the network to call this on the Player who is being pulled
+    public void OverridePlayerPosition(GridPoint updatedPosGp)
+    {
+        currentLocation = updatedPosGp.UniqueTag;
+        updatedPosGp.DragMovementREF.UpdateDragMoverPosition(updatedPosGp.UniqueTag);
+        ClientSend.UpdatePlayerCurrentPostition((int)currentLocation.x, (int)currentLocation.y);
+        var currentLocationVector3 = new Vector3(currentLocation.x, 0, currentLocation.y);
+        var moveLocalPlayer = ClientInfo.playerNumber == 1 ? player1Spawn.transform.position = currentLocationVector3 : player2Spawn.transform.position = currentLocationVector3;
+    }
+
+    public void ConfirmMove()
+    {
+        ClientSend.UpdatePlayerCurrentPostition((int)currentLocation.x, (int)currentLocation.y);
+        var currentLocationVector3 = new Vector3(currentLocation.x, 0, currentLocation.y);
+
+        var moveLocalPlayer = ClientInfo.playerNumber == 1 ? player1Spawn.transform.position = currentLocationVector3 : player2Spawn.transform.position = currentLocationVector3;
+
+        BroadcastHoveredOverGridPointsCount();
+        EmptyGridPointList();
+
+        ActionPointsManager.Instance.MoveWasConfirmed(ActionPointsManager.Instance.CurrentApReferenceListsREF);
     }
 
     public void AddStartingGpHighlight()

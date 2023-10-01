@@ -173,6 +173,7 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.serverSendStatusEffectData, ClientHandle.ClientReceiveStatusEffectData},
             { (int)ServerPackets.serverSendCurrentStatusEffectDuration, ClientHandle.ClientReceiveCurrentStatusEffectDuration},
             { (int)ServerPackets.serverSendStoredMomentumValue, ClientHandle.ClientReceiveStoredMomentumValue},
+            { (int)ServerPackets.serverSendOverrodePos, ClientHandle.RecieveOverrodePosition},
         };
         Debug.Log("Initialized Packets..");
     }

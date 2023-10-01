@@ -87,11 +87,11 @@ public class ClientSend : MonoBehaviour
         }
     }
 
-    public static void SendStatusEffectData(int statusEffectIdentifier, int duration, int ownership, bool endThisStatusEffect)
+    public static void SendStatusEffectData(StatusEffect.StatusEffectType statusEffectIdentifier, int duration, int ownership, bool endThisStatusEffect)
     {
         using (Packet _packet = new Packet((int)ClientPackets.clientSendStatusEffectData))
         {
-            _packet.Write(statusEffectIdentifier);
+            _packet.Write(((int)statusEffectIdentifier));
             _packet.Write(duration);
             _packet.Write(ownership);
             _packet.Write(endThisStatusEffect);
@@ -114,6 +114,17 @@ public class ClientSend : MonoBehaviour
         using (Packet _packet = new Packet((int)ClientPackets.sendStoredMomentumValue))
         {
             _packet.Write(storedMomentum);
+            SendTcpData(_packet);
+        }
+    }
+
+    public static void OverrideOppositePlayersPostition(int x, int y) // Pass this a vector 2's x and y
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.overrideOppositePlayersPos))
+        {
+            _packet.Write(x);
+            _packet.Write(y);
+
             SendTcpData(_packet);
         }
     }

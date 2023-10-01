@@ -79,7 +79,7 @@ namespace ForverFight.Ui
                 }
             }
 
-            Debug.LogError("No slot with matching type was found !");
+            Debug.Log("No slot with matching type was found !");
             return null;
         }
 
