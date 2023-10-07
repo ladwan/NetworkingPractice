@@ -30,5 +30,8 @@ public class ToDo : MonoBehaviour
     Make camera move with drag mover while in movement
     brawns ground pound while ulted does wayy too much daamge fix this
 
+    TestAnimCameraReparent finish this!!
+    look at a way to run the coroutine you made from the valid drag of the drag mover
+    get local pos of obj to move
     */
 }

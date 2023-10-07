@@ -810,6 +810,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 766723298}
+        m_TargetAssemblyTypeName: TestAnimCameraReparent, Assembly-CSharp
+        m_MethodName: ReturnObjectBackToOriginalPos
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   isDoOnce: 0
 --- !u!1 &97224474
 GameObject:
@@ -13293,6 +13305,37 @@ MonoBehaviour:
   displayedStatusEffectType: 0
   formatter: {fileID: 0}
   isOccupied: 0
+--- !u!1 &539104608
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 539104609}
+  m_Layer: 0
+  m_Name: Offset Parent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &539104609
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 539104608}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1554892683}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &547977243
 GameObject:
   m_ObjectHideFlags: 0
@@ -13801,6 +13844,19 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: ForverFight.Ui.CombatUiStatesManager, Assembly-CSharp
         m_MethodName: SetCombatUiState
         m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 766723298}
+        m_TargetAssemblyTypeName: ForverFight.HelperScripts.LerpPlayerCameraWhenMoving,
+          Assembly-CSharp
+        m_MethodName: ReturnObjectBackToOriginalPos
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -14635,6 +14691,22 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+--- !u!114 &766723298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 766723293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abc84f85f9cbc314589354fee84b3d76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objToLerp: {fileID: 7168879821103507338}
+  pos1REF: {fileID: 7168879821103507338}
+  pos2REF: {fileID: 1554892683}
+  duration: 1
 --- !u!1 &767817198
 GameObject:
   m_ObjectHideFlags: 0
@@ -29790,6 +29862,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1936672957}
+  - {fileID: 539104609}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -35480,6 +35553,11 @@ PrefabInstance:
 --- !u!1 &7168879821103507337 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7050767311733928487, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
+  m_PrefabInstance: {fileID: 7168879821103507336}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7168879821103507338 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5257885628006845449, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
   m_PrefabInstance: {fileID: 7168879821103507336}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7490724336987231609

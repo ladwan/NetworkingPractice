@@ -15,6 +15,7 @@ public class DragMovement : MonoBehaviour
 
 
     private Action onDragMoverPosUpdated = null;
+    private Action onDragEnded = null;
     private GridPoint currentlyClickedGridPoint = null;
     private GridPoint gridPointCurrentlyDisplayingConnections = null;
     private Vector3 YAxisOffset = new Vector3(0, 0.5f, 0);
@@ -31,6 +32,8 @@ public class DragMovement : MonoBehaviour
 
     public Action OnDragMoverPosUpdated { get => onDragMoverPosUpdated; set => onDragMoverPosUpdated = value; }
 
+    public Action OnDragEnded { get => onDragEnded; set => onDragEnded = value; }
+
 
     protected void OnMouseDown()
     {
@@ -41,6 +44,7 @@ public class DragMovement : MonoBehaviour
     {
         validDrag = false;
         currentlyClickedGridPoint = null;
+        OnDragEnded?.Invoke();
     }
 
 

@@ -208,7 +208,7 @@ public class FloorGrid : MonoBehaviour
     }
 
 
-    private bool AddGridPointToListBool(GridPoint gp)
+    private bool AddGridPointToListBool(GridPoint gp) // Determines if a gp is already in the hoveredOverGridPoints list, if not just add it to the list, if so update list and remove all gps that came after it.
     {
         bool add = false;
         if (hoveredOverGridPoints.Count != 0)
