@@ -140,6 +140,7 @@ namespace GameServer
 
                 SendTcpDataToOppositePlayer(1, _packet);
                 SendTcpDataToOppositePlayer(2, _packet);
+
                 Console.WriteLine($"~ ~ ~ Toggle Sent {(int)ServerPackets.toggleCountdownTimer} ~ ~ ~");
             }
         }
@@ -148,7 +149,7 @@ namespace GameServer
 
         public static void ServerSendingOutTestPacket(int _playerThatDoesntNeedMsgId, int _testInt)
         {
-            using (Packet _packet = new Packet((int)ServerPackets.serverSendTestPacket)) 
+            using (Packet _packet = new Packet((int)ServerPackets.serverSendTestPacket))
             {
                 _packet.Write(_testInt);
 

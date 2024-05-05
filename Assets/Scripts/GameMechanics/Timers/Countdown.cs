@@ -111,7 +111,7 @@ namespace ForeverFight.HelperScripts
             if (Input.GetKeyDown(KeyCode.G))
             {
                 Debug.Log("~~~ 1 ~~~");
-                ClientSend.ClientSendTestPacket();
+                ClientSend.ToggleCountdownTimer();
             }
         }
     }

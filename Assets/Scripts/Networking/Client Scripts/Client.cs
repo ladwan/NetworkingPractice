@@ -12,7 +12,7 @@ public class Client : MonoBehaviour
     public static Client localClientInstance;
     public static int dataBufferSize = 4096;
 
-    public string severIp = "127.0.0.1"; //local host (study this)
+    public string serverIp = "127.0.0.1"; //local host (study this)
     public int port = 32887;
     public int localClientId = 0;
     public TCP tcp;
@@ -76,8 +76,7 @@ public class Client : MonoBehaviour
             };
 
             //receiveBuffer = new byte[dataBufferSize];
-            socket.BeginConnect(localClientInstance.severIp, localClientInstance.port, ConnectCallback, socket);
-
+            socket.BeginConnect(localClientInstance.serverIp, localClientInstance.port, ConnectCallback, socket);
         }
 
         public void ConnectCallback(IAsyncResult result)
@@ -120,6 +119,7 @@ public class Client : MonoBehaviour
             int received = stream.EndRead(result);
             if (received <= 0)
             {
+                Debug.Log("Received was less than 0  : 0");
                 // disconnect or error
                 return;
             }
@@ -135,7 +135,7 @@ public class Client : MonoBehaviour
             // fully received header, parse it and start receiving body
 
             int length = BitConverter.ToInt32(buffer, 0); // we only have to read the single length field
-
+            Debug.Log($"Length : {length} ");
             BeginReceiveBody(length);
         }
 
@@ -154,6 +154,7 @@ public class Client : MonoBehaviour
             int received = stream.EndRead(result);
             if (received <= 0)
             {
+                Debug.Log("Received was less than 0  :  1");
                 // disconnect or error
                 return;
             }
@@ -168,10 +169,19 @@ public class Client : MonoBehaviour
 
             // fully received body, handle the packet and start reading next packet
 
+            for (int i = 0; i < 3; i++)
+            {
+                Debug.Log($"Buffer data : {buffer[i]}");
+            }
+
+
+            byte[] body = new byte[buffer.Length];
+            Array.Copy(buffer, 0, body, 0, body.Length);
+
 
             ThreadManager.ExecuteOnMainThread(() =>
             {
-                using (Packet packet = new Packet(buffer))
+                using (Packet packet = new Packet(body))
                 {
                     int id = packet.ReadInt();
                     packetHandlers[id](packet);
@@ -180,7 +190,7 @@ public class Client : MonoBehaviour
             });
 
 
-            //BeginReceiveHeader();
+            BeginReceiveHeader();
         }
     }
 
