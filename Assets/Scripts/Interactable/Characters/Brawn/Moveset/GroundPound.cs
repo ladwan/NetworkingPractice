@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ForverFight.Ui;
-using ForverFight.GameMechanics;
+using ForeverFight.Ui;
+using ForeverFight.GameMechanics;
 
-namespace ForverFight.Interactable.Abilities
+namespace ForeverFight.Interactable.Abilities
 {
     public class GroundPound : CharAbility
     {

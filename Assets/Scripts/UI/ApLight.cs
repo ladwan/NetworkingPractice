@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ForverFight.Ui
+namespace ForeverFight.Ui
 {
     public class ApLight : MonoBehaviour
     {

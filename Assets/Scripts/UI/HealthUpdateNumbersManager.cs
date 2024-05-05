@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-namespace ForverFight.Ui
+namespace ForeverFight.Ui
 {
     public class HealthUpdateNumbersManager : MonoBehaviour
     {

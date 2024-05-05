@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using ForverFight.Interactable.Abilities;
+using ForeverFight.Interactable.Abilities;
 
-namespace ForverFight.Ui
+namespace ForeverFight.Ui
 {
     public class StatusEffectDisplay : MonoBehaviour
     {

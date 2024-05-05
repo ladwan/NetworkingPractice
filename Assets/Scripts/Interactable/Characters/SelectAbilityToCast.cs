@@ -1,7 +1,7 @@
-using ForverFight.Networking;
+using ForeverFight.Networking;
 using UnityEngine;
 
-namespace ForverFight.Interactable.Abilities
+namespace ForeverFight.Interactable.Abilities
 {
     public class SelectAbilityToCast : MonoBehaviour
     {

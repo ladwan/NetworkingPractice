@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ForverFight.Interactable.Characters
+namespace ForeverFight.Interactable.Characters
 {
     public class Speedster : Character
     {

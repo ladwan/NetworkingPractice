@@ -2,10 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ForverFight.FlowControl;
-using ForverFight.Interactable.Abilities;
+using ForeverFight.FlowControl;
+using ForeverFight.Interactable.Abilities;
 
-namespace ForverFight.Ui
+namespace ForeverFight.Ui
 {
     public class StatusEffectStaticManager : MonoBehaviour
     {

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ForverFight.HelperScripts
+namespace ForeverFight.HelperScripts
 {
     public static class Vector3ToVector2
     {

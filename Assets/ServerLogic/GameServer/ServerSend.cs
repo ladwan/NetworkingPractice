@@ -97,7 +97,6 @@ namespace GameServer
                 _packet.Write(_username);
 
                 SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
-
             }
         }
 
@@ -129,8 +128,44 @@ namespace GameServer
 
                 SendTcpDataToOppositePlayer(1, _packet);
                 SendTcpDataToOppositePlayer(2, _packet);
+                Console.WriteLine("~ ~ ~ Sync Sent ~ ~ ~");
             }
         }
+
+        public static void ToggleCountdownTimer(int _playerThatDoesntNeedMsgId, int _signalInt)
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.toggleCountdownTimer))
+            {
+                _packet.Write(_signalInt);
+
+                SendTcpDataToOppositePlayer(1, _packet);
+                SendTcpDataToOppositePlayer(2, _packet);
+                Console.WriteLine($"~ ~ ~ Toggle Sent {(int)ServerPackets.toggleCountdownTimer} ~ ~ ~");
+            }
+        }
+
+
+
+        public static void ServerSendingOutTestPacket(int _playerThatDoesntNeedMsgId, int _testInt)
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.serverSendTestPacket)) 
+            {
+                _packet.Write(_testInt);
+
+                SendTcpDataToOppositePlayer(1, _packet);
+                SendTcpDataToOppositePlayer(2, _packet);
+                Console.WriteLine($"~ ~ ~ Test Packet Sent {(int)ServerPackets.serverSendTestPacket} ~ ~ ~");
+            }
+        }
+
+
+
+
+
+
+
+
+
 
         public static void SendDamageToOpponent(int _playerThatDoesntNeedMsgId, int _damageInt)
         {
@@ -183,5 +218,15 @@ namespace GameServer
                 SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
             }
         }
+        public static void SendWinStatus(int _playerThatDoesntNeedMsgId, bool winStatus)
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.serverSendWinStatus))
+            {
+                _packet.Write(winStatus);
+
+                SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
+            }
+        }
+
     }
 }

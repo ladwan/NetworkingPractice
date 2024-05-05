@@ -1,10 +1,10 @@
-using ForverFight.Networking;
+using ForeverFight.Networking;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace ForverFight.HelperScripts
+namespace ForeverFight.HelperScripts
 {
     public class CleanUpUiAfterTurn : MonoBehaviour
     {

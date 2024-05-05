@@ -5,6 +5,7 @@ namespace GameServer
     class ServerHandle
     {
         private static int desyncedTimersRecived = 0;
+
         public static void WelcomeReceived(int _fromClient, Packet _packet)
         {
             int _clientIdCheck = _packet.ReadInt();
@@ -64,9 +65,38 @@ namespace GameServer
             {
                 int _currentTime = _packet.ReadInt();
                 ServerSend.SyncTimers(_fromClient, _currentTime);
+                Console.WriteLine("~ ~ ~ Sync ~ ~ ~");
                 desyncedTimersRecived = 0;
             }
         }
+        public static void ServerRecieveToggleTimerSignal(int _fromClient, Packet _packet)
+        {
+            int _signalInt = _packet.ReadInt();
+            Console.WriteLine("~ ~ ~ Toggle ~ ~ ~");
+            ServerSend.ToggleCountdownTimer(_fromClient, _signalInt);
+        }
+
+
+
+
+
+        public static void ServerRecieveTestPacket(int _fromClient, Packet _packet)
+        {
+            int testInt = _packet.ReadInt();
+            Console.WriteLine("~ ~ ~ Test Int Recieved ! ~ ~ ~");
+            ServerSend.ServerSendingOutTestPacket(_fromClient, testInt);
+
+        }
+
+
+
+
+
+
+
+
+
+
 
         public static void ServerRecieveRequestToDamageOpponent(int _fromClient, Packet _packet)
         {
@@ -101,6 +131,13 @@ namespace GameServer
             int _playerUpdatedY = _packet.ReadInt();
 
             ServerSend.SendOverrodePosition(_fromClient, _playerUpdatedX, _playerUpdatedY);
+        }
+
+        public static void ServerRecieveWinnerStatus(int _fromClient, Packet _packet)
+        {
+            bool _winnerStatus = _packet.ReadBool();
+
+            ServerSend.SendWinStatus(_fromClient, _winnerStatus);
         }
     }
 }

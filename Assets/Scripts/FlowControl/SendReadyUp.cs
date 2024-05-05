@@ -2,9 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ForverFight.Ui.CharacterSelection;
+using ForeverFight.Ui.CharacterSelection;
 
-namespace ForverFight.FlowControl
+namespace ForeverFight.FlowControl
 {
     public class SendReadyUp : MonoBehaviour
     {

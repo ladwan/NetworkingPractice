@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace ForverFight.FlowControl
+namespace ForeverFight.FlowControl
 {
     public class DelayedEvent : MonoBehaviour
     {

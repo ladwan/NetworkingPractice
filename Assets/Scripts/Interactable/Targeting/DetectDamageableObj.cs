@@ -1,9 +1,9 @@
-using ForverFight.Networking;
+using ForeverFight.Networking;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace ForverFight.Interactable
+namespace ForeverFight.Interactable
 {
     public class DetectDamageableObj : MonoBehaviour
     {

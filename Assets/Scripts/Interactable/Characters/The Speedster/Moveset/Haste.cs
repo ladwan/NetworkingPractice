@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using ForverFight.Ui;
-using ForverFight.FlowControl;
+using ForeverFight.Ui;
+using ForeverFight.FlowControl;
 
-namespace ForverFight.Interactable.Abilities
+namespace ForeverFight.Interactable.Abilities
 {
     public class Haste : StatusEffect
     {
@@ -27,7 +27,7 @@ namespace ForverFight.Interactable.Abilities
         protected Haste()
         {
             AbilityName = "Haste";
-            AbilityDescription = "Are you winning son !?";
+            AbilityDescription = "Doubles the amount of movement AP gained from your passive. Increases the attack radius of Quick Punch";
             AbilityDamage = 0;
             MaxAbilityDuration = 4;
             CurrentAbilityDuration = MaxAbilityDuration;

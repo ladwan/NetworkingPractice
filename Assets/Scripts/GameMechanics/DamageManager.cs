@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using ForverFight.Networking;
-using ForverFight.Ui;
+using ForeverFight.Ui;
+using ForeverFight.Networking;
+using ForeverFight.FlowControl;
 
-namespace ForverFight.GameMechanics
+namespace ForeverFight.GameMechanics
 {
     public class DamageManager : MonoBehaviour
     {
@@ -17,6 +18,8 @@ namespace ForverFight.GameMechanics
         private Slider otherPlayerHealthBar = null;
         [SerializeField]
         private HealthUpdateNumbersManager healthUpdateNumbersManagerREF = null;
+        [SerializeField]
+        private GameLoopManager gameLoopManagerREF = null;
 
 
         [NonSerialized]
@@ -56,6 +59,12 @@ namespace ForverFight.GameMechanics
             }
             healthUpdateNumbersManagerREF.Animator.SetTrigger("LocalPlayerHealthEvent");
             healthUpdateNumbersManagerREF.HealthDecreased(healthUpdateNumbersManagerREF.LocalPlayerHealthUpdateNumber, dmg);
+
+            if (health.value <= 0)
+            {
+                ClientSend.SendWinnerStatus(true);
+                gameLoopManagerREF.ShowLoserScreen();
+            }
         }
 
         // ToDO : Add healing logic

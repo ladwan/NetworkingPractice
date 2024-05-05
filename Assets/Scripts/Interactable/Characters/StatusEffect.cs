@@ -2,11 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ForverFight.Ui;
-using ForverFight.Interactable.Abilities;
+using ForeverFight.Ui;
+using ForeverFight.Interactable.Abilities;
 using TMPro;
 
-namespace ForverFight.Interactable.Abilities
+namespace ForeverFight.Interactable.Abilities
 {
     public class StatusEffect : CharAbility
     {

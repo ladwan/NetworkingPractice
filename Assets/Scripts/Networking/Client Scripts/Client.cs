@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
 
@@ -16,8 +17,17 @@ public class Client : MonoBehaviour
     public int localClientId = 0;
     public TCP tcp;
 
+    private bool isConnected = false;
     private delegate void PacketHandler(Packet _packet);
     private static Dictionary<int, PacketHandler> packetHandlers;
+
+
+    protected void OnApplicationQuit()
+    {
+        Disconnect();
+    }
+
+
     private void Awake()
     {
         if (localClientInstance == null)
@@ -39,9 +49,143 @@ public class Client : MonoBehaviour
     public void ConnectToServer()
     {
         InitializeClientData();
+        isConnected = true;
         tcp.Connect();
     }
 
+    public class TCP
+    {
+        public TcpClient socket;
+        private readonly int id;
+        private NetworkStream stream;
+
+        // our network buffer into which we receive raw packets
+        private byte[] buffer;
+        private int offset, expected;
+
+        public TCP()
+        {
+        }
+
+        public void Connect()
+        {
+            socket = new TcpClient
+            {
+                ReceiveBufferSize = dataBufferSize,
+                SendBufferSize = dataBufferSize,
+            };
+
+            //receiveBuffer = new byte[dataBufferSize];
+            socket.BeginConnect(localClientInstance.severIp, localClientInstance.port, ConnectCallback, socket);
+
+        }
+
+        public void ConnectCallback(IAsyncResult result)
+        {
+            socket.EndConnect(result);
+
+            if (!socket.Connected)
+            {
+                return;
+            }
+
+            stream = socket.GetStream();
+            BeginReceiveHeader();
+        }
+
+        public void SendData(Packet _packet)
+        {
+            stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), OnSentData, null);
+        }
+
+        private void OnSentData(IAsyncResult result)
+        {
+            stream.EndWrite(result);
+            // NetworkStream.BeginWrite() always writes all data before returning,
+            // so no need to check whether there is more data to send (there wont be)
+        }
+
+        // our packet header is a single int: |len|
+        private void BeginReceiveHeader()
+        {
+            buffer = new byte[sizeof(int)];
+            offset = 0;
+            expected = buffer.Length;
+
+            stream.BeginRead(buffer, offset, expected, OnReceiveHeader, null);
+        }
+
+        private void OnReceiveHeader(IAsyncResult result)
+        {
+            int received = stream.EndRead(result);
+            if (received <= 0)
+            {
+                // disconnect or error
+                return;
+            }
+
+            offset += received;
+            if (offset < expected)
+            {
+                // there is more data in the header to be read
+                stream.BeginRead(buffer, offset, expected - offset, OnReceiveHeader, null);
+                return;
+            }
+
+            // fully received header, parse it and start receiving body
+
+            int length = BitConverter.ToInt32(buffer, 0); // we only have to read the single length field
+
+            BeginReceiveBody(length);
+        }
+
+        // our packet body is the packet id (an int), and some bytes: |id|data...|
+        private void BeginReceiveBody(int length)
+        {
+            buffer = new byte[length];
+            offset = 0;
+            expected = buffer.Length;
+
+            stream.BeginRead(buffer, offset, expected, OnReceiveBody, null);
+        }
+
+        private void OnReceiveBody(IAsyncResult result)
+        {
+            int received = stream.EndRead(result);
+            if (received <= 0)
+            {
+                // disconnect or error
+                return;
+            }
+
+            offset += received;
+            if (offset < expected)
+            {
+                // there is more data in the body to read
+                stream.BeginRead(buffer, offset, expected - offset, OnReceiveBody, null);
+                return;
+            }
+
+            // fully received body, handle the packet and start reading next packet
+
+
+            ThreadManager.ExecuteOnMainThread(() =>
+            {
+                using (Packet packet = new Packet(buffer))
+                {
+                    int id = packet.ReadInt();
+                    packetHandlers[id](packet);
+                }
+                //Server.packetHandlers[id](id, packet);
+            });
+
+
+            //BeginReceiveHeader();
+        }
+    }
+
+
+    /*
     public class TCP
     {
         public TcpClient socket;
@@ -99,7 +243,7 @@ public class Client : MonoBehaviour
                 int byteLength = stream.EndRead(result);
                 if (byteLength <= 0)
                 {
-                    //TODO: Disconnect
+                    localClientInstance.Disconnect();
                     return;
                 }
 
@@ -111,7 +255,7 @@ public class Client : MonoBehaviour
             }
             catch
             {
-                //TODO: Disconnect
+                Disconnect();
             }
         }
 
@@ -136,6 +280,7 @@ public class Client : MonoBehaviour
                     {
                         int packetId = _packet.ReadInt();
                         packetHandlers[packetId](_packet);
+                        Debug.Log($"packet id : {packetId}");
                     }
                 });
 
@@ -155,8 +300,18 @@ public class Client : MonoBehaviour
             }
             return false;
         }
-    }
 
+        private void Disconnect()
+        {
+            localClientInstance.Disconnect();
+
+            stream = null;
+            receiveBuffer = null;
+            receiveData = null;
+            socket = null;
+        }
+    }
+*/
     private void InitializeClientData()
     {
         packetHandlers = new Dictionary<int, PacketHandler>()
@@ -174,6 +329,9 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.serverSendCurrentStatusEffectDuration, ClientHandle.ClientReceiveCurrentStatusEffectDuration},
             { (int)ServerPackets.serverSendStoredMomentumValue, ClientHandle.ClientReceiveStoredMomentumValue},
             { (int)ServerPackets.serverSendOverrodePos, ClientHandle.RecieveOverrodePosition},
+            { (int)ServerPackets.serverSendWinStatus, ClientHandle.RecieveWinStatus},
+            { (int)ServerPackets.toggleCountdownTimer, ClientHandle.ReceiveToggleTimerSignal},
+            { (int)ServerPackets.serverSendTestPacket, ClientHandle.ReceiveTestPacket },
         };
         Debug.Log("Initialized Packets..");
     }
@@ -184,5 +342,15 @@ public class Client : MonoBehaviour
         Debug.Log("Unable to connect, server is most likely not online");
     }
 
+    public void Disconnect()
+    {
+        if (isConnected)
+        {
+            isConnected = false;
+            tcp.socket.Close();
+            ClientInfo.totalPlayersConnected--;
 
+            Debug.Log("Disconnected from Server");
+        }
+    }
 }

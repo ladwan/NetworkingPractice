@@ -1,10 +1,10 @@
-using ForverFight.Networking;
+using ForeverFight.Networking;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ForverFight.Ui
+namespace ForeverFight.Ui
 {
     public class ActionPointsManager : MonoBehaviour
     {

@@ -69,6 +69,9 @@ namespace GameServer
                 {(int)ClientPackets.sendCurrentStatusEffectDuration, ServerHandle.ServerRecieveStatusEffectCurrentDuration},
                 {(int)ClientPackets.sendStoredMomentumValue, ServerHandle.ServerRecieveStoredMomentumValue},
                 {(int)ClientPackets.overrideOppositePlayersPos, ServerHandle.ServerRecieveOverrodePosition},
+                {(int)ClientPackets.hasWonTheMatch, ServerHandle.ServerRecieveWinnerStatus},
+                {(int)ClientPackets.toggleTimerCountdown, ServerHandle.ServerRecieveToggleTimerSignal},
+                {(int)(ClientPackets.clientSendTestPacket),ServerHandle.ServerRecieveTestPacket },
             };
             Console.WriteLine("Initialized Packets..");
         }

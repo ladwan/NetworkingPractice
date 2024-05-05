@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using TMPro;
 
-namespace ForverFight.HelperScripts
+namespace ForeverFight.HelperScripts
 {
     public class Countdown : MonoBehaviour
     {
@@ -25,6 +25,7 @@ namespace ForverFight.HelperScripts
         private Countdown instance;
         [NonSerialized]
         private bool doOnce = false;
+        private bool isPaused = false;
 
 
         public int Time { get => time; set => time = value; }
@@ -83,11 +84,35 @@ namespace ForverFight.HelperScripts
             StartCoroutine(Count());
         }
 
+        public void ToggleCountdownTimer()
+        {
+            Debug.Log("~~~ 5 ~~~");
+            if (!isPaused)
+            {
+                StopAllCoroutines();
+                isPaused = true;
+            }
+            else
+            {
+                StartCoroutine(Count());
+                isPaused = false;
+            }
+        }
+
         public void ResetTimer(int value)
         {
             StopAllCoroutines();
             time = value;
             StartCoroutine(Count());
+        }
+
+        protected void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.G))
+            {
+                Debug.Log("~~~ 1 ~~~");
+                ClientSend.ClientSendTestPacket();
+            }
         }
     }
 }

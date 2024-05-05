@@ -1,9 +1,9 @@
-using ForverFight.Interactable;
-using ForverFight.Interactable.Abilities;
+using ForeverFight.Interactable;
+using ForeverFight.Interactable.Abilities;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ForverFight.Networking
+namespace ForeverFight.Networking
 {
     public static class LocalStoredNetworkData
     {

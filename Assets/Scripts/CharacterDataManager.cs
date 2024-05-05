@@ -1,5 +1,5 @@
-using ForverFight.Interactable.Abilities;
-using ForverFight.Networking;
+using ForeverFight.Interactable.Abilities;
+using ForeverFight.Networking;
 using UnityEngine;
 
 public class CharacterDataManager : MonoBehaviour

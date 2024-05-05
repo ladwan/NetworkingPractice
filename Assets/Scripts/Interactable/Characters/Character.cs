@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using ForverFight.Networking;
-using ForverFight.Interactable.Abilities;
+using ForeverFight.Networking;
+using ForeverFight.Interactable.Abilities;
 
 
-namespace ForverFight.Interactable
+namespace ForeverFight.Interactable
 {
     public abstract class Character : MonoBehaviour
     {

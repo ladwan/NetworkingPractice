@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using ForverFight.Networking;
+using ForeverFight.Networking;
 using FlowControl;
-using ForverFight.Interactable;
+using ForeverFight.Interactable;
 
-namespace ForverFight.GameMechanics
+namespace ForeverFight.GameMechanics
 {
     public class GameMechanicsManager : MonoBehaviour
     {

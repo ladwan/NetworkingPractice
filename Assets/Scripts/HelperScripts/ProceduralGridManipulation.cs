@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ForverFight.HelperScripts
+namespace ForeverFight.HelperScripts
 {
     public class ProceduralGridManipulation : MonoBehaviour
     {

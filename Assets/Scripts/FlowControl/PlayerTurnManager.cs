@@ -1,12 +1,12 @@
-using ForverFight.HelperScripts;
-using ForverFight.Networking;
-using ForverFight.Ui;
+using ForeverFight.HelperScripts;
+using ForeverFight.Networking;
+using ForeverFight.Ui;
 using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
 
-namespace ForverFight.FlowControl
+namespace ForeverFight.FlowControl
 {
     public class PlayerTurnManager : MonoBehaviour
     {

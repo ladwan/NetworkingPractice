@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ForverFight.HelperScripts
+namespace ForeverFight.HelperScripts
 {
     public class UsernameInputTracker : MonoBehaviour
     {

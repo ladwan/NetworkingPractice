@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace ForverFight.HelperScripts.Animation
+namespace ForeverFight.HelperScripts.Animation
 {
     public class EventOnAnminationEnd : MonoBehaviour
     {

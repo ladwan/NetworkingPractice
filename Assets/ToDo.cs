@@ -23,15 +23,9 @@ public class ToDo : MonoBehaviour
     ---------------------------------------------------------------------------
 
     Maybe dont need toggle becuase ui blockers can clean themselves up
+    Make class that holds and displays ability descriptions
 
-    Start in on the brawn Ultimate ability logic, get it to a a point where you can test the knockback functionality
-    make ground pound always deal damage if you are in the ult
 
-    Make camera move with drag mover while in movement
-    brawns ground pound while ulted does wayy too much daamge fix this
-
-    TestAnimCameraReparent finish this!!
-    look at a way to run the coroutine you made from the valid drag of the drag mover
-    get local pos of obj to move
+    Read from packet to make sure the data is as expected // Do this both server side and client side
     */
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ForverFight.Ui
+namespace ForeverFight.Ui
 {
     public class StatusEffectDisplayFormatter : MonoBehaviour
     {

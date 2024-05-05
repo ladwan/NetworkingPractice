@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using ForverFight.Networking;
-using ForverFight.Interactable;
-using ForverFight.Interactable.Abilities;
+using ForeverFight.Networking;
+using ForeverFight.Interactable;
+using ForeverFight.Interactable.Abilities;
 
-namespace ForverFight.Ui
+namespace ForeverFight.Ui
 {
     public class AbilitySelectionUiManager : MonoBehaviour
     {

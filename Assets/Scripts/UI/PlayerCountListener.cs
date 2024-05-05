@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using ForverFight.HelperScripts;
+using ForeverFight.HelperScripts;
 
 public class PlayerCountListener : MonoBehaviour
 {

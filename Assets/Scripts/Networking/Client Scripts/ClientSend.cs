@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ForverFight.Movement;
-using ForverFight.Ui.CharacterSelection;
-using ForverFight.Interactable.Abilities;
+using ForeverFight.Movement;
+using ForeverFight.Ui.CharacterSelection;
+using ForeverFight.Interactable.Abilities;
 
 public class ClientSend : MonoBehaviour
 {
@@ -77,6 +77,40 @@ public class ClientSend : MonoBehaviour
         }
     }
 
+    public static void ToggleCountdownTimer()
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.toggleTimerCountdown))
+        {
+            int signalInt = 1;
+            _packet.Write(signalInt);
+            SendTcpData(_packet);
+            Debug.Log("~~~ 2 ~~~");
+        }
+    }
+
+
+
+
+
+    public static void ClientSendTestPacket()
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.clientSendTestPacket))
+        {
+            int testInt = 999;
+            _packet.Write(testInt);
+            SendTcpData(_packet);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
     public static void RequestToDamageOpponentsHealth(int damage)
     {
         using (Packet _packet = new Packet((int)ClientPackets.requestToDamageOpponentsHealth))
@@ -124,6 +158,16 @@ public class ClientSend : MonoBehaviour
         {
             _packet.Write(x);
             _packet.Write(y);
+
+            SendTcpData(_packet);
+        }
+    }
+
+    public static void SendWinnerStatus(bool hasWonTheMatch)
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.hasWonTheMatch))
+        {
+            _packet.Write(hasWonTheMatch);
 
             SendTcpData(_packet);
         }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace ForverFight.Ui
+namespace ForeverFight.Ui
 {
     public class CombatUiStatesManager : MonoBehaviour
     {

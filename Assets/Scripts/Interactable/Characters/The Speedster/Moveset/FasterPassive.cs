@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using ForverFight.Ui;
-using ForverFight.Networking;
-using ForverFight.FlowControl;
-using ForverFight.Interactable;
+using ForeverFight.Ui;
+using ForeverFight.Networking;
+using ForeverFight.FlowControl;
+using ForeverFight.Interactable;
 
 public class FasterPassive : MonoBehaviour, IPassiveAbility
 {

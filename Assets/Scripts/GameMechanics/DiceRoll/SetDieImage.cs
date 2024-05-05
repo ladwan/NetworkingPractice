@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using ForverFight.Ui;
-using ForverFight.Networking;
+using ForeverFight.Ui;
+using ForeverFight.Networking;
 
 public class SetDieImage : MonoBehaviour
 {

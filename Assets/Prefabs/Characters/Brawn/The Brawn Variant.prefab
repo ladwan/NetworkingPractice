@@ -243,7 +243,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   abilityName: Ground Pound
-  abilityDescription: HUlk SMASH!?
+  abilityDescription: See options for ability details
   abilityDamage: 10
   abilityCost: 2
   abilityRadius: {fileID: 3653020910258520038}
@@ -273,7 +273,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1490564771178830737}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -294,7 +294,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   abilityName: Haymaker
-  abilityDescription: Ohhhh yeahhh !?
+  abilityDescription: See options for ability details
   abilityDamage: 15
   abilityCost: 3
   abilityRadius: {fileID: 227062655782478284}
@@ -433,7 +433,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   abilityName: Ire
-  abilityDescription: Its over 9000 !?
+  abilityDescription: See options for ability details
   abilityDamage: 0
   abilityCost: 4
   abilityRadius: {fileID: 8789733998745498740}
@@ -498,6 +498,7 @@ MonoBehaviour:
   maxAbilityDuration: 9
   currentAbilityDuration: 2
   stunImmunityREF: {fileID: 8317242809360310192}
+  incrementAmount: 2
 --- !u!114 &8317242809360310192
 MonoBehaviour:
   m_ObjectHideFlags: 0

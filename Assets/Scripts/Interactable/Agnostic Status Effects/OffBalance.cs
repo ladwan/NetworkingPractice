@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using ForverFight.Ui;
-using ForverFight.FlowControl;
+using ForeverFight.Ui;
+using ForeverFight.FlowControl;
 
-namespace ForverFight.Interactable.Abilities
+namespace ForeverFight.Interactable.Abilities
 {
     public class OffBalance : StatusEffect
     {

@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using ForverFight.HelperScripts;
+using ForeverFight.HelperScripts;
 
-namespace ForverFight.Ui.CharacterSelection
+namespace ForeverFight.Ui.CharacterSelection
 {
     public class CharacterSelect : MonoBehaviour
     {

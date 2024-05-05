@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ForverFight.Ui.CharacterSelection
+namespace ForeverFight.Ui.CharacterSelection
 {
     public class DisplayCharacterInfo : MonoBehaviour
     {

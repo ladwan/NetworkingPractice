@@ -1,16 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ForverFight.GameMechanics;
-using ForverFight.Movement;
-using ForverFight.Ui;
-using ForverFight.Ui.CharacterSelection;
-using ForverFight.Networking;
-using ForverFight.FlowControl;
-using ForverFight.Interactable.Abilities;
+using ForeverFight.GameMechanics;
+using ForeverFight.Movement;
+using ForeverFight.Ui;
+using ForeverFight.Ui.CharacterSelection;
+using ForeverFight.Networking;
+using ForeverFight.FlowControl;
+using ForeverFight.Interactable.Abilities;
+using System;
 
 public class ClientHandle : MonoBehaviour
 {
+
+    public static Action winnerStatusReceived = null;
+
     public static void Welcome(Packet _packet)
     {
         string _msg = _packet.ReadString();
@@ -79,14 +83,37 @@ public class ClientHandle : MonoBehaviour
     public static void ReceiveSyncedTimerTime(Packet _packet)
     {
         int _timeLeft = _packet.ReadInt();
-
+        Debug.Log("~~~ Timers Synced ~~~");
         CharacterSelect.Instance.CountdownTimer.Time = 4;
     }
+
+    public static void ReceiveToggleTimerSignal(Packet _packet)
+    {
+        int _signalInt = _packet.ReadInt();
+        Debug.Log("~~~ 4 ~~~");
+        CharacterSelect.Instance.CountdownTimer.ToggleCountdownTimer();
+    }
+
+
+
+
+    public static void ReceiveTestPacket(Packet _packet)
+    {
+        int _testInt = _packet.ReadInt();
+        Debug.Log("~~~ Completed ! ~~~");
+    }
+
+
+
+
+
+
+
 
     public static void ReceiveDamage(Packet _packet)
     {
         int _damageAmount = _packet.ReadInt();
-
+        Debug.Log("~~~ Damage Recived ~~~");
         DamageManager.Instance.ReceiveDamage(_damageAmount);
     }
 
@@ -133,4 +160,12 @@ public class ClientHandle : MonoBehaviour
 
         FloorGrid.Instance.ProceduralGridManipulationREF.IsVector2AValidGridPoint(gridPointVector2);
     }
+
+    public static void RecieveWinStatus(Packet _packet)
+    {
+        bool winStatus = _packet.ReadBool();
+
+        winnerStatusReceived?.Invoke();
+    }
 }
+

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ForverFight.Interactable;
+using ForeverFight.Interactable;
 
 [CreateAssetMenu(menuName = "ChosenCharacter")]
 public class CharacterScriptableObject : ScriptableObject

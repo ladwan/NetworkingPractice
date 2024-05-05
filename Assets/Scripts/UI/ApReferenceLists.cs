@@ -2,9 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ForverFight.Ui;
-using ForverFight.Networking;
-using ForverFight.Interactable.Characters;
+using ForeverFight.Ui;
+using ForeverFight.Networking;
+using ForeverFight.Interactable.Characters;
 
 public class ApReferenceLists : MonoBehaviour
 {

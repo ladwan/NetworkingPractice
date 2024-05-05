@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using UnityEngine;
-using ForverFight.Ui;
+using ForeverFight.Ui;
 
-namespace ForverFight.GameMechanics.DiceRoll
+namespace ForeverFight.GameMechanics.DiceRoll
 {
     public class RollDice : MonoBehaviour
     {

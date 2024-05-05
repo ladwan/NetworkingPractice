@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ForverFight.GameMechanics.DiceRoll
+namespace ForeverFight.GameMechanics.DiceRoll
 {
     public class ToggleObjectsOnDieRoll : MonoBehaviour
     {

@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using ForverFight.Ui;
-using ForverFight.FlowControl;
+using ForeverFight.Ui;
+using ForeverFight.FlowControl;
 
-namespace ForverFight.Interactable.Abilities
+namespace ForeverFight.Interactable.Abilities
 {
     public class Momentum : StatusEffect
     {
@@ -41,7 +41,7 @@ namespace ForverFight.Interactable.Abilities
         protected Momentum()
         {
             AbilityName = "Momentum";
-            AbilityDescription = "Im fast as fuck boiii !?";
+            AbilityDescription = "Build Momentum by moving sq's. Quick Punch's damage will be increased by double the amount of stored Momentum";
             AbilityDamage = 0;
             MaxAbilityDuration = 3;
             CurrentAbilityDuration = MaxAbilityDuration;

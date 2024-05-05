@@ -1,4 +1,4 @@
-using ForverFight.Networking;
+using ForeverFight.Networking;
 using UnityEngine;
 using UnityEngine.UI;
 

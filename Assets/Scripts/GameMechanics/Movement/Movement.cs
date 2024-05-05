@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ForverFight.Movement
+namespace ForeverFight.Movement
 {
     public class Movement : MonoBehaviour
     {

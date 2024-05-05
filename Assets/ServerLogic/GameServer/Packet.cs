@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+//using UnityEngine.Networking;
 
 namespace GameServer
 {
@@ -20,6 +21,9 @@ namespace GameServer
         serverSendCurrentStatusEffectDuration = 11,
         serverSendStoredMomentumValue = 12,
         serverSendOverrodePos = 13,
+        serverSendWinStatus = 14,
+        toggleCountdownTimer = 15,
+        serverSendTestPacket = 16,
     }
 
     /// <summary>Sent from client to server.</summary>
@@ -36,6 +40,9 @@ namespace GameServer
         sendCurrentStatusEffectDuration = 9,
         sendStoredMomentumValue = 10,
         overrideOppositePlayersPos = 11,
+        hasWonTheMatch = 12,
+        toggleTimerCountdown = 13,
+        clientSendTestPacket = 14,
     }
 
     public class Packet : IDisposable

@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ForverFight.GameMechanics;
+using ForeverFight.GameMechanics;
 
-namespace ForverFight.Interactable.Abilities
+namespace ForeverFight.Interactable.Abilities
 {
     public class QuickPunch : CharAbility
     {
@@ -20,7 +20,7 @@ namespace ForverFight.Interactable.Abilities
         protected QuickPunch()
         {
             AbilityName = "Quick Punch";
-            AbilityDescription = "Dayum sun where'd you find this !?";
+            AbilityDescription = $"Ability Damage : {AbilityDamage} \n\n This abilities damage scales with the Momentum ability";
             AbilityDamage = 5;
             AbilityCost = 2;
         }
