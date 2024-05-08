@@ -2,6 +2,7 @@ using ForeverFight.Interactable;
 using ForeverFight.Interactable.Abilities;
 using UnityEngine;
 using UnityEngine.UI;
+using ForeverFight.HelperScripts;
 
 namespace ForeverFight.Networking
 {
@@ -28,6 +29,8 @@ namespace ForeverFight.Networking
         public static int localPlayerCurrentAP = 3;
 
         public static int opponentsCurrentAP = 3;
+
+        public static Countdown countdownTimerScript = null;
 
 
 
@@ -79,6 +82,19 @@ namespace ForeverFight.Networking
             else
             {
                 Debug.Log("No opponent health slider could be found");
+                return null;
+            }
+        }
+
+        public static Countdown GetCountdownTimerScript()
+        {
+            if (countdownTimerScript)
+            {
+                return countdownTimerScript;
+            }
+            else
+            {
+                Debug.Log("No Count Down Script could be found");
                 return null;
             }
         }

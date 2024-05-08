@@ -9,7 +9,6 @@ public class ClientSend : MonoBehaviour
 {
     private static void SendTcpData(Packet _packet)
     {
-        _packet.WriteLength();
         Client.localClientInstance.tcp.SendData(_packet);
     }
 

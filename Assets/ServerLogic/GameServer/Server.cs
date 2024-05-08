@@ -39,6 +39,7 @@ namespace GameServer
             Console.WriteLine($"Incoming connection from... {_client.Client.RemoteEndPoint}");
             for (int i = 1; i <= maxPlayers; i++)
             {
+                Console.WriteLine($"~~ Socket : {connectedClients[i].myClientTcp.socket}  ||  Index : {i}");
                 if (connectedClients[i].myClientTcp.socket == null)
                 {
                     connectedClients[i].myClientTcp.Connect(_client);
@@ -54,6 +55,7 @@ namespace GameServer
             for (int i = 1; i <= maxPlayers; i++)
             {
                 connectedClients.Add(i, new Client(i));
+                Console.WriteLine($"~~~ Hey : {i}");
             }
 
             packetHandlers = new Dictionary<int, PacketHandler>()

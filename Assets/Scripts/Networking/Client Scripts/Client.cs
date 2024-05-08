@@ -94,7 +94,20 @@ public class Client : MonoBehaviour
 
         public void SendData(Packet _packet)
         {
-            stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), OnSentData, null);
+            byte[] body = _packet.ToArray();
+            byte[] header = BitConverter.GetBytes(body.Length);
+            byte[] packet = new byte[header.Length + body.Length];
+
+            Array.Copy(header, 0, packet, 0, header.Length);
+            Array.Copy(body, 0, packet, header.Length, body.Length);
+
+            stream.BeginWrite(packet, 0, packet.Length, OnSentData, null);
+
+            byte[] testBytes = _packet.ToArray();
+            for (int i = 0; i < testBytes.Length; i++)
+            {
+                Debug.Log($"Network Stream data : {testBytes[i]}");
+            }
         }
 
         private void OnSentData(IAsyncResult result)
@@ -120,6 +133,7 @@ public class Client : MonoBehaviour
             if (received <= 0)
             {
                 Debug.Log("Received was less than 0  : 0");
+                //localClientInstance.Disconnect();
                 // disconnect or error
                 return;
             }
@@ -155,6 +169,7 @@ public class Client : MonoBehaviour
             if (received <= 0)
             {
                 Debug.Log("Received was less than 0  :  1");
+                //localClientInstance.Disconnect();
                 // disconnect or error
                 return;
             }

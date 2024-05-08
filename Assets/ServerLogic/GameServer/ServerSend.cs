@@ -6,7 +6,6 @@ namespace GameServer
     {
         private static void SendTcpData(int _toClient, Packet _packet)
         {
-            _packet.WriteLength();
             Server.connectedClients[_toClient].myClientTcp.SendData(_packet);
             Console.WriteLine($"The current index in connected clients is: {_toClient}");
         }
@@ -22,12 +21,10 @@ namespace GameServer
         {
             if (_clientToIgnore == 1)
             {
-                _packet.WriteLength();
                 Server.connectedClients[2].myClientTcp.SendData(_packet);
             }
             if (_clientToIgnore == 2)
             {
-                _packet.WriteLength();
                 Server.connectedClients[1].myClientTcp.SendData(_packet);
             }
         }

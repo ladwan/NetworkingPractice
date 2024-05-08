@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using ForeverFight.Networking;
 using TMPro;
 
 namespace ForeverFight.HelperScripts
@@ -42,6 +43,7 @@ namespace ForeverFight.HelperScripts
             if (instance == null)
             {
                 instance = this;
+                LocalStoredNetworkData.countdownTimerScript = instance;
             }
             else if (instance != this)
             {

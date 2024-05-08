@@ -29,7 +29,7 @@ public class ClientHandle : MonoBehaviour
         {
             ClientInfo.playerNumber = 2;
         }
-        Debug.Log($"Message from server: {_msg}.");
+        Debug.Log($"Message from server: {_msg}. Player id: {_myId} Total PLayers :{ClientInfo.totalPlayersConnected}");
         Client.localClientInstance.localClientId = _myId;
 
         ClientSend.WelcomeReceived();
@@ -91,7 +91,7 @@ public class ClientHandle : MonoBehaviour
     {
         int _signalInt = _packet.ReadInt();
         Debug.Log("~~~ 4 ~~~");
-        CharacterSelect.Instance.CountdownTimer.ToggleCountdownTimer();
+        LocalStoredNetworkData.GetCountdownTimerScript().ToggleCountdownTimer();
     }
 
 
