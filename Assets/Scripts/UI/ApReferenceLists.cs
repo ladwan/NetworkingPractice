@@ -22,6 +22,7 @@ public class ApReferenceLists : MonoBehaviour
         main,
         speedster,
     };
+
     private bool blinkCoroutineIsRunning = false;
     private int referenceListsApValueToUpdate = 0;
     private List<GameObject> apLightsToBeBlinked = new List<GameObject>();

@@ -78,23 +78,26 @@ namespace ForeverFight.Ui
 
         public void UpdateBlinkingAP(ApReferenceLists referenceLists)
         {
-            if (referenceLists.ApLightsToBeBlinked.Count > 0)
+            if (referenceLists.ApLightsToBeBlinked.Count == 0)
             {
-                if (playerTurnHasEnded)
+                return;
+            }
+
+            if (playerTurnHasEnded)
+            {
+                referenceLists.StopBlink();
+                referenceLists.ApLightsToBeBlinked.Clear();
+                playerTurnHasEnded = false;
+            }
+            else
+            {
+                referenceLists.ApLightsToBeBlinked.RemoveAt(referenceLists.ApLightsToBeBlinked.Count - 1);
+                if (referenceLists.ApLightsToBeBlinked.Count <= 0)
                 {
                     referenceLists.StopBlink();
-                    referenceLists.ApLightsToBeBlinked.Clear();
-                    playerTurnHasEnded = false;
-                }
-                else
-                {
-                    referenceLists.ApLightsToBeBlinked.RemoveAt(referenceLists.ApLightsToBeBlinked.Count - 1);
-                    if (referenceLists.ApLightsToBeBlinked.Count <= 0)
-                    {
-                        referenceLists.StopBlink();
-                    };
-                }
+                };
             }
+
         }
 
         public void MoveWasConfirmed(ApReferenceLists referenceLists)
@@ -192,6 +195,8 @@ namespace ForeverFight.Ui
 
         private void SetCurrentlyActiveReferenceList(ApReferenceLists referenceLists)
         {
+            currentApReferenceListsREF = referenceLists;
+            /*
             if (referenceLists == mainApLists)
             {
                 currentApReferenceListsREF = referenceLists;
@@ -200,6 +205,7 @@ namespace ForeverFight.Ui
             {
                 currentApReferenceListsREF = referenceLists;
             }
+            */
         }
     }
 }

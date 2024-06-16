@@ -26,6 +26,7 @@ namespace ForeverFight.HelperScripts
         private Countdown instance;
         [NonSerialized]
         private bool doOnce = false;
+        [NonSerialized]
         private bool isPaused = false;
 
 
@@ -86,19 +87,25 @@ namespace ForeverFight.HelperScripts
             StartCoroutine(Count());
         }
 
+        public void TellNetworkToToggleTimer() //This is needed so we can call from a button
+        {
+            Debug.Log("TellNetworkToToggleTimer was called !");
+            ClientSend.ToggleCountdownTimer();
+        }
+
         public void ToggleCountdownTimer()
         {
-            Debug.Log("~~~ 5 ~~~");
+            Debug.Log("ToggleCountdownTimer was called !");
+
             if (!isPaused)
             {
                 StopAllCoroutines();
                 isPaused = true;
+                return;
             }
-            else
-            {
-                StartCoroutine(Count());
-                isPaused = false;
-            }
+
+            StartCoroutine(Count());
+            isPaused = false;
         }
 
         public void ResetTimer(int value)
@@ -106,15 +113,6 @@ namespace ForeverFight.HelperScripts
             StopAllCoroutines();
             time = value;
             StartCoroutine(Count());
-        }
-
-        protected void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.G))
-            {
-                Debug.Log("~~~ 1 ~~~");
-                ClientSend.ToggleCountdownTimer();
-            }
         }
     }
 }

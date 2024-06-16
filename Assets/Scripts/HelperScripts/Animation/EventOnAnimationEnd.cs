@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 namespace ForeverFight.HelperScripts.Animation
 {
-    public class EventOnAnminationEnd : MonoBehaviour
+    public class EventOnAnimationEnd : MonoBehaviour
     {
         [SerializeField]
         private Animator animatorREF = null;

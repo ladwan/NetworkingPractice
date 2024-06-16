@@ -95,7 +95,7 @@ public class GridPoint : MonoBehaviour
                 {
                     previousGp.DisplayConnections(false);
                 }
-                floorGridREF.TryHighlighting(dragMovementREF.CurrentlyClickedGridPoint);
+                floorGridREF.TryHighlighting(dragMovementREF.CurrentlyClickedGridPoint, false);
                 dragMovementREF.UpdateDragMover();
                 dragMovementREF.OnDragMoverPosUpdated?.Invoke();
             }

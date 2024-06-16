@@ -68,8 +68,7 @@ public class FloorGrid : MonoBehaviour
         }
     }
 
-
-    void Start()
+    protected void Start()
     {
         for (int p = 0; p < 10; p++) //Create grid columns
         {
@@ -102,6 +101,7 @@ public class FloorGrid : MonoBehaviour
                 break;
         }
     }
+
 
     public void EmptyGridPointList() //Removes Highlighted Sq's
     {
@@ -138,32 +138,34 @@ public class FloorGrid : MonoBehaviour
         var moveOpponent = ClientInfo.playerNumber == 1 ? player2Spawn.transform.position = newPos : player1Spawn.transform.position = newPos;
     }
 
-    public void TryHighlighting(GridPoint nextDestinationsGridPoint)
+    public void TryHighlighting(GridPoint nextDestinationsGridPoint, bool moveWithoutCostingAp)
     {
-        if (nextDestinationsGridPoint != GridPointOccupiedByOpponent())
+        if (nextDestinationsGridPoint == GridPointOccupiedByOpponent())
         {
-            if (IsGridPointInList(nextDestinationsGridPoint))
-            {
-                dragMoverGridPointREF = nextDestinationsGridPoint;
-                currentLocation = nextDestinationsGridPoint.UniqueTag;
-                AddGridPointToList(nextDestinationsGridPoint);
-                nextDestinationsGridPoint.DragMovementREF.UpdateDragMoverPosition(nextDestinationsGridPoint.UniqueTag);
-            }
-            else
-            {
-                if (ActionPointsManager.Instance.CurrentApReferenceListsREF.UpdateValueOfRelevantAp(0) > 0)
-                {
-                    dragMoverGridPointREF = nextDestinationsGridPoint;
-                    currentLocation = nextDestinationsGridPoint.UniqueTag;
-                    AddGridPointToList(nextDestinationsGridPoint);
-                    ActionPointsManager.Instance.BlinkCurrentListReference();
-                    nextDestinationsGridPoint.DragMovementREF.UpdateDragMoverPosition(nextDestinationsGridPoint.UniqueTag);
-                }
-            }
+            Debug.Log("That position is already taken! Please try to move elsewhere.");
+            return;
+        }
+
+        if (IsGridPointInList(nextDestinationsGridPoint))
+        {
+            UpdateMovementVariablesAndGpList(nextDestinationsGridPoint);
+            nextDestinationsGridPoint.DragMovementREF.UpdateDragMoverPosition(nextDestinationsGridPoint.UniqueTag);
         }
         else
         {
-            Debug.Log("That position is already taken! Please try to move elsewhere.");
+            if (ActionPointsManager.Instance.CurrentApReferenceListsREF.UpdateValueOfRelevantAp(0) > 0 && !moveWithoutCostingAp)
+            {
+                UpdateMovementVariablesAndGpList(nextDestinationsGridPoint);
+                ActionPointsManager.Instance.BlinkCurrentListReference();
+                nextDestinationsGridPoint.DragMovementREF.UpdateDragMoverPosition(nextDestinationsGridPoint.UniqueTag);
+            }
+
+            if (moveWithoutCostingAp)
+            {
+                UpdateMovementVariablesAndGpList(nextDestinationsGridPoint);
+                //ActionPointsManager.Instance.BlinkCurrentListReference();
+                nextDestinationsGridPoint.DragMovementREF.UpdateDragMoverPosition(nextDestinationsGridPoint.UniqueTag);
+            }
         }
     }
 
@@ -190,6 +192,7 @@ public class FloorGrid : MonoBehaviour
         ActionPointsManager.Instance.MoveWasConfirmed(ActionPointsManager.Instance.CurrentApReferenceListsREF);
     }
 
+
     public void AddStartingGpHighlight()
     {
         if (gridDictionary.TryGetValue(currentLocation, out GridPoint startingSq))
@@ -211,34 +214,34 @@ public class FloorGrid : MonoBehaviour
     private bool AddGridPointToListBool(GridPoint gp) // Determines if a gp is already in the hoveredOverGridPoints list, if not just add it to the list, if so update list and remove all gps that came after it.
     {
         bool add = false;
-        if (hoveredOverGridPoints.Count != 0)
-        {
-            for (int i = 0; i < hoveredOverGridPoints.Count; i++)
-            {
-                if (gp != hoveredOverGridPoints[i])
-                {
-                    add = true;
-                }
-                else
-                {
-                    if (i + 1 < hoveredOverGridPoints.Count)
-                    {
-                        for (int removeMe = i + 1; removeMe != hoveredOverGridPoints.Count;)
-                        {
-                            hoveredOverGridPoints[removeMe].ShowHighlight(false);
-                            hoveredOverGridPoints.RemoveAt(removeMe);
-                            ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.CurrentApReferenceListsREF, 1);
-                            ActionPointsManager.Instance.UpdateBlinkingAP(ActionPointsManager.Instance.CurrentApReferenceListsREF);
-                        }
-                    }
-                    add = false;
-                    break;
-                }
-            }
-        }
-        else
+
+        if (hoveredOverGridPoints.Count == 0)
         {
             add = true;
+            return add;
+        }
+
+        for (int i = 0; i < hoveredOverGridPoints.Count; i++)
+        {
+            if (gp != hoveredOverGridPoints[i])
+            {
+                add = true;
+            }
+            else
+            {
+                if (i + 1 < hoveredOverGridPoints.Count)
+                {
+                    for (int removeMe = i + 1; removeMe != hoveredOverGridPoints.Count;)
+                    {
+                        hoveredOverGridPoints[removeMe].ShowHighlight(false);
+                        hoveredOverGridPoints.RemoveAt(removeMe);
+                        ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.CurrentApReferenceListsREF, 1);
+                        ActionPointsManager.Instance.UpdateBlinkingAP(ActionPointsManager.Instance.CurrentApReferenceListsREF);
+                    }
+                }
+                add = false;
+                break;
+            }
         }
 
         return add;
@@ -289,5 +292,12 @@ public class FloorGrid : MonoBehaviour
 
         Debug.Log("ClientInfo.PlayerNumber returned an abnormal value, please check code");
         return null;
+    }
+
+    private void UpdateMovementVariablesAndGpList(GridPoint nextDestinationsGridPoint)
+    {
+        dragMoverGridPointREF = nextDestinationsGridPoint;
+        currentLocation = nextDestinationsGridPoint.UniqueTag;
+        AddGridPointToList(nextDestinationsGridPoint);
     }
 }

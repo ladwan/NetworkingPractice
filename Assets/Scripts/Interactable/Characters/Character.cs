@@ -25,6 +25,8 @@ namespace ForeverFight.Interactable
         [SerializeField]
         private int abilityNumber = 0;
         [SerializeField]
+        private Animator characterAnimator = null;
+        [SerializeField]
         private List<CharAbility> moveset = new List<CharAbility>();
         [SerializeField]
         private List<GameObject> customUiElements = new List<GameObject>();
@@ -53,6 +55,8 @@ namespace ForeverFight.Interactable
         public int RollAlotment { get => rollAlotment; set => rollAlotment = value; }
 
         public int AbilityNumber { get => abilityNumber; set => abilityNumber = value; }
+
+        public Animator CharacterAnimator { get => characterAnimator; set => characterAnimator = value; }
 
         public List<CharAbility> Moveset => moveset;
 

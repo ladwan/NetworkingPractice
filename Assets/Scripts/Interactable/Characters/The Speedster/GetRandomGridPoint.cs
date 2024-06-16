@@ -10,32 +10,24 @@ namespace ForeverFight.HelperScripts
         private List<GridPoint> randomGridPoints = new List<GridPoint>();
 
 
-        protected void OnEnable()
-        {
-        }
-
-        protected void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.T))
-            {
-                floorGridREF = FloorGrid.Instance;
-            }
-        }
-
-
         public List<GridPoint> GeneranteListOfRandomGPs(int n)
         {
             ReturnRandomGridPoint(n);
             return randomGridPoints;
         }
 
+        public void ClearList<T>(List<T> genericList)
+        {
+            genericList.Clear();
+            randomGridPoints.Clear();
+        }
 
         private void ReturnRandomGridPoint(int numberOfCalls)
         {
             int randomX = Random.Range(0, 10);
             int randomY = Random.Range(0, 10);
             Vector2 randomVector2 = new Vector2(randomX, randomY);
-            GridPoint randomGridPoint = floorGridREF.GridDictionary[randomVector2];
+            GridPoint randomGridPoint = FloorGrid.Instance.GridDictionary[randomVector2];
             randomGridPoints.Add(randomGridPoint);
             numberOfCalls--;
 

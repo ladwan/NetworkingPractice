@@ -104,10 +104,12 @@ public class Client : MonoBehaviour
             stream.BeginWrite(packet, 0, packet.Length, OnSentData, null);
 
             byte[] testBytes = _packet.ToArray();
+            /*
             for (int i = 0; i < testBytes.Length; i++)
             {
                 Debug.Log($"Network Stream data : {testBytes[i]}");
             }
+            */
         }
 
         private void OnSentData(IAsyncResult result)
@@ -149,7 +151,7 @@ public class Client : MonoBehaviour
             // fully received header, parse it and start receiving body
 
             int length = BitConverter.ToInt32(buffer, 0); // we only have to read the single length field
-            Debug.Log($"Length : {length} ");
+            //Debug.Log($"Length : {length} ");
             BeginReceiveBody(length);
         }
 
@@ -183,11 +185,12 @@ public class Client : MonoBehaviour
             }
 
             // fully received body, handle the packet and start reading next packet
-
+            /*
             for (int i = 0; i < 3; i++)
             {
                 Debug.Log($"Buffer data : {buffer[i]}");
             }
+            */
 
 
             byte[] body = new byte[buffer.Length];

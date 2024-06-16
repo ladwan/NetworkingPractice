@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using ForeverFight.Ui;
+using ForeverFight.Movement;
 using ForeverFight.FlowControl;
 
 namespace ForeverFight.Interactable.Abilities
@@ -19,7 +20,8 @@ namespace ForeverFight.Interactable.Abilities
         [SerializeField]
         private GameObject increasedQuickPunchRadius = null;
         [SerializeField]
-        private MonoBehaviour thisScript = null;
+        private MoveToRandomGPs moveToRandomGPsREF = null;
+
 
         private bool statusActive = false;
 
@@ -79,6 +81,7 @@ namespace ForeverFight.Interactable.Abilities
             {
                 fasterPassiveREF.SetMaxPassiveApPool(6);
                 quickPunchREF.SetAbilityRadius(increasedQuickPunchRadius);
+                AugmentedMovementManager.Instance.ToggleAugmentMovement(moveToRandomGPsREF);
             }
         }
 
@@ -115,6 +118,7 @@ namespace ForeverFight.Interactable.Abilities
                     statusActive = false;
                     fasterPassiveREF.SetMaxPassiveApPool(3);
                     quickPunchREF.SetAbilityRadius(quickPunchREF.OriginalRadius);
+                    AugmentedMovementManager.Instance.ToggleAugmentMovement(moveToRandomGPsREF);
                 }
             }
         }

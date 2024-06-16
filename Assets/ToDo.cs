@@ -20,9 +20,10 @@ public class ToDo : MonoBehaviour
       Test game and refactor code
       Look for edge cases 
 
+    6/15/24
     ---------------------------------------------------------------------------
 
-    Maybe dont need toggle becuase ui blockers can clean themselves up
+    Maybe dont need toggle because ui blockers can clean themselves up
     Make class that holds and displays ability descriptions
 
 

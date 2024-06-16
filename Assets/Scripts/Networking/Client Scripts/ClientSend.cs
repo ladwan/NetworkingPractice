@@ -83,7 +83,6 @@ public class ClientSend : MonoBehaviour
             int signalInt = 1;
             _packet.Write(signalInt);
             SendTcpData(_packet);
-            Debug.Log("~~~ 2 ~~~");
         }
     }
 

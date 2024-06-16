@@ -155,6 +155,9 @@ GameObject:
   m_Component:
   - component: {fileID: 931232968}
   - component: {fileID: 3877362417826474932}
+  - component: {fileID: 3773514657781986916}
+  - component: {fileID: 530243782496728678}
+  - component: {fileID: 3215790686580489246}
   m_Layer: 0
   m_Name: Haste
   m_TagString: Untagged
@@ -201,7 +204,60 @@ MonoBehaviour:
   quickPunchREF: {fileID: 491710909}
   hasteDisplayUi: {fileID: 5730032930054460824, guid: 8db9afa71273aed47af1995d40f273ab, type: 3}
   increasedQuickPunchRadius: {fileID: 2903982421141336467}
-  thisScript: {fileID: 0}
+  moveToRandomGPsREF: {fileID: 3773514657781986916}
+--- !u!114 &3773514657781986916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 931232967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6551c07babc15f240b78f6d47673e401, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  getRandomGridPointREF: {fileID: 530243782496728678}
+  genericLerpREF: {fileID: 3215790686580489246}
+  movementCompletedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Stop To Idle
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &530243782496728678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 931232967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6a126a74637ec040b6b06470f91e7a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3215790686580489246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 931232967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc04d67191347e8458a50e338fdf0ba7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &705518648247848405
 GameObject:
   m_ObjectHideFlags: 0
@@ -2076,6 +2132,68 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4289649503520861611, guid: a987242d5a41cb641a2be58a95322ddb, type: 3}
   m_PrefabInstance: {fileID: 1509172377211556822}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &2120026627206405269
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 7098479322418756063}
+    m_Modifications:
+    - target: {fileID: 5827011820623171209, guid: 6b9a5c4308fe4524d86321884d4f5844, type: 3}
+      propertyPath: m_Name
+      value: Speedster_Stop_To_Idle
+      objectReference: {fileID: 0}
+    - target: {fileID: 6599573132847043635, guid: 6b9a5c4308fe4524d86321884d4f5844, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6599573132847043635, guid: 6b9a5c4308fe4524d86321884d4f5844, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6599573132847043635, guid: 6b9a5c4308fe4524d86321884d4f5844, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6599573132847043635, guid: 6b9a5c4308fe4524d86321884d4f5844, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6599573132847043635, guid: 6b9a5c4308fe4524d86321884d4f5844, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6599573132847043635, guid: 6b9a5c4308fe4524d86321884d4f5844, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6599573132847043635, guid: 6b9a5c4308fe4524d86321884d4f5844, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6599573132847043635, guid: 6b9a5c4308fe4524d86321884d4f5844, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6599573132847043635, guid: 6b9a5c4308fe4524d86321884d4f5844, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6599573132847043635, guid: 6b9a5c4308fe4524d86321884d4f5844, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6599573132847043635, guid: 6b9a5c4308fe4524d86321884d4f5844, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6b9a5c4308fe4524d86321884d4f5844, type: 3}
+--- !u!95 &4717244963492211723 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 6637423703962808478, guid: 6b9a5c4308fe4524d86321884d4f5844, type: 3}
+  m_PrefabInstance: {fileID: 2120026627206405269}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2468633464252725849
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3807,6 +3925,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Low_Speedster
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 107760a3bf1fb3845b5500b51916fc9b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1899720325968872903, guid: 107760a3bf1fb3845b5500b51916fc9b, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -3846,7 +3968,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1145084265029886813, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1145084265029886813, guid: e1d5b68e643a24a4a920b97143d6a12d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3997,6 +4119,7 @@ MonoBehaviour:
   health: 0
   rollAlotment: 0
   abilityNumber: 0
+  characterAnimator: {fileID: 4717244963492211723}
   moveset:
   - {fileID: 491710909}
   - {fileID: 6802778721011314917}
