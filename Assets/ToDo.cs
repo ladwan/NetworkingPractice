@@ -20,7 +20,9 @@ public class ToDo : MonoBehaviour
       Test game and refactor code
       Look for edge cases 
 
-    6/15/24
+    6/16/24
+    rename test anim controller to something more meaningful
+
     ---------------------------------------------------------------------------
 
     Maybe dont need toggle because ui blockers can clean themselves up
