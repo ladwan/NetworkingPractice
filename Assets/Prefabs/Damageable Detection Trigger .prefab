@@ -125,10 +125,10 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4289649503520861268}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1, y: -0.45, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 0.1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 737960196293762368}
   m_Father: {fileID: 0}
@@ -229,6 +229,4 @@ MonoBehaviour:
   noTargetMat: {fileID: 2100000, guid: 483e114e74eb4db4799221c89b24bd85, type: 2}
   targetFoundMat: {fileID: 2100000, guid: 09e530d6c3a512a4b8b032fdfe4f8808, type: 2}
   activeTargetCube: {fileID: 4004632824781905355}
-  fireAbilityEvent:
-    m_PersistentCalls:
-      m_Calls: []
+  isTargetingSelf: 0
