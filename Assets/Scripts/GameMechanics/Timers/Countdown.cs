@@ -89,11 +89,11 @@ namespace ForeverFight.HelperScripts
 
         public void TellNetworkToToggleTimer() //This is needed so we can call from a button
         {
-            Debug.Log("TellNetworkToToggleTimer was called !");
+            //Debug.Log("TellNetworkToToggleTimer was called !");
             ClientSend.ToggleCountdownTimer();
         }
 
-        public void ToggleCountdownTimer()
+        public void ToggleCountdownTimer() // DO NOT directly call this
         {
             Debug.Log("ToggleCountdownTimer was called !");
 

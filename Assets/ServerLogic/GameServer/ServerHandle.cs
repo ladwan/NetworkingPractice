@@ -76,27 +76,11 @@ namespace GameServer
             ServerSend.ToggleCountdownTimer(_fromClient, _signalInt);
         }
 
-
-
-
-
-        public static void ServerRecieveTestPacket(int _fromClient, Packet _packet)
+        public static void ServerRecieveAnimationTrigger(int _fromClient, Packet _packet)
         {
-            int testInt = _packet.ReadInt();
-            Console.WriteLine("~ ~ ~ Test Int Recieved ! ~ ~ ~");
-            ServerSend.ServerSendingOutTestPacket(_fromClient, testInt);
-
+            string trigger = _packet.ReadString();
+            ServerSend.ServerSendAnimationTrigger(_fromClient, trigger);
         }
-
-
-
-
-
-
-
-
-
-
 
         public static void ServerRecieveRequestToDamageOpponent(int _fromClient, Packet _packet)
         {

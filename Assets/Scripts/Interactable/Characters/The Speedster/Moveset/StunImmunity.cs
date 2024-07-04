@@ -10,12 +10,6 @@ namespace ForeverFight.Interactable.Abilities
 {
     public class StunImmunity : StatusEffect
     {
-        private bool statusActive = false;
-
-
-        public bool StatusActive { get => statusActive; set => statusActive = value; }
-
-
         protected StunImmunity()
         {
             AbilityName = "Stun Immunity";
@@ -46,14 +40,14 @@ namespace ForeverFight.Interactable.Abilities
 
         public override void CastAbility()
         {
-            statusActive = true;
+            StatusActive = true;
             StatusEffectStaticManager.Instance.UpdateNetworkedStatusEffectDisplay(6, CurrentAbilityDuration, 0, false);
             ClientSend.SendStatusEffectData(StatusEffect.StatusEffectType.StunImmunity, CurrentAbilityDuration, 1, false);
         }
 
         public void StopAbility()
         {
-            if (statusActive)
+            if (StatusActive)
             {
                 CurrentAbilityDuration = 1;
                 CurrentAbilityDuration = UpdateStatusEffectDuration(000, CurrentAbilityDuration, MaxAbilityDuration, CurrentStatusEffectType, false);
@@ -78,7 +72,7 @@ namespace ForeverFight.Interactable.Abilities
 
         private void UpdateAbilityDuration()
         {
-            if (statusActive)
+            if (StatusActive)
             {
                 CurrentAbilityDuration = UpdateStatusEffectDuration(2, CurrentAbilityDuration, MaxAbilityDuration, CurrentStatusEffectType, true);
             }
@@ -88,7 +82,7 @@ namespace ForeverFight.Interactable.Abilities
         {
             if (type == CurrentStatusEffectType && CurrentAbilityDuration <= 1)
             {
-                statusActive = false;
+                StatusActive = false;
             }
         }
     }

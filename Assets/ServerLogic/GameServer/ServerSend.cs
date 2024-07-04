@@ -144,15 +144,12 @@ namespace GameServer
 
 
 
-        public static void ServerSendingOutTestPacket(int _playerThatDoesntNeedMsgId, int _testInt)
+        public static void ServerSendAnimationTrigger(int _playerThatDoesntNeedMsgId, string trigger)
         {
-            using (Packet _packet = new Packet((int)ServerPackets.serverSendTestPacket))
+            using (Packet _packet = new Packet((int)ServerPackets.serverSendAnimationTrigger))
             {
-                _packet.Write(_testInt);
-
-                SendTcpDataToOppositePlayer(1, _packet);
-                SendTcpDataToOppositePlayer(2, _packet);
-                Console.WriteLine($"~ ~ ~ Test Packet Sent {(int)ServerPackets.serverSendTestPacket} ~ ~ ~");
+                _packet.Write(trigger);
+                SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
             }
         }
 

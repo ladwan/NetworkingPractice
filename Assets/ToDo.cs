@@ -19,9 +19,12 @@ public class ToDo : MonoBehaviour
 
       Test game and refactor code
       Look for edge cases 
-
-    6/16/24
-    rename test anim controller to something more meaningful
+      
+    speedster quick punch momentum aminations
+    1-14 / base anim
+    15-24 / Stronger punch anim
+    25+ / Ultimate punch anim
+        if you are animating then the clock will always stop & if you are animating hide interactable buttons 
 
     ---------------------------------------------------------------------------
 

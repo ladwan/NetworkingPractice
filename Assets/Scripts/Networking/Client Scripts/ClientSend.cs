@@ -86,28 +86,14 @@ public class ClientSend : MonoBehaviour
         }
     }
 
-
-
-
-
-    public static void ClientSendTestPacket()
+    public static void ClientSendAnimationTrigger(string trigger)
     {
-        using (Packet _packet = new Packet((int)ClientPackets.clientSendTestPacket))
+        using (Packet _packet = new Packet((int)ClientPackets.clientSendAnimationTrigger))
         {
-            int testInt = 999;
-            _packet.Write(testInt);
+            _packet.Write(trigger);
             SendTcpData(_packet);
         }
     }
-
-
-
-
-
-
-
-
-
 
     public static void RequestToDamageOpponentsHealth(int damage)
     {

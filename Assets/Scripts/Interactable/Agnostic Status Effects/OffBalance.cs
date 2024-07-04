@@ -15,8 +15,6 @@ namespace ForeverFight.Interactable.Abilities
         [SerializeField]
         private int incrementAmount = 2;
 
-        private bool statusActive = false;
-
 
         protected OffBalance()
         {
@@ -46,7 +44,7 @@ namespace ForeverFight.Interactable.Abilities
         {
             if (!stunImmunityREF.StatusActive)
             {
-                statusActive = true;
+                StatusActive = true;
                 StatusEffectStaticManager.Instance.UpdateNetworkedStatusEffectDisplay(4, incrementAmount, 0, false);
                 ClientSend.SendStatusEffectData(StatusEffect.StatusEffectType.OffBalance, incrementAmount, 1, false);
             }
@@ -56,7 +54,7 @@ namespace ForeverFight.Interactable.Abilities
         {
             if (!stunImmunityREF.StatusActive)
             {
-                statusActive = true;
+                StatusActive = true;
                 StatusEffectStaticManager.Instance.UpdateNetworkedStatusEffectDisplay(4, MaxAbilityDuration, 0, false);
                 ClientSend.SendStatusEffectData(StatusEffect.StatusEffectType.OffBalance, MaxAbilityDuration, 1, false);
             }
@@ -86,7 +84,7 @@ namespace ForeverFight.Interactable.Abilities
 
         private void UpdateAbilityDuration()
         {
-            if (statusActive)
+            if (StatusActive)
             {
                 CurrentAbilityDuration = UpdateStatusEffectDuration(000, CurrentAbilityDuration, 1, CurrentStatusEffectType, false);
                 var slot = StatusEffectStaticManager.Instance.ReturnMatchingStatusEffectSlot(CurrentStatusEffectType, 0);
@@ -120,7 +118,7 @@ namespace ForeverFight.Interactable.Abilities
             {
                 if (CurrentAbilityDuration <= 1)
                 {
-                    statusActive = false;
+                    StatusActive = false;
                 }
             }
         }

@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ForeverFight.Networking;
+using ForeverFight.Interactable.Abilities;
 
 namespace ForeverFight.Interactable.Characters
 {
@@ -8,6 +11,8 @@ namespace ForeverFight.Interactable.Characters
     {
         [SerializeField]
         private FasterPassive fasterPassive = null;
+        [SerializeField]
+        private Haste hasteREF = null;
 
 
         public FasterPassive FasterPassive { get => fasterPassive; set => fasterPassive = value; }
@@ -20,6 +25,20 @@ namespace ForeverFight.Interactable.Characters
             CharacterName = "The Speedster";
             Health = 100;
             RollAlotment = 5;
+
+            if (FloorGrid.Instance)
+            {
+                FloorGrid.Instance.OnMoveConfirmed += MoveWasConfirmed;
+                return;
+            }
+        }
+
+        protected void OnDisable()
+        {
+            if (FloorGrid.Instance)
+            {
+                FloorGrid.Instance.OnMoveConfirmed -= MoveWasConfirmed;
+            }
         }
 
 
@@ -37,6 +56,15 @@ namespace ForeverFight.Interactable.Characters
             else
             {
                 Debug.Log("value passed for ability number was not valid");
+            }
+        }
+
+
+        private void MoveWasConfirmed(int value)
+        {
+            if (!hasteREF.StatusActive)
+            {
+                LocalStoredNetworkData.GetCountdownTimerScript().TellNetworkToToggleTimer(); //This should be called to turn the timer back on, timer should be shut off by Augemented Movement Manager
             }
         }
     }

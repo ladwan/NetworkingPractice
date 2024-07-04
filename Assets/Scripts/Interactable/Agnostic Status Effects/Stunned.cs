@@ -16,9 +16,6 @@ namespace ForeverFight.Interactable.Abilities
         private StunImmunity stunImmunityREF = null;
 
 
-        private bool statusActive = false;
-
-
         protected Stunned()
         {
             AbilityName = "Stunned";

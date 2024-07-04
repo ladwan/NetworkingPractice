@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ForeverFight.Networking;
 
 namespace ForeverFight.Movement
 {
@@ -51,6 +52,7 @@ namespace ForeverFight.Movement
             if (augmentedMovementLogicREF == null)
             {
                 FloorGrid.Instance.ConfirmMove();
+                LocalStoredNetworkData.GetCountdownTimerScript().TellNetworkToToggleTimer();
                 return;
             }
 

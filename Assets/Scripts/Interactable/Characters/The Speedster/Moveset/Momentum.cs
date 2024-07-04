@@ -22,9 +22,6 @@ namespace ForeverFight.Interactable.Abilities
         private Action onMoveConfirmed = null;
 
 
-        private bool statusActive = false;
-
-
         public int StoredMomentum { get => storedMomentum; set => storedMomentum = value; }
 
         public Action OnMoveConfirmed { get => onMoveConfirmed; set => onMoveConfirmed = value; }
@@ -72,14 +69,14 @@ namespace ForeverFight.Interactable.Abilities
 
         public override void CastAbility()
         {
-            statusActive = true;
+            StatusActive = true;
             AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(1, false, CurrentStatusEffectType); // Pass a 1 because you want the second index of the list because this is the second ability
             ClientSend.SendStatusEffectData(StatusEffect.StatusEffectType.Momentum, CurrentAbilityDuration, 0, false);
         }
 
         public void StopAbility()
         {
-            if (statusActive)
+            if (StatusActive)
             {
                 CurrentAbilityDuration = 1;
                 CurrentAbilityDuration = UpdateStatusEffectDuration(1, CurrentAbilityDuration, MaxAbilityDuration, CurrentStatusEffectType, true);
@@ -91,7 +88,7 @@ namespace ForeverFight.Interactable.Abilities
 
         public void GetHoveredOverGridPointsCount(int value)
         {
-            if (statusActive)
+            if (StatusActive)
             {
                 storedMomentum += value - 1;
                 onMoveConfirmed?.Invoke();
@@ -136,7 +133,7 @@ namespace ForeverFight.Interactable.Abilities
 
         private void UpdateAbilityDuration()
         {
-            if (statusActive)
+            if (StatusActive)
             {
                 CurrentAbilityDuration = UpdateStatusEffectDuration(1, CurrentAbilityDuration, MaxAbilityDuration, CurrentStatusEffectType, true);
             }
@@ -149,7 +146,7 @@ namespace ForeverFight.Interactable.Abilities
                 if (CurrentAbilityDuration <= 1)
                 {
                     storedMomentum = 0;
-                    statusActive = false;
+                    StatusActive = false;
                 }
             }
         }

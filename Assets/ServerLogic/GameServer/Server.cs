@@ -73,7 +73,7 @@ namespace GameServer
                 {(int)ClientPackets.overrideOppositePlayersPos, ServerHandle.ServerRecieveOverrodePosition},
                 {(int)ClientPackets.hasWonTheMatch, ServerHandle.ServerRecieveWinnerStatus},
                 {(int)ClientPackets.toggleTimerCountdown, ServerHandle.ServerRecieveToggleTimerSignal},
-                {(int)(ClientPackets.clientSendTestPacket),ServerHandle.ServerRecieveTestPacket },
+                {(int)(ClientPackets.clientSendAnimationTrigger),ServerHandle.ServerRecieveAnimationTrigger },
             };
             Console.WriteLine("Initialized Packets..");
         }

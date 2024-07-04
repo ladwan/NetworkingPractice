@@ -23,9 +23,6 @@ namespace ForeverFight.Interactable.Abilities
         private MoveToRandomGPs moveToRandomGPsREF = null;
 
 
-        private bool statusActive = false;
-
-
         protected Haste()
         {
             AbilityName = "Haste";
@@ -56,7 +53,7 @@ namespace ForeverFight.Interactable.Abilities
 
         public override void CastAbility()
         {
-            statusActive = true;
+            StatusActive = true;
             AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(2, false, CurrentStatusEffectType); // Pass a 2 because you want the third index of the list because this is the third ability
             AbilityFunctionality();
             ClientSend.SendStatusEffectData(StatusEffect.StatusEffectType.Haste, CurrentAbilityDuration, 0, false);
@@ -64,7 +61,7 @@ namespace ForeverFight.Interactable.Abilities
 
         public void StopAbility()
         {
-            if (statusActive)
+            if (StatusActive)
             {
                 CurrentAbilityDuration = 1;
                 CurrentAbilityDuration = UpdateStatusEffectDuration(2, CurrentAbilityDuration, MaxAbilityDuration, CurrentStatusEffectType, true);
@@ -77,7 +74,7 @@ namespace ForeverFight.Interactable.Abilities
 
         private void AbilityFunctionality()
         {
-            if (statusActive)
+            if (StatusActive)
             {
                 fasterPassiveREF.SetMaxPassiveApPool(6);
                 quickPunchREF.SetAbilityRadius(increasedQuickPunchRadius);
@@ -103,7 +100,7 @@ namespace ForeverFight.Interactable.Abilities
 
         private void UpdateAbilityDuration()
         {
-            if (statusActive)
+            if (StatusActive)
             {
                 CurrentAbilityDuration = UpdateStatusEffectDuration(2, CurrentAbilityDuration, MaxAbilityDuration, CurrentStatusEffectType, true);
             }
@@ -115,7 +112,7 @@ namespace ForeverFight.Interactable.Abilities
             {
                 if (CurrentAbilityDuration <= 1)
                 {
-                    statusActive = false;
+                    StatusActive = false;
                     fasterPassiveREF.SetMaxPassiveApPool(3);
                     quickPunchREF.SetAbilityRadius(quickPunchREF.OriginalRadius);
                     AugmentedMovementManager.Instance.ToggleAugmentMovement(moveToRandomGPsREF);

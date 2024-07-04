@@ -56,7 +56,7 @@ namespace ForeverFight.Interactable
 
         public int AbilityNumber { get => abilityNumber; set => abilityNumber = value; }
 
-        public Animator CharacterAnimator { get => characterAnimator; set => characterAnimator = value; }
+        public Animator CharacterAnimator => characterAnimator;
 
         public List<CharAbility> Moveset => moveset;
 

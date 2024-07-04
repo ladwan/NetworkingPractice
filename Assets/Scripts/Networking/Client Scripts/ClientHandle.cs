@@ -94,21 +94,11 @@ public class ClientHandle : MonoBehaviour
         LocalStoredNetworkData.GetCountdownTimerScript().ToggleCountdownTimer();
     }
 
-
-
-
-    public static void ReceiveTestPacket(Packet _packet)
+    public static void ReceiveAnimationTrigger(Packet _packet)
     {
-        int _testInt = _packet.ReadInt();
-        Debug.Log("~~~ Completed ! ~~~");
+        string trigger = _packet.ReadString();
+        LocalStoredNetworkData.GetOpponentCharacter().CharacterAnimator.SetTrigger(trigger);
     }
-
-
-
-
-
-
-
 
     public static void ReceiveDamage(Packet _packet)
     {

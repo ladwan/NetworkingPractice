@@ -31,6 +31,9 @@ namespace ForeverFight.Interactable.Abilities
             public int duration;
         }
 
+        [SerializeField]
+        private bool statusActive = false;
+
 
         [SerializeField]
         private StatusEffectType currentStatusEffectType = StatusEffectType.None;
@@ -44,6 +47,8 @@ namespace ForeverFight.Interactable.Abilities
         private Action<StatusEffectType> onStatusEffectEnded = null;
         private StatusEffectStruct formattedStatusEffectData = new();
 
+
+        public bool StatusActive { get => statusActive; set => statusActive = value; }
 
         public Action<StatusEffectType> OnStatusEffectFormatted { get => onStatusEffectFormatted; set => onStatusEffectFormatted = value; }
 
