@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 using ForeverFight.Networking;
-using ForeverFight.Interactable;
 using ForeverFight.Interactable.Abilities;
+using ForeverFight.Interactable.Characters;
+using TMPro;
 
 namespace ForeverFight.Ui
 {

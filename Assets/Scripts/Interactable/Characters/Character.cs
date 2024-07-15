@@ -6,7 +6,7 @@ using ForeverFight.Networking;
 using ForeverFight.Interactable.Abilities;
 
 
-namespace ForeverFight.Interactable
+namespace ForeverFight.Interactable.Characters
 {
     public abstract class Character : MonoBehaviour
     {

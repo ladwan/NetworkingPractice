@@ -1,8 +1,8 @@
-using ForeverFight.Interactable;
-using ForeverFight.Interactable.Abilities;
 using UnityEngine;
 using UnityEngine.UI;
-using ForeverFight.HelperScripts;
+using ForeverFight.GameMechanics.Timers;
+using ForeverFight.Interactable.Abilities;
+using ForeverFight.Interactable.Characters;
 
 namespace ForeverFight.Networking
 {

@@ -1,14 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ForeverFight.GameMechanics;
-using ForeverFight.Movement;
 using ForeverFight.Ui;
-using ForeverFight.Ui.CharacterSelection;
 using ForeverFight.Networking;
 using ForeverFight.FlowControl;
+using ForeverFight.GameMechanics;
+using ForeverFight.Ui.CharacterSelection;
 using ForeverFight.Interactable.Abilities;
-using System;
+using ForeverFight.GameMechanics.Movement;
 
 public class ClientHandle : MonoBehaviour
 {

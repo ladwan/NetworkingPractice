@@ -5,6 +5,7 @@ using UnityEngine;
 using TMPro;
 using ForeverFight.Ui;
 using ForeverFight.FlowControl;
+using ForeverFight.GameMechanics.Movement;
 
 namespace ForeverFight.Interactable.Abilities
 {

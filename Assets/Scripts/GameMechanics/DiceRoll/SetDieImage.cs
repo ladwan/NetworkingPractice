@@ -5,61 +5,64 @@ using TMPro;
 using ForeverFight.Ui;
 using ForeverFight.Networking;
 
-public class SetDieImage : MonoBehaviour
+namespace ForeverFight.GameMechanics.DiceRoll
 {
-    [SerializeField]
-    private List<GameObject> uiDieImages = new List<GameObject>();
-    [SerializeField]
-    private TMP_Text tmpApDisplay = null;
-
-    protected void OnEnable()
+    public class SetDieImage : MonoBehaviour
     {
-        int value = DistributedDieValue.distributedDieRollValue;
-        if (value != 0)
+        [SerializeField]
+        private List<GameObject> uiDieImages = new List<GameObject>();
+        [SerializeField]
+        private TMP_Text tmpApDisplay = null;
+
+        protected void OnEnable()
         {
-            switch (value)
+            int value = DistributedDieValue.distributedDieRollValue;
+            if (value != 0)
             {
-                case 1:
-                    DisableDieImages();
-                    uiDieImages[value - 1].SetActive(true);
-                    break;
+                switch (value)
+                {
+                    case 1:
+                        DisableDieImages();
+                        uiDieImages[value - 1].SetActive(true);
+                        break;
 
-                case 2:
-                    DisableDieImages();
-                    uiDieImages[value - 1].SetActive(true);
-                    break;
+                    case 2:
+                        DisableDieImages();
+                        uiDieImages[value - 1].SetActive(true);
+                        break;
 
-                case 3:
-                    DisableDieImages();
-                    uiDieImages[value - 1].SetActive(true);
-                    break;
+                    case 3:
+                        DisableDieImages();
+                        uiDieImages[value - 1].SetActive(true);
+                        break;
 
-                case 4:
-                    DisableDieImages();
-                    uiDieImages[value - 1].SetActive(true);
-                    break;
+                    case 4:
+                        DisableDieImages();
+                        uiDieImages[value - 1].SetActive(true);
+                        break;
 
-                case 5:
-                    DisableDieImages();
-                    uiDieImages[value - 1].SetActive(true);
-                    break;
+                    case 5:
+                        DisableDieImages();
+                        uiDieImages[value - 1].SetActive(true);
+                        break;
 
-                case 6:
-                    DisableDieImages();
-                    uiDieImages[value - 1].SetActive(true);
-                    break;
+                    case 6:
+                        DisableDieImages();
+                        uiDieImages[value - 1].SetActive(true);
+                        break;
+                }
             }
+
+            tmpApDisplay.text = LocalStoredNetworkData.localPlayerCurrentAP.ToString();
         }
 
-        tmpApDisplay.text = LocalStoredNetworkData.localPlayerCurrentAP.ToString();
-    }
 
-
-    private void DisableDieImages()
-    {
-        for (int i = 0; i < uiDieImages.Count; i++)
+        private void DisableDieImages()
         {
-            uiDieImages[i].SetActive(false);
+            for (int i = 0; i < uiDieImages.Count; i++)
+            {
+                uiDieImages[i].SetActive(false);
+            }
         }
     }
 }

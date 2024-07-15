@@ -35,7 +35,6 @@ namespace ForeverFight.Interactable.Abilities
 
         public void ToggleTargeting(bool value)
         {
-            //AbilityRadius.SetActive(value);
         }
     }
 }

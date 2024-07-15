@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ForeverFight.GameMechanics.Movement;
+
 
 namespace ForeverFight.HelperScripts
 {
     public class GetRandomGridPoint : MonoBehaviour
     {
-        private FloorGrid floorGridREF = null;
+        //private FloorGrid floorGridREF = null;
         private List<GridPoint> randomGridPoints = new List<GridPoint>();
 
 

@@ -6,7 +6,7 @@ using UnityEngine.Events;
 using ForeverFight.Networking;
 using TMPro;
 
-namespace ForeverFight.HelperScripts
+namespace ForeverFight.GameMechanics.Timers
 {
     public class Countdown : MonoBehaviour
     {
@@ -116,3 +116,4 @@ namespace ForeverFight.HelperScripts
         }
     }
 }
+

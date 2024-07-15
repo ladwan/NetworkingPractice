@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ForeverFight.Networking;
+using ForeverFight.FlowControl;
 using ForeverFight.GameMechanics;
 
 namespace ForeverFight.Interactable.Abilities
@@ -33,6 +35,7 @@ namespace ForeverFight.Interactable.Abilities
 
         public override void CastAbility()
         {
+            ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimator, "Level 1 Punch");
             DamageManager.Instance.DealDamage(AbilityDamage + momentumREF.Product);
             momentumREF.StopAbility();
             //AbilityRadius.SetActive(false);

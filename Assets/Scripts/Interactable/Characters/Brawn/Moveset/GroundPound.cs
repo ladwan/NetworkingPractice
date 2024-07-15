@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ForeverFight.Ui;
 using ForeverFight.GameMechanics;
+using ForeverFight.GameMechanics.Movement;
 
 namespace ForeverFight.Interactable.Abilities
 {

@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ForeverFight.Movement;
 using ForeverFight.Ui.CharacterSelection;
 using ForeverFight.Interactable.Abilities;
 

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using ForeverFight.HelperScripts;
+using ForeverFight.GameMechanics.Timers;
 
 namespace ForeverFight.Ui.CharacterSelection
 {

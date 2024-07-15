@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ForeverFight.Networking;
+using ForeverFight.FlowControl;
 
-namespace ForeverFight.Movement
+namespace ForeverFight.GameMechanics.Movement
 {
     public class AugmentedMovementManager : MonoBehaviour
     {
@@ -58,6 +59,7 @@ namespace ForeverFight.Movement
 
             FloorGrid.Instance.ConfirmMove();
             augmentedMovementLogicREF.BeginMovement();
+            ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating();
         }
     }
 }

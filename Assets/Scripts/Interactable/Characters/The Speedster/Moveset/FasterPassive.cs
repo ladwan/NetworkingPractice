@@ -6,7 +6,9 @@ using UnityEngine.UI;
 using ForeverFight.Ui;
 using ForeverFight.Networking;
 using ForeverFight.FlowControl;
-using ForeverFight.Interactable;
+using ForeverFight.Interactable.Abilities;
+using ForeverFight.GameMechanics.Movement;
+using ForeverFight.Interactable.Characters;
 
 public class FasterPassive : MonoBehaviour, IPassiveAbility
 {

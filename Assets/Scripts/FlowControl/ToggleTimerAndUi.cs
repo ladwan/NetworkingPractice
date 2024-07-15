@@ -49,7 +49,7 @@ namespace ForeverFight.FlowControl
             sub = StartCoroutine(ListenForAnimEnd(animatorREF, triggerToFire)); //the trigger and the state should always have the same name, so this should work.
         }
 
-        public void FireAnimationWithoutToggleOfInteractivity(Animator animatorREF, string triggerToFire)
+        public void FireAnimationWithoutToggleOffInteractivity(Animator animatorREF, string triggerToFire)
         {
             if (sub != null)
             {
@@ -70,6 +70,7 @@ namespace ForeverFight.FlowControl
 
         private IEnumerator ListenForAnimEnd(Animator animatorREF, string desiredStateName)
         {
+            ClientSend.ClientSendAnimationTrigger(desiredStateName);
             yield return new WaitUntil(() => animatorREF.GetCurrentAnimatorStateInfo(0).IsName(desiredStateName));
             var animStateInfo = animatorREF.GetCurrentAnimatorStateInfo(0);
 

@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using ForeverFight.Ui;
-using ForeverFight.Movement;
 using ForeverFight.FlowControl;
+using ForeverFight.GameMechanics.Movement;
 
 namespace ForeverFight.Interactable.Abilities
 {

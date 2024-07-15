@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ForeverFight.Interactable;
+using ForeverFight.Interactable.Characters;
 
 namespace FlowControl
 {

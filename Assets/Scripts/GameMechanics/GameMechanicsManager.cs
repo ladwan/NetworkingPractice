@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using ForeverFight.Networking;
 using FlowControl;
-using ForeverFight.Interactable;
+using ForeverFight.Interactable.Characters;
 
 namespace ForeverFight.GameMechanics
 {

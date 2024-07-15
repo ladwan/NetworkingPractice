@@ -1,8 +1,10 @@
-using ForeverFight.Networking;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ForeverFight.Networking;
+using ForeverFight.GameMechanics.Movement;
+
 
 namespace ForeverFight.Ui
 {

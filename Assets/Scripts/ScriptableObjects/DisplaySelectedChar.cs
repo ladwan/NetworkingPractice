@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ForeverFight.GameMechanics;
-using ForeverFight.Interactable;
-using ForeverFight.Networking;
 using ForeverFight.Ui;
+using ForeverFight.Networking;
+using ForeverFight.GameMechanics;
+using ForeverFight.Interactable.Characters;
 
 public class DisplaySelectedChar : MonoBehaviour
 {
