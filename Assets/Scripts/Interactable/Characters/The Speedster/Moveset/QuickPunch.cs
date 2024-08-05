@@ -35,7 +35,15 @@ namespace ForeverFight.Interactable.Abilities
 
         public override void CastAbility()
         {
-            ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimator, "Level 1 Punch");
+            if (momentumREF.StatusActive)
+            {
+                ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimator, DeterminePunchAnim(momentumREF.StoredMomentum));
+            }
+            else
+            {
+                ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimator, DeterminePunchAnim(1));
+            }
+
             DamageManager.Instance.DealDamage(AbilityDamage + momentumREF.Product);
             momentumREF.StopAbility();
             //AbilityRadius.SetActive(false);
@@ -48,6 +56,34 @@ namespace ForeverFight.Interactable.Abilities
         public void SetAbilityRadius(GameObject radius)
         {
             AbilityRadius = radius;
+        }
+
+
+        private string DeterminePunchAnim(int quickPunchDamage)
+        {
+            string animTrigger = "";
+
+            switch (quickPunchDamage)
+            {
+                case > 24:
+                    animTrigger = "Level 3 Punch";
+                    break;
+
+                case > 14:
+                    animTrigger = "Level 2 Punch";
+                    break;
+
+                case > 0:
+                    animTrigger = "Level 3 Punch";
+                    break;
+
+                default:
+                    Debug.Log("Negative int passed !");
+                    animTrigger = "";
+                    break;
+            }
+
+            return animTrigger;
         }
     }
 }

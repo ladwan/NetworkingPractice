@@ -10,8 +10,7 @@ public class ToDo : MonoBehaviour
         If status effect 1 ends before status effect 2, slide that status effect back to the first open slot
         Occasionally the charather selection screen will throw a null ref
         Green mat for availible targeting looked a bit odd, maybe update this to look better 
-        Add the other 5 abilites
-            add the passive abilities as well
+
     
     ---------------------------------------------------------------------------
 
@@ -26,8 +25,8 @@ public class ToDo : MonoBehaviour
     25+ / Ultimate punch anim
         if you are animating then the clock will always stop & if you are animating hide interactable buttons 
 
-
-    fix namespace/folder continuity
+    only enable confirm button on move screen if the users move at least 1 sq
+    only do long speedster anim if you move at least 3 sqs
 
     ---------------------------------------------------------------------------
 
