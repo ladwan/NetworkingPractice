@@ -144,11 +144,14 @@ namespace GameServer
 
 
 
-        public static void ServerSendAnimationTrigger(int _playerThatDoesntNeedMsgId, string trigger)
+        public static void ServerSendAnimationTrigger(int _playerThatDoesntNeedMsgId, string trigger, float cameraShakeX, float cameraShakeY, float cameraShakeZ)
         {
             using (Packet _packet = new Packet((int)ServerPackets.serverSendAnimationTrigger))
             {
                 _packet.Write(trigger);
+                _packet.Write(cameraShakeX);
+                _packet.Write(cameraShakeY);
+                _packet.Write(cameraShakeZ);
                 SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
             }
         }

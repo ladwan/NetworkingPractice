@@ -12,23 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 5
+  version: 7
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Ice Material
   m_Shader: {fileID: -6465566751694194690, guid: 9fa152a33b9ea3d4689ef95e0e87f778, type: 3}
-  m_ShaderKeywords: 
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -66,6 +70,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Depth_Intersection_Offset: 0.0073
+    - _Foam_Distance: 0.8
+    - _Foam_Scale: 500
     - _Fresnel_Power: 1.05
     - _Metalic: 0
     - _QueueControl: 0
@@ -75,7 +82,10 @@ Material:
     m_Colors:
     - _Base_Color: {r: 0.3773585, g: 0.3773585, b: 0.3773585, a: 1}
     - _Color: {r: 1, g: 0, b: 0, a: 1}
+    - _Depth_Sample_Offset: {r: 0, g: 0, b: 0, a: 0}
     - _Emmisive_Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Foam_Color: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 0}
+    - _Foam_Velocity: {r: 0.05, g: 0.05, b: 0, a: 0}
     - _Fresnel_Color: {r: 0, g: 4, b: 0.8941177, a: 1}
     - _Scroll_Velocity: {r: 1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []

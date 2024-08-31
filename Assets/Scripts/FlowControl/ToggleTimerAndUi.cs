@@ -37,7 +37,7 @@ namespace ForeverFight.FlowControl
             ToggleInteractableUiAndTimer();
         }
 
-        public void ToggleInteractivityWhileAnimating(Animator animatorREF, string triggerToFire)
+        public void ToggleInteractivityWhileAnimating(Animator animatorREF, string triggerToFire, Vector3 cameraShakeParameters)
         {
             if (sub != null)
             {
@@ -46,10 +46,10 @@ namespace ForeverFight.FlowControl
 
             ToggleInteractableUiAndTimer();
             animatorREF.SetTrigger(triggerToFire);
-            sub = StartCoroutine(ListenForAnimEnd(animatorREF, triggerToFire)); //the trigger and the state should always have the same name, so this should work.
+            sub = StartCoroutine(ListenForAnimEnd(animatorREF, triggerToFire, cameraShakeParameters)); //the trigger and the state should always have the same name, so this should work.
         }
 
-        public void FireAnimationWithoutToggleOffInteractivity(Animator animatorREF, string triggerToFire)
+        public void FireAnimationWithoutToggleOffInteractivity(Animator animatorREF, string triggerToFire, Vector3 cameraShakeParameters)
         {
             if (sub != null)
             {
@@ -57,7 +57,7 @@ namespace ForeverFight.FlowControl
             }
 
             animatorREF.SetTrigger(triggerToFire);
-            sub = StartCoroutine(ListenForAnimEnd(animatorREF, triggerToFire)); //the trigger and the state should always have the same name, so this should work.
+            sub = StartCoroutine(ListenForAnimEnd(animatorREF, triggerToFire, cameraShakeParameters)); //the trigger and the state should always have the same name, so this should work.
         }
 
 
@@ -68,9 +68,9 @@ namespace ForeverFight.FlowControl
         }
 
 
-        private IEnumerator ListenForAnimEnd(Animator animatorREF, string desiredStateName)
+        private IEnumerator ListenForAnimEnd(Animator animatorREF, string desiredStateName, Vector3 cameraShakeParameters)
         {
-            ClientSend.ClientSendAnimationTrigger(desiredStateName);
+            ClientSend.ClientSendAnimationTrigger(desiredStateName, cameraShakeParameters.x, cameraShakeParameters.y, cameraShakeParameters.z);
             yield return new WaitUntil(() => animatorREF.GetCurrentAnimatorStateInfo(0).IsName(desiredStateName));
             var animStateInfo = animatorREF.GetCurrentAnimatorStateInfo(0);
 

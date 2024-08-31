@@ -16,6 +16,18 @@ public class ToDo : MonoBehaviour
 
     DO TODAY:
 
+    Keep learning shader stuff!
+
+    poiyomi and liltoon
+
+     Named variables : Study this
+
+        go to client handle and shake camera when anim comes in
+
+        continue implementing charather specific cameras
+
+
+
       Test game and refactor code
       Look for edge cases 
       

@@ -74,7 +74,7 @@ namespace ForeverFight.FlowControl
         public void StartTurn()
         {
             playerUi.SetActive(true);
-            playerTimer.ResetTimer(30);
+            playerTimer.ResetTimer(playerTimer.MaxTime);
             playerTimerSubtext.text = "( Your Go ! )";
             isLocalPlayersTurn = true;
             if (playerDieAnim.GetCurrentAnimatorStateInfo(0).IsName("Despawn"))
@@ -92,7 +92,7 @@ namespace ForeverFight.FlowControl
             {
                 CleanUpUiAfterTurn.Instance.CleanUpUi();
                 playerUi.SetActive(false);
-                playerTimer.ResetTimer(30);
+                playerTimer.ResetTimer(playerTimer.MaxTime);
                 playerTimerSubtext.text = "( Opponents turn... )";
                 isLocalPlayersTurn = false;
                 if (playerCameraAnim.GetCurrentAnimatorStateInfo(0).IsName("CameraTopView") && !playerCameraAnim.IsInTransition(0))

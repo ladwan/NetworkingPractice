@@ -85,11 +85,14 @@ public class ClientSend : MonoBehaviour
         }
     }
 
-    public static void ClientSendAnimationTrigger(string trigger)
+    public static void ClientSendAnimationTrigger(string trigger, float cameraShakeX, float cameraShakeY, float cameraShakeZ)
     {
         using (Packet _packet = new Packet((int)ClientPackets.clientSendAnimationTrigger))
         {
             _packet.Write(trigger);
+            _packet.Write(cameraShakeX);
+            _packet.Write(cameraShakeY);
+            _packet.Write(cameraShakeZ);
             SendTcpData(_packet);
         }
     }

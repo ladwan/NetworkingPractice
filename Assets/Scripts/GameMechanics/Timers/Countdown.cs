@@ -23,6 +23,8 @@ namespace ForeverFight.GameMechanics.Timers
 
 
         [NonSerialized]
+        private int maxTime = 30;
+        [NonSerialized]
         private Countdown instance;
         [NonSerialized]
         private bool doOnce = false;
@@ -31,6 +33,8 @@ namespace ForeverFight.GameMechanics.Timers
 
 
         public int Time { get => time; set => time = value; }
+
+        public int MaxTime { get => maxTime; set => maxTime = value; }
 
         public UnityEvent AwakeEvent { get => awakeEvent; set => awakeEvent = value; }
 
@@ -113,6 +117,11 @@ namespace ForeverFight.GameMechanics.Timers
             StopAllCoroutines();
             time = value;
             StartCoroutine(Count());
+        }
+
+        public void SetDebugTime()
+        {
+            maxTime = 999999;
         }
     }
 }

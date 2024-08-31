@@ -46,7 +46,7 @@ namespace ForeverFight.Interactable.Abilities
 
             Vector3 beforeLastGPposVector3 = new Vector3(finalPos.x, 0.0f, finalPos.z - 1);
             //genericLerpREF.BeginLerpCoroutine(playerSpawn, beforeLastGPposVector3, finalPos, 1);
-            ToggleTimerAndUi.Instance.FireAnimationWithoutToggleOffInteractivity(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimator, "Stop To Idle");
+            ToggleTimerAndUi.Instance.FireAnimationWithoutToggleOffInteractivity(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimator, "Stop To Idle", Vector3.zero);
             //LocalStoredNetworkData.GetLocalCharacter().CharacterAnimator.SetTrigger("Stop To Idle");
             FloorGrid.Instance.TryHighlighting(FloorGrid.Instance.GridDictionary[Vector3ToVector2.ConvertToVector2(finalPos)], true);
             FloorGrid.Instance.ConfirmMove();

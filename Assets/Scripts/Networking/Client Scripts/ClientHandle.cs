@@ -9,10 +9,11 @@ using ForeverFight.GameMechanics;
 using ForeverFight.Ui.CharacterSelection;
 using ForeverFight.Interactable.Abilities;
 using ForeverFight.GameMechanics.Movement;
+using System.Threading.Tasks;
 
 public class ClientHandle : MonoBehaviour
 {
-
+    private MonoBehaviour clientHandleREF = null;
     public static Action winnerStatusReceived = null;
 
     public static void Welcome(Packet _packet)
@@ -64,9 +65,30 @@ public class ClientHandle : MonoBehaviour
         ClientInfo.otherUsername = _username;
     }
 
-    public static void ReceiveStartTurnSignal(Packet _packet)
+    public async static void ReceiveStartTurnSignal(Packet _packet)
     {
         int signalInt = _packet.ReadInt();
+
+        if (PlayerTurnManager.Instance == null)
+        {
+            await DelayedExecutionAsync();
+            return;
+        }
+
+        PlayerTurnManager.Instance.StartTurn();
+    }
+
+    private static async Task DelayedExecutionAsync()
+    {
+        // Polling interval (e.g., 100 milliseconds)
+        const int pollingInterval = 100;
+
+        while (PlayerTurnManager.Instance == null && Application.isPlaying)
+        {
+            await Task.Delay(pollingInterval);
+        }
+
+        // Variable is not null, execute the static method
         PlayerTurnManager.Instance.StartTurn();
     }
 
@@ -97,7 +119,16 @@ public class ClientHandle : MonoBehaviour
     public static void ReceiveAnimationTrigger(Packet _packet)
     {
         string trigger = _packet.ReadString();
+        float cameraShakeX = _packet.ReadFloat();
+        float cameraShakeY = _packet.ReadFloat();
+        float cameraShakeZ = _packet.ReadFloat();
+
         LocalStoredNetworkData.GetOpponentCharacter().CharacterAnimator.SetTrigger(trigger);
+        var temp = new Vector3(cameraShakeX, cameraShakeY, cameraShakeZ);
+        if (temp != Vector3.zero)
+        {
+            CameraControls.Instance.StartShake(cameraShakeX, cameraShakeY, cameraShakeZ);
+        }
     }
 
     public static void ReceiveDamage(Packet _packet)
@@ -156,6 +187,19 @@ public class ClientHandle : MonoBehaviour
         bool winStatus = _packet.ReadBool();
 
         winnerStatusReceived?.Invoke();
+    }
+
+    private void CallIEnumerator()
+    {
+        StartCoroutine(WaitForPlayerTurnManagerInstance());
+    }
+
+    private IEnumerator WaitForPlayerTurnManagerInstance()
+    {
+        Debug.Log("~~ ~~ 02 I ran!");
+        yield return new WaitUntil(() => PlayerTurnManager.Instance != null);
+        PlayerTurnManager.Instance.StartTurn();
+        Debug.Log("~~ ~~ 03 I ran!");
     }
 }
 
