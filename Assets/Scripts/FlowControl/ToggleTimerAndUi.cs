@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ForeverFight.Networking;
+using ForeverFight.Interactable.Abilities;
 
 namespace ForeverFight.FlowControl
 {
@@ -37,7 +38,7 @@ namespace ForeverFight.FlowControl
             ToggleInteractableUiAndTimer();
         }
 
-        public void ToggleInteractivityWhileAnimating(Animator animatorREF, string triggerToFire, Vector3 cameraShakeParameters)
+        public void ToggleInteractivityWhileAnimating(Animator animatorREF, string triggerToFire, CharAbility.CameraShakeParameters parameters)
         {
             if (sub != null)
             {
@@ -46,10 +47,10 @@ namespace ForeverFight.FlowControl
 
             ToggleInteractableUiAndTimer();
             animatorREF.SetTrigger(triggerToFire);
-            sub = StartCoroutine(ListenForAnimEnd(animatorREF, triggerToFire, cameraShakeParameters)); //the trigger and the state should always have the same name, so this should work.
+            sub = StartCoroutine(ListenForAnimEnd(animatorREF, triggerToFire, parameters)); //the trigger and the state should always have the same name, so this should work.
         }
 
-        public void FireAnimationWithoutToggleOffInteractivity(Animator animatorREF, string triggerToFire, Vector3 cameraShakeParameters)
+        public void FireAnimationWithoutToggleOffInteractivity(Animator animatorREF, string triggerToFire, CharAbility.CameraShakeParameters parameters)
         {
             if (sub != null)
             {
@@ -57,7 +58,7 @@ namespace ForeverFight.FlowControl
             }
 
             animatorREF.SetTrigger(triggerToFire);
-            sub = StartCoroutine(ListenForAnimEnd(animatorREF, triggerToFire, cameraShakeParameters)); //the trigger and the state should always have the same name, so this should work.
+            sub = StartCoroutine(ListenForAnimEnd(animatorREF, triggerToFire, parameters)); //the trigger and the state should always have the same name, so this should work.
         }
 
 
@@ -68,12 +69,12 @@ namespace ForeverFight.FlowControl
         }
 
 
-        private IEnumerator ListenForAnimEnd(Animator animatorREF, string desiredStateName, Vector3 cameraShakeParameters)
+        private IEnumerator ListenForAnimEnd(Animator animatorREF, string desiredStateName, CharAbility.CameraShakeParameters parameters)
         {
-            ClientSend.ClientSendAnimationTrigger(desiredStateName, cameraShakeParameters.x, cameraShakeParameters.y, cameraShakeParameters.z);
+            ClientSend.ClientSendAnimationTrigger(desiredStateName, parameters.duration, parameters.magnitude);
+
             yield return new WaitUntil(() => animatorREF.GetCurrentAnimatorStateInfo(0).IsName(desiredStateName));
             var animStateInfo = animatorREF.GetCurrentAnimatorStateInfo(0);
-
             yield return new WaitUntil(() => animatorREF.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.95);
 
             ToggleInteractableUiAndTimer();

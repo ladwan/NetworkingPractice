@@ -1,27 +1,27 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using ForeverFight.GameMechanics.Movement;
+using ForeverFight.Networking;
+using ForeverFight.Interactable.Characters;
 
 namespace ForeverFight.HelperScripts
 {
     public class LerpPlayerCameraWhenMoving : MonoBehaviour
     {
         [SerializeField]
-        private Transform objToLerp = null;
-        [SerializeField]
-        private Transform pos1REF = null;
-        [SerializeField]
-        private Transform pos2REF = null;
-        [SerializeField]
-        private float duration = 1.0f;
+        private Transform dragMoverTransformREF = null;
 
 
         private Coroutine sub = null;
-        private float time = 0f;
+        private Transform localCharacterCameraParent = null;
 
 
-        protected void OnEnable()
+        private void Start()
+        {
+            StartCoroutine(LocalStoredNetworkData.WaitForCharacterAnimationReferences(SetCharacterAnimatorReferences));
+        }
+
+        private void OnEnable()
         {
             if (FloorGrid.Instance)
             {
@@ -33,7 +33,7 @@ namespace ForeverFight.HelperScripts
             }
         }
 
-        protected void OnDisable()
+        private void OnDisable()
         {
             FloorGrid.Instance.DragMoverREF.OnDragMoverPosUpdated -= LerpObject;
         }
@@ -48,7 +48,7 @@ namespace ForeverFight.HelperScripts
         public void ReturnObjectBackToOriginalPos()
         {
             EndAndCleanUpCouroutine();
-            objToLerp.localPosition = Vector3.zero;
+            localCharacterCameraParent.localPosition = Vector3.zero;
         }
 
 
@@ -63,21 +63,17 @@ namespace ForeverFight.HelperScripts
 
         private IEnumerator LerpObjToMove()
         {
-            var startingPos = Vector3.zero;
-            var endingPos = Vector3.zero;
-            var tempPos = Vector3.zero;
+            var startingPos = localCharacterCameraParent.position;
+            var tempPos = new Vector3(dragMoverTransformREF.position.x, startingPos.y, dragMoverTransformREF.position.z); //get where the dragMover is at
 
-            startingPos = pos1REF.position;
-            endingPos = pos2REF.position;
-            tempPos = new Vector3(endingPos.x, startingPos.y, endingPos.z);
+            var time = 0.0f;
 
-            time = 0;
-            while (objToLerp.position != pos2REF.position)
+            while (localCharacterCameraParent.position != dragMoverTransformREF.position)
             {
                 time += Time.deltaTime;
-                var percent = time / duration;
+                //var percent = time / duration;
                 yield return new WaitForEndOfFrame();
-                objToLerp.position = Vector3.Lerp(startingPos, tempPos, percent);
+                localCharacterCameraParent.position = Vector3.Lerp(startingPos, tempPos, time);
             }
 
             sub = null;
@@ -87,6 +83,11 @@ namespace ForeverFight.HelperScripts
         {
             yield return new WaitUntil(() => FloorGrid.Instance);
             FloorGrid.Instance.DragMoverREF.OnDragMoverPosUpdated += LerpObject;
+        }
+
+        private void SetCharacterAnimatorReferences(CharacterAnimationReferences animationReferences)
+        {
+            localCharacterCameraParent = animationReferences.CharacterCameraParent.transform;
         }
     }
 }

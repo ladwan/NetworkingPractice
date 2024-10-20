@@ -79,10 +79,9 @@ namespace GameServer
         public static void ServerRecieveAnimationTrigger(int _fromClient, Packet _packet)
         {
             string trigger = _packet.ReadString();
-            float cameraShakeX = _packet.ReadFloat();
-            float cameraShakeY = _packet.ReadFloat();
-            float cameraShakeZ = _packet.ReadFloat();
-            ServerSend.ServerSendAnimationTrigger(_fromClient, trigger, cameraShakeX, cameraShakeY, cameraShakeZ);
+            float duration = _packet.ReadFloat();
+            float magnitude = _packet.ReadFloat();
+            ServerSend.ServerSendAnimationTrigger(_fromClient, trigger, duration, magnitude);
         }
 
         public static void ServerRecieveRequestToDamageOpponent(int _fromClient, Packet _packet)

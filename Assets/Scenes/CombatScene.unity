@@ -310,6 +310,50 @@ MonoBehaviour:
   displayedStatusEffectType: 0
   formatter: {fileID: 0}
   isOccupied: 0
+--- !u!1 &23197419
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 23197420}
+  - component: {fileID: 23197421}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &23197420
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 23197419}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 82241249}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &23197421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 23197419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eca00ce919842e140af02580cd637d08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &32644997
 GameObject:
   m_ObjectHideFlags: 0
@@ -801,6 +845,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1420736853}
+  - {fileID: 23197420}
   m_Father: {fileID: 195005822}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &92420964
@@ -912,7 +957,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 766723298}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: TestAnimCameraReparent, Assembly-CSharp
         m_MethodName: ReturnObjectBackToOriginalPos
         m_Mode: 1
@@ -1060,13 +1105,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 134048671}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.18301274, y: -0.6830127, z: 0.18301274, w: 0.6830127}
-  m_LocalPosition: {x: 7.9831023, y: -2.5949407, z: 6.9482126}
+  m_LocalRotation: {x: 0.000000014901161, y: -0.7071068, z: -0.000000014901161, w: 0.7071068}
+  m_LocalPosition: {x: 8.483103, y: -3.2213917, z: 2.7198572}
   m_LocalScale: {x: 1.1088722, y: 1.1088723, z: 1.108872}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1992690347}
-  m_Father: {fileID: 766723294}
+  m_Father: {fileID: 7168879821103507338}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &159372890
 GameObject:
@@ -6260,14 +6305,15 @@ Transform:
   m_Children:
   - {fileID: 2003473787}
   - {fileID: 582136861}
-  - {fileID: 1333339517}
   - {fileID: 807454139}
+  - {fileID: 654013215}
   - {fileID: 1095206155}
   - {fileID: 231754725}
   - {fileID: 284813924}
+  - {fileID: 389754372}
+  - {fileID: 1333339517}
   - {fileID: 808368853}
   - {fileID: 1893315688}
-  - {fileID: 654013215}
   - {fileID: 1241826874}
   - {fileID: 893886384}
   - {fileID: 82241249}
@@ -7713,6 +7759,50 @@ MonoBehaviour:
   displayedStatusEffectType: 0
   formatter: {fileID: 0}
   isOccupied: 0
+--- !u!1 &389754371
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 389754372}
+  - component: {fileID: 389754373}
+  m_Layer: 0
+  m_Name: Helper Scripts
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &389754372
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389754371}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.28939095, y: -1.6657926, z: -1.0840517}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 195005822}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &389754373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389754371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0c94ad95a26e344cb4fe886f28d553e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &397232263
 GameObject:
   m_ObjectHideFlags: 0
@@ -13285,7 +13375,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ade80c9ca47b6f645a8be3855af325ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraAnimatorREF: {fileID: 766723295}
+  cameraAnimatorREF: {fileID: 0}
   player1Transform: {fileID: 1018525768}
   player2Transform: {fileID: 465574530}
 --- !u!1 &475742415
@@ -13553,18 +13643,6 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 766723295}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Idle
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1554892682}
@@ -14166,6 +14244,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2be41af663fa0104e95d8cc3968bea6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lerpCameraREF: {fileID: 1333339519}
 --- !u!1 &586147413
 GameObject:
   m_ObjectHideFlags: 0
@@ -14349,8 +14428,9 @@ GameObject:
   m_Component:
   - component: {fileID: 654013215}
   - component: {fileID: 654013216}
+  - component: {fileID: 654013217}
   m_Layer: 0
-  m_Name: Ui Clean Up
+  m_Name: Clean Up Ui Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14451,7 +14531,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 766723298}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: ForverFight.HelperScripts.LerpPlayerCameraWhenMoving,
           Assembly-CSharp
         m_MethodName: ReturnObjectBackToOriginalPos
@@ -14464,6 +14544,21 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+--- !u!114 &654013217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 654013214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 223888a0a76704048b759ce66821ef84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dragMoverREF: {fileID: 1554892682}
+  movementUiREF: {fileID: 1321447670}
+  attackUiREF: {fileID: 32644997}
 --- !u!1 &683877670
 GameObject:
   m_ObjectHideFlags: 0
@@ -15223,151 +15318,6 @@ RectTransform:
   m_AnchoredPosition: {x: 426.10187, y: -60.05548}
   m_SizeDelta: {x: 47.401245, y: 100.11096}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &766723293 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7150403839734329697, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
-  m_PrefabInstance: {fileID: 7168879821103507336}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &766723294 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 619274435334607681, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
-  m_PrefabInstance: {fileID: 7168879821103507336}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &766723295 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 6060463918668085875, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
-  m_PrefabInstance: {fileID: 7168879821103507336}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &766723296
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 766723293}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 223888a0a76704048b759ce66821ef84, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animatorREF: {fileID: 766723295}
-  animatorStateName: CameraTopView
-  animationEndEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1554892682}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 1321447670}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
---- !u!114 &766723297
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 766723293}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 223888a0a76704048b759ce66821ef84, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animatorREF: {fileID: 766723295}
-  animatorStateName: CameraTopView
-  animationEndEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 32644997}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
---- !u!114 &766723298
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 766723293}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: abc84f85f9cbc314589354fee84b3d76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objToLerp: {fileID: 7168879821103507338}
-  pos1REF: {fileID: 7168879821103507338}
-  pos2REF: {fileID: 1554892683}
-  duration: 1
---- !u!114 &766723299
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 766723293}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_RenderShadows: 1
-  m_RequiresDepthTextureOption: 2
-  m_RequiresOpaqueTextureOption: 2
-  m_CameraType: 0
-  m_Cameras: []
-  m_RendererIndex: -1
-  m_VolumeLayerMask:
-    serializedVersion: 2
-    m_Bits: 1
-  m_VolumeTrigger: {fileID: 0}
-  m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
-  m_Antialiasing: 0
-  m_AntialiasingQuality: 2
-  m_StopNaN: 0
-  m_Dithering: 0
-  m_ClearDepth: 1
-  m_AllowXRRendering: 1
-  m_AllowHDROutput: 1
-  m_UseScreenCoordOverride: 0
-  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
-  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
-  m_RequiresDepthTexture: 0
-  m_RequiresColorTexture: 0
-  m_Version: 2
-  m_TaaSettings:
-    m_Quality: 3
-    m_FrameInfluence: 0.1
-    m_JitterScale: 1
-    m_MipBias: 0
-    m_VarianceClampScale: 0.9
-    m_ContrastAdaptiveSharpening: 0
 --- !u!1 &767817198
 GameObject:
   m_ObjectHideFlags: 0
@@ -15451,7 +15401,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 766723295}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
         m_MethodName: SetTrigger
         m_Mode: 5
@@ -15833,7 +15783,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerUi: {fileID: 1535058858}
   playerDieAnim: {fileID: 1992690350}
-  playerCameraAnim: {fileID: 766723295}
   playerTimer: {fileID: 336035657}
   playerTimerSubtext: {fileID: 1870779468}
   dragMovementREF: {fileID: 1554892684}
@@ -26891,7 +26840,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ade80c9ca47b6f645a8be3855af325ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraAnimatorREF: {fileID: 766723295}
+  cameraAnimatorREF: {fileID: 0}
   player1Transform: {fileID: 1018525768}
   player2Transform: {fileID: 465574530}
 --- !u!1 &1037483532
@@ -28986,7 +28935,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1321447670}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 43763a16dfd296946af081a19f6b89a0, type: 3}
   m_Name: 
@@ -29016,9 +28965,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1333339517}
-  - component: {fileID: 1333339518}
+  - component: {fileID: 1333339519}
   m_Layer: 0
-  m_Name: Camera Controls
+  m_Name: Lerp Camera To Drag Mover
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29039,7 +28988,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 195005822}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1333339518
+--- !u!114 &1333339519
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -29048,10 +28997,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1333339516}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db311e39c621425499d61f6217254651, type: 3}
+  m_Script: {fileID: 11500000, guid: abc84f85f9cbc314589354fee84b3d76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraTransform: {fileID: 7168879821103507338}
+  dragMoverTransformREF: {fileID: 1554892683}
 --- !u!1 &1339459211
 GameObject:
   m_ObjectHideFlags: 0
@@ -29159,34 +29108,11 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 766723295}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Idle
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 1554892684}
-        m_TargetAssemblyTypeName: DragMovement, Assembly-CSharp
-        m_MethodName: UpdateDragMoverPosition
+        m_TargetAssemblyTypeName: ForeverFight.GameMechanics.Movement.DragMovement,
+          Assembly-CSharp
+        m_MethodName: ResetDragMover
         m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1554892682}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -29666,21 +29592,10 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 766723295}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: TopView
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 766723297}
-        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
-        m_MethodName: set_enabled
+      - m_Target: {fileID: 654013217}
+        m_TargetAssemblyTypeName: ForeverFight.HelperScripts.Animation.EnableCombatUiBasedOnButtonPress,
+          Assembly-CSharp
+        m_MethodName: EnableCombatUi
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -29688,7 +29603,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 1
+          m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1397651742
 MonoBehaviour:
@@ -30015,7 +29930,7 @@ RectTransform:
   - {fileID: 336035656}
   - {fileID: 2127194196}
   - {fileID: 177584172}
-  m_Father: {fileID: 766723294}
+  m_Father: {fileID: 7168879821103507338}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -30655,7 +30570,7 @@ Transform:
   m_GameObject: {fileID: 1554892682}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 4}
+  m_LocalPosition: {x: 0, y: 1, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -30678,6 +30593,7 @@ MonoBehaviour:
   currentLocationOfDragMover: {x: 0, y: 4}
   floorGridREF: {fileID: 880057296}
   playerPositionREF: {fileID: 484594182}
+  lerpCameraREF: {fileID: 1333339519}
 --- !u!65 &1554892685
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -35229,7 +35145,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 766723295}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
         m_MethodName: SetTrigger
         m_Mode: 5
@@ -35736,30 +35652,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 766723295}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: TopView
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 766723296}
-        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
-        m_MethodName: set_enabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
       - m_Target: {fileID: 92420964}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
@@ -35771,6 +35663,31 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 654013217}
+        m_TargetAssemblyTypeName: ForeverFight.HelperScripts.Animation.EnableCombatUiBasedOnButtonPress,
+          Assembly-CSharp
+        m_MethodName: EnableCombatUi
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 1187727702}
+        m_TargetAssemblyTypeName: ForeverFight.Ui.CombatUiStatesManager, Assembly-CSharp
+        m_MethodName: SetCombatUiState
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
         m_CallState: 2
 --- !u!114 &2069132491
 MonoBehaviour:
@@ -36464,6 +36381,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1430945296841179592, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5257885628006845449, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
@@ -36474,6 +36395,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5257885628006845449, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5791679837157803063, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6060463918668085875, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7050767311733928487, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
@@ -36541,27 +36470,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 7150403839734329697, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
     m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 619274435334607681, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 134048672}
-    - targetCorrespondingSourceObject: {fileID: 619274435334607681, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 5257885628006845449, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1443357163}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7150403839734329697, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 5257885628006845449, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 766723296}
-    - targetCorrespondingSourceObject: {fileID: 7150403839734329697, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 766723297}
-    - targetCorrespondingSourceObject: {fileID: 7150403839734329697, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 766723298}
-    - targetCorrespondingSourceObject: {fileID: 7150403839734329697, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 766723299}
+      addedObject: {fileID: 134048672}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
 --- !u!1 &7168879821103507337 stripped
 GameObject:

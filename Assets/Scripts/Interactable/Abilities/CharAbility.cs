@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,6 +18,13 @@ namespace ForeverFight.Interactable.Abilities
         [SerializeField]
         private GameObject abilityRadius = null;
 
+        [Serializable]
+        public struct CameraShakeParameters
+        {
+            public float duration;
+            public float magnitude;
+        }
+
 
         public string AbilityName { get => abilityName; set => abilityName = value; }
 
@@ -35,6 +43,16 @@ namespace ForeverFight.Interactable.Abilities
 
         public void ToggleTargeting(bool value)
         {
+        }
+
+        public virtual void ShakeCamera()
+        {
+
+        }
+
+        public virtual CameraShakeParameters AssignCameraShakeParameterValues(float duration, float magnitude)
+        {
+            return new CameraShakeParameters();
         }
     }
 }

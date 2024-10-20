@@ -14,6 +14,8 @@ namespace ForeverFight.GameMechanics.Movement
         private FloorGrid floorGridREF = null;
         [SerializeField]
         private Transform playerPositionREF = null;
+        [SerializeField]
+        private LerpPlayerCameraWhenMoving lerpCameraREF = null;
 
 
         private Action onDragMoverPosUpdated = null;
@@ -37,12 +39,17 @@ namespace ForeverFight.GameMechanics.Movement
         public Action OnDragEnded { get => onDragEnded; set => onDragEnded = value; }
 
 
-        protected void OnMouseDown()
+        private void Start()
+        {
+            //Physics.queriesHitTriggers = true;
+        }
+
+        private void OnMouseDown()
         {
             UpdateDragMover();
         }
 
-        protected void OnMouseUp()
+        private void OnMouseUp()
         {
             validDrag = false;
             currentlyClickedGridPoint = null;
@@ -99,6 +106,8 @@ namespace ForeverFight.GameMechanics.Movement
                 gridPointCurrentlyDisplayingConnections = null;
             }
             UpdateDragMoverPosition();
+            lerpCameraREF.ReturnObjectBackToOriginalPos();
+            currentLocationOfDragMover = Vector3ToVector2.ConvertToVector2(gameObject.transform.position);
             gameObject.SetActive(false);
         }
     }

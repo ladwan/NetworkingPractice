@@ -4,11 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using ForeverFight.Networking;
 using ForeverFight.FlowControl;
+using ForeverFight.HelperScripts;
+using ForeverFight.Ui;
 
 namespace ForeverFight.GameMechanics.Movement
 {
     public class AugmentedMovementManager : MonoBehaviour
     {
+        [SerializeField]
+        private LerpPlayerCameraWhenMoving lerpCameraREF = null;
+
         private bool movementIsAugmented = false;
         private static AugmentedMovementManager instance = null;
         private IAugmentedMovement augmentedMovementLogicREF = null;
@@ -50,6 +55,8 @@ namespace ForeverFight.GameMechanics.Movement
 
         public void DetermineIfMovementIsAugmented()
         {
+            lerpCameraREF.ReturnObjectBackToOriginalPos();
+
             if (augmentedMovementLogicREF == null)
             {
                 FloorGrid.Instance.ConfirmMove();
@@ -57,6 +64,7 @@ namespace ForeverFight.GameMechanics.Movement
                 return;
             }
 
+            LocalStoredNetworkData.squaresMovedThisInstanceOfMovement = ActionPointsManager.Instance.CurrentApReferenceListsREF.ApLightsToBeBlinked.Count;
             FloorGrid.Instance.ConfirmMove();
             augmentedMovementLogicREF.BeginMovement();
             ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating();

@@ -5,16 +5,20 @@ using UnityEngine;
 using ForeverFight.Ui;
 using ForeverFight.Networking;
 using ForeverFight.FlowControl;
+using ForeverFight.HelperScripts;
 using ForeverFight.GameMechanics;
 using ForeverFight.Ui.CharacterSelection;
 using ForeverFight.Interactable.Abilities;
 using ForeverFight.GameMechanics.Movement;
 using System.Threading.Tasks;
+using static ForeverFight.Interactable.Abilities.CharAbility;
 
 public class ClientHandle : MonoBehaviour
 {
     private MonoBehaviour clientHandleREF = null;
+    private static CameraShakeParameters currentCameraShakeParameters = new CameraShakeParameters();
     public static Action winnerStatusReceived = null;
+
 
     public static void Welcome(Packet _packet)
     {
@@ -72,7 +76,6 @@ public class ClientHandle : MonoBehaviour
         if (PlayerTurnManager.Instance == null)
         {
             await DelayedExecutionAsync();
-            return;
         }
 
         PlayerTurnManager.Instance.StartTurn();
@@ -87,9 +90,6 @@ public class ClientHandle : MonoBehaviour
         {
             await Task.Delay(pollingInterval);
         }
-
-        // Variable is not null, execute the static method
-        PlayerTurnManager.Instance.StartTurn();
     }
 
     public static void ReceiveReadyUpSignal(Packet _packet)
@@ -105,36 +105,47 @@ public class ClientHandle : MonoBehaviour
     public static void ReceiveSyncedTimerTime(Packet _packet)
     {
         int _timeLeft = _packet.ReadInt();
-        Debug.Log("~~~ Timers Synced ~~~");
         CharacterSelect.Instance.CountdownTimer.Time = 4;
     }
 
     public static void ReceiveToggleTimerSignal(Packet _packet)
     {
         int _signalInt = _packet.ReadInt();
-        Debug.Log("~~~ 4 ~~~");
         LocalStoredNetworkData.GetCountdownTimerScript().ToggleCountdownTimer();
     }
 
     public static void ReceiveAnimationTrigger(Packet _packet)
     {
         string trigger = _packet.ReadString();
-        float cameraShakeX = _packet.ReadFloat();
-        float cameraShakeY = _packet.ReadFloat();
-        float cameraShakeZ = _packet.ReadFloat();
+        float duration = _packet.ReadFloat();
+        float magnitude = _packet.ReadFloat();
+        var tempParameters = new CharAbility.CameraShakeParameters();
+        var opponentAnimatior = LocalStoredNetworkData.GetOpponentCharacter().CharacterAnimationReferences.CharacterAnimator;
 
-        LocalStoredNetworkData.GetOpponentCharacter().CharacterAnimator.SetTrigger(trigger);
-        var temp = new Vector3(cameraShakeX, cameraShakeY, cameraShakeZ);
-        if (temp != Vector3.zero)
+        opponentAnimatior.SetTrigger(trigger);
+        tempParameters.duration = duration;
+        tempParameters.magnitude = magnitude;
+        currentCameraShakeParameters = tempParameters;
+
+        if (tempParameters.duration is 0)
         {
-            CameraControls.Instance.StartShake(cameraShakeX, cameraShakeY, cameraShakeZ);
+            return;
+        }
+
+        // Loop through until you find the state that matches the name of the trigger. Once found grab what time its animation trigger is at, use that as the delay for the camera shake!
+        for (int i = 0; i < opponentAnimatior.runtimeAnimatorController.animationClips.Length; i++)
+        {
+            if (opponentAnimatior.runtimeAnimatorController.animationClips[i].name == trigger)
+            {
+                var shakeTime = opponentAnimatior.runtimeAnimatorController.animationClips[i].events[0].time; //events at the zero-th index is unsafe, works for now though! No guarantee the event youre looking for will be 0
+                ExecuteMethodAfterDelay.Instance.BeginDelay(shakeTime, BeginLocalCameraShakeRecievedFromOpponent);
+            }
         }
     }
 
     public static void ReceiveDamage(Packet _packet)
     {
         int _damageAmount = _packet.ReadInt();
-        Debug.Log("~~~ Damage Recived ~~~");
         DamageManager.Instance.ReceiveDamage(_damageAmount);
     }
 
@@ -189,17 +200,9 @@ public class ClientHandle : MonoBehaviour
         winnerStatusReceived?.Invoke();
     }
 
-    private void CallIEnumerator()
+    private static void BeginLocalCameraShakeRecievedFromOpponent()
     {
-        StartCoroutine(WaitForPlayerTurnManagerInstance());
-    }
-
-    private IEnumerator WaitForPlayerTurnManagerInstance()
-    {
-        Debug.Log("~~ ~~ 02 I ran!");
-        yield return new WaitUntil(() => PlayerTurnManager.Instance != null);
-        PlayerTurnManager.Instance.StartTurn();
-        Debug.Log("~~ ~~ 03 I ran!");
+        CameraControls.Instance.StartShake(currentCameraShakeParameters);
     }
 }
 

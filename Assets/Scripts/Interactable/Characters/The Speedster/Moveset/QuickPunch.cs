@@ -15,11 +15,11 @@ namespace ForeverFight.Interactable.Abilities
 
         private GameObject originalRadius = null;
 
-        //StartDelay == X  // Duration == Y // Magnitude == Z
-        private Vector3 level1PunchCameraShakeParameters = new Vector3(0.25f, .4f, 0.05f);
-        private Vector3 level2PunchCameraShakeParameters = new Vector3(.8f, 0.5f, 0.25f);
-        private Vector3 level3PunchCameraShakeParameters = new Vector3(1.5f, 1f, 0.5f);
-        private Vector3 currentCameraShakeParameters = Vector3.zero;
+
+        private CameraShakeParameters level1PunchCameraShakeParameters;
+        private CameraShakeParameters level2PunchCameraShakeParameters;
+        private CameraShakeParameters level3PunchCameraShakeParameters;
+        private CameraShakeParameters currentCameraShakeParameters;
 
 
         public GameObject OriginalRadius { get => originalRadius; set => originalRadius = value; }
@@ -36,6 +36,9 @@ namespace ForeverFight.Interactable.Abilities
         protected void Awake()
         {
             originalRadius = AbilityRadius;
+            level1PunchCameraShakeParameters = AssignCameraShakeParameterValues(0.3f, 0.1f);
+            level2PunchCameraShakeParameters = AssignCameraShakeParameterValues(0.5f, 0.3f);
+            level3PunchCameraShakeParameters = AssignCameraShakeParameterValues(1.0f, 0.5f);
         }
 
 
@@ -43,11 +46,11 @@ namespace ForeverFight.Interactable.Abilities
         {
             if (momentumREF.StatusActive)
             {
-                ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimator, DeterminePunchAnim(momentumREF.StoredMomentum), currentCameraShakeParameters);
+                ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator, DeterminePunchAnim(momentumREF.StoredMomentum), currentCameraShakeParameters);
             }
             else
             {
-                ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimator, DeterminePunchAnim(1), level3PunchCameraShakeParameters);
+                ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator, DeterminePunchAnim(1), level1PunchCameraShakeParameters);
             }
 
             DamageManager.Instance.DealDamage(AbilityDamage + momentumREF.Product);
@@ -71,24 +74,19 @@ namespace ForeverFight.Interactable.Abilities
 
             switch (quickPunchDamage)
             {
-                case > 24:
-                    animTrigger = "Level 3 Punch";
+                case > 24: //24
+                    animTrigger = "Level-3-Punch";
                     currentCameraShakeParameters = level3PunchCameraShakeParameters;
-                    CameraControls.Instance.StartShake(level3PunchCameraShakeParameters.x, level3PunchCameraShakeParameters.y, level3PunchCameraShakeParameters.z);
-                    CameraControls.Instance.Zoom(0, 3f, 1f, 1f);
                     break;
 
-                case > 14:
-                    animTrigger = "Level 2 Punch";
+                case > 14: //14
+                    animTrigger = "Level-2-Punch";
                     currentCameraShakeParameters = level2PunchCameraShakeParameters;
-                    CameraControls.Instance.StartShake(level2PunchCameraShakeParameters.x, level2PunchCameraShakeParameters.y, level2PunchCameraShakeParameters.z);
                     break;
 
                 case > 0:
-                    animTrigger = "Level 3 Punch";
-                    currentCameraShakeParameters = level3PunchCameraShakeParameters;
-                    CameraControls.Instance.StartShake(level3PunchCameraShakeParameters.x, level3PunchCameraShakeParameters.y, level3PunchCameraShakeParameters.z);
-                    CameraControls.Instance.Zoom(0, -2f, 1f, 1f);
+                    animTrigger = "Level-1-Punch";
+                    currentCameraShakeParameters = level1PunchCameraShakeParameters;
                     break;
 
                 default:
@@ -98,6 +96,21 @@ namespace ForeverFight.Interactable.Abilities
             }
 
             return animTrigger;
+        }
+
+        public override void ShakeCamera()
+        {
+            CameraControls.Instance.StartShake(currentCameraShakeParameters);
+        }
+
+        public override CameraShakeParameters AssignCameraShakeParameterValues(float duration, float magnitude)
+        {
+            CameraShakeParameters parameters = new CameraShakeParameters();
+
+            parameters.duration = duration;
+            parameters.magnitude = magnitude;
+
+            return parameters;
         }
     }
 }

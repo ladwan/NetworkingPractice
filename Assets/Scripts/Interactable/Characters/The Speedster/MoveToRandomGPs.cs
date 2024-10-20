@@ -6,6 +6,7 @@ using ForeverFight.Networking;
 using ForeverFight.FlowControl;
 using ForeverFight.HelperScripts;
 using ForeverFight.GameMechanics.Movement;
+using ForeverFight.Ui;
 
 namespace ForeverFight.Interactable.Abilities
 {
@@ -16,6 +17,8 @@ namespace ForeverFight.Interactable.Abilities
         [SerializeField]
         private GenericLerp genericLerpREF = null;
         [SerializeField]
+        private UnityEvent movementBeganEvent = new UnityEvent();
+        [SerializeField]
         private UnityEvent movementCompletedEvent = new UnityEvent();
 
 
@@ -25,15 +28,26 @@ namespace ForeverFight.Interactable.Abilities
 
         public void BeginMovement()
         {
+            if (LocalStoredNetworkData.squaresMovedThisInstanceOfMovement < 4)
+            {
+                //LocalStoredNetworkData.GetCountdownTimerScript().TellNetworkToToggleTimer();
+                ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating();
+                FloorGrid.Instance.ConfirmMove();
+                LocalStoredNetworkData.squaresMovedThisInstanceOfMovement = 0;
+                return;
+            }
+
             if (sub == null)
             {
                 GPs = getRandomGridPointREF.GeneranteListOfRandomGPs(4);
                 sub = StartCoroutine(Move());
+                LocalStoredNetworkData.squaresMovedThisInstanceOfMovement = 0;
             }
         }
 
         private IEnumerator Move()
         {
+            movementBeganEvent?.Invoke();
             var playerSpawn = ClientInfo.playerNumber == 1 ? FloorGrid.Instance.Player1Spawn : FloorGrid.Instance.Player2Spawn;
             Vector3 finalPos = playerSpawn.transform.position;
 
@@ -45,14 +59,15 @@ namespace ForeverFight.Interactable.Abilities
             }
 
             Vector3 beforeLastGPposVector3 = new Vector3(finalPos.x, 0.0f, finalPos.z - 1);
-            //genericLerpREF.BeginLerpCoroutine(playerSpawn, beforeLastGPposVector3, finalPos, 1);
-            ToggleTimerAndUi.Instance.FireAnimationWithoutToggleOffInteractivity(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimator, "Stop To Idle", Vector3.zero);
-            //LocalStoredNetworkData.GetLocalCharacter().CharacterAnimator.SetTrigger("Stop To Idle");
+            CharAbility.CameraShakeParameters parameters = new CharAbility.CameraShakeParameters();
+            ToggleTimerAndUi.Instance.FireAnimationWithoutToggleOffInteractivity(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator, "Stop To Idle", parameters);
             FloorGrid.Instance.TryHighlighting(FloorGrid.Instance.GridDictionary[Vector3ToVector2.ConvertToVector2(finalPos)], true);
             FloorGrid.Instance.ConfirmMove();
 
             getRandomGridPointREF.ClearList(GPs);
             sub = null;
+
+            yield return new WaitForSecondsRealtime(1.5f);
             movementCompletedEvent?.Invoke();
         }
     }

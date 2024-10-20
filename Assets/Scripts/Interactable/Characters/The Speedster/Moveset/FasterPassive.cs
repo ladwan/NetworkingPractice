@@ -22,6 +22,12 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
     private List<Image> passiveApBackgrounds = new List<Image>();
     [SerializeField]
     private Color passiveHightlightColor = Color.black;
+    [SerializeField]
+    private Material passiveHightlighMaterial = null;
+    [SerializeField]
+    private Material originalPassiveHightlighMaterial = null;
+
+
 
 
     private int passiveAp = 3;
@@ -177,9 +183,7 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
         if (FloorGrid.Instance.GridDictionary.TryGetValue(FloorGrid.Instance.DragMoverREF.CurrentLocationOfDragMover, out GridPoint changeHightlightColorGp))
         {
             meshRendererREF = changeHightlightColorGp.Highlight.GetComponent<MeshRenderer>();
-            var propertyBlock = new MaterialPropertyBlock();
-            propertyBlock.SetColor("_Color", passiveHightlightColor);
-            meshRendererREF.SetPropertyBlock(propertyBlock);
+            meshRendererREF.material = passiveHightlighMaterial;
             passiveHighlightedMeshRenderers.Add(meshRendererREF);
         }
     }
@@ -190,7 +194,7 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
         {
             foreach (MeshRenderer meshRenderer in passiveHighlightedMeshRenderers)
             {
-                meshRenderer.SetPropertyBlock(null);
+                meshRenderer.material = originalPassiveHightlighMaterial;
             }
             passiveHighlightedMeshRenderers.Clear();
         }

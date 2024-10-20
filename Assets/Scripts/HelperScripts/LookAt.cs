@@ -25,12 +25,12 @@ namespace ForeverFight.HelperScripts
 
         void LateUpdate()
         {
-            if (cameraAnimatorREF.GetCurrentAnimatorStateInfo(0).IsName("CameraIdle") && !cameraAnimatorREF.IsInTransition(0))
-            {
-                // Rotate the camera every frame so it keeps looking at the target
-                transform.LookAt(target);
-                target.LookAt(transform);
-            }
+            //if (cameraAnimatorREF.GetCurrentAnimatorStateInfo(0).IsName("CameraIdle") && !cameraAnimatorREF.IsInTransition(0))
+            //{
+            // Rotate the camera every frame so it keeps looking at the target
+            transform.LookAt(target);
+            target.LookAt(transform);
+            //}
         }
     }
 }

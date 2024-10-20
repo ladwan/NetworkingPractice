@@ -25,7 +25,7 @@ namespace ForeverFight.Interactable.Characters
         [SerializeField]
         private int abilityNumber = 0;
         [SerializeField]
-        private Animator characterAnimator = null;
+        private CharacterAnimationReferences characterAnimationReferences = null;
         [SerializeField]
         private List<CharAbility> moveset = new List<CharAbility>();
         [SerializeField]
@@ -56,7 +56,7 @@ namespace ForeverFight.Interactable.Characters
 
         public int AbilityNumber { get => abilityNumber; set => abilityNumber = value; }
 
-        public Animator CharacterAnimator => characterAnimator;
+        public CharacterAnimationReferences CharacterAnimationReferences { get => characterAnimationReferences; set => characterAnimationReferences = value; }
 
         public List<CharAbility> Moveset => moveset;
 

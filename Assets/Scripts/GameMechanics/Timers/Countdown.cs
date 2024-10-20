@@ -99,8 +99,6 @@ namespace ForeverFight.GameMechanics.Timers
 
         public void ToggleCountdownTimer() // DO NOT directly call this
         {
-            Debug.Log("ToggleCountdownTimer was called !");
-
             if (!isPaused)
             {
                 StopAllCoroutines();

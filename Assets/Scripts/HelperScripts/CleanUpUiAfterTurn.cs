@@ -39,10 +39,11 @@ namespace ForeverFight.HelperScripts
 
         public void CleanUpUi()
         {
-            for (int i = 0; i < playerObjectsToTurnEnable.Count; i++)
+            /*for (int i = 0; i < playerObjectsToTurnEnable.Count; i++)
             {
                 playerObjectsToTurnEnable[i].SetActive(true);
-            }
+            }*/
+
 
             for (int i = 0; i < playerObjectsToTurnDisable.Count; i++)
             {

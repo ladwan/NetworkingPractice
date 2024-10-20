@@ -30,6 +30,8 @@ public class DisplaySelectedChar : MonoBehaviour
         if (myCharacterDictionary.TryGetValue(playersIdentity, out Character value))
         {
             var localPlayerCharInstance = Instantiate(value, spawnPoint);
+            localPlayerCharInstance.CharacterAnimationReferences.CharacterCamera.enabled = true;
+            localPlayerCharInstance.CharacterAnimationReferences.CharacterCameraAudioListener.enabled = true;
             var opponentCharInstance = GameMechanicsManager.Instance.HandleSpawningOpponent();
             LocalStoredNetworkData.localPlayerCharacter = localPlayerCharInstance;
             LocalStoredNetworkData.opponentCharacter = opponentCharInstance;

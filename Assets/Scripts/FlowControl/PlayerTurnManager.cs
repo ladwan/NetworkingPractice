@@ -7,6 +7,7 @@ using ForeverFight.HelperScripts;
 using ForeverFight.GameMechanics.Timers;
 using ForeverFight.GameMechanics.Movement;
 using TMPro;
+using ForeverFight.Interactable.Characters;
 
 namespace ForeverFight.FlowControl
 {
@@ -16,8 +17,6 @@ namespace ForeverFight.FlowControl
         private GameObject playerUi = null;
         [SerializeField]
         private Animator playerDieAnim = null;
-        [SerializeField]
-        private Animator playerCameraAnim = null;
         [SerializeField]
         private Countdown playerTimer = null;
         [SerializeField]
@@ -31,9 +30,10 @@ namespace ForeverFight.FlowControl
         [NonSerialized]
         private static PlayerTurnManager instance = null;
         [NonSerialized]
-        private bool isLocalPlayersTurn = true; //0 == unset // 1 == true // 2 == false
-        [NonSerialized]
+        private bool isLocalPlayersTurn = true; //This will be true for player 2 on the when the game FIRST starts, it should set itself to false using the EndTurn() method
         private Action onTurnStart = null;
+        [NonSerialized]
+        private Animator localCharacterAnimator = null;
 
 
         public static PlayerTurnManager Instance { get => instance; set => instance = value; }
@@ -56,18 +56,9 @@ namespace ForeverFight.FlowControl
             }
         }
 
-
-        public void Start()
+        protected void Start()
         {
-            if (ClientInfo.playerNumber == 1)
-            {
-                isLocalPlayersTurn = true;
-            }
-
-            if (ClientInfo.playerNumber == 2)
-            {
-                EndTurn(false);
-            }
+            StartCoroutine(LocalStoredNetworkData.WaitForCharacterAnimationReferences(SetCharacterAnimatorReferences));
         }
 
 
@@ -88,6 +79,7 @@ namespace ForeverFight.FlowControl
 
         public void EndTurn(bool timeRanOut)
         {
+
             if (isLocalPlayersTurn)
             {
                 CleanUpUiAfterTurn.Instance.CleanUpUi();
@@ -95,10 +87,13 @@ namespace ForeverFight.FlowControl
                 playerTimer.ResetTimer(playerTimer.MaxTime);
                 playerTimerSubtext.text = "( Opponents turn... )";
                 isLocalPlayersTurn = false;
-                if (playerCameraAnim.GetCurrentAnimatorStateInfo(0).IsName("CameraTopView") && !playerCameraAnim.IsInTransition(0))
+
+
+                if (!localCharacterAnimator.GetCurrentAnimatorStateInfo(1).IsName("Camera - Idle"))
                 {
-                    playerCameraAnim.SetTrigger("Idle");
+                    localCharacterAnimator.SetTrigger("Camera - Go to Idle");
                 }
+
                 if (!playerDieAnim.GetCurrentAnimatorStateInfo(0).IsName("Despawn"))
                 {
                     playerDieAnim.Play("Despawn", 0);
@@ -128,6 +123,15 @@ namespace ForeverFight.FlowControl
                 isLocalPlayersTurn = false;
                 ClientSend.EndTurn();
                 return;
+            }
+        }
+
+        private void SetCharacterAnimatorReferences(CharacterAnimationReferences animationReferences)
+        {
+            localCharacterAnimator = animationReferences.CharacterAnimator;
+            if (ClientInfo.playerNumber == 2)
+            {
+                EndTurn(false);
             }
         }
     }

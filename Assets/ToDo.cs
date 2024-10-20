@@ -11,31 +11,17 @@ public class ToDo : MonoBehaviour
         Occasionally the charather selection screen will throw a null ref
         Green mat for availible targeting looked a bit odd, maybe update this to look better 
 
-    
-    ---------------------------------------------------------------------------
-
-    DO TODAY:
-
-    Keep learning shader stuff!
-
-    poiyomi and liltoon
+        Keep learning shader stuff!
 
      Named variables : Study this
 
-        go to client handle and shake camera when anim comes in
+    ---------------------------------------------------------------------------
 
-        continue implementing charather specific cameras
+    DO TODAY:
+    make it so the move to random grid points only happens when you move 4 or more grid points, while ulted !
+    seems like updateAP is called and is re-showing the passive AP lights when it shouldnt , look into this!
+    change the way combat Ui states are set, remove them from happening on object enable to something more tracable
 
-
-
-      Test game and refactor code
-      Look for edge cases 
-      
-    speedster quick punch momentum aminations
-    1-14 / base anim
-    15-24 / Stronger punch anim
-    25+ / Ultimate punch anim
-        if you are animating then the clock will always stop & if you are animating hide interactable buttons 
 
     only enable confirm button on move screen if the users move at least 1 sq
     only do long speedster anim if you move at least 3 sqs

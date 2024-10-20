@@ -13,6 +13,7 @@ namespace ForeverFight.HelperScripts
         [SerializeField]
         private Transform player2Spawn = null;
 
+
         protected void Awake()
         {
             var transformToParentPlayerHolderUnder = ClientInfo.playerNumber == 1 ? player1Spawn : player2Spawn;
