@@ -18,13 +18,8 @@ public class ToDo : MonoBehaviour
     ---------------------------------------------------------------------------
 
     DO TODAY:
-    make it so the move to random grid points only happens when you move 4 or more grid points, while ulted !
-    seems like updateAP is called and is re-showing the passive AP lights when it shouldnt , look into this!
-    change the way combat Ui states are set, remove them from happening on object enable to something more tracable
-
 
     only enable confirm button on move screen if the users move at least 1 sq
-    only do long speedster anim if you move at least 3 sqs
 
     ---------------------------------------------------------------------------
 

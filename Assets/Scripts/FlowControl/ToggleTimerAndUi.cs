@@ -71,9 +71,20 @@ namespace ForeverFight.FlowControl
 
         private IEnumerator ListenForAnimEnd(Animator animatorREF, string desiredStateName, CharAbility.CameraShakeParameters parameters)
         {
+            var timeElapsed = 0.0f;
+            var threshold = 5.0f;
+
+
             ClientSend.ClientSendAnimationTrigger(desiredStateName, parameters.duration, parameters.magnitude);
 
-            yield return new WaitUntil(() => animatorREF.GetCurrentAnimatorStateInfo(0).IsName(desiredStateName));
+            yield return new WaitUntil(() => animatorREF.GetCurrentAnimatorStateInfo(0).IsName(desiredStateName) || (timeElapsed += Time.deltaTime) > threshold);
+
+            if (timeElapsed > threshold)
+            {
+                Debug.LogError($"Trigger: {desiredStateName} is NOT equal to current animator state name. Timeout has occured!");
+                yield break;
+            }
+
             var animStateInfo = animatorREF.GetCurrentAnimatorStateInfo(0);
             yield return new WaitUntil(() => animatorREF.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.95);
 
