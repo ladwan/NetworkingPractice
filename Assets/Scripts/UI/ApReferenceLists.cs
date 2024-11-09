@@ -122,7 +122,8 @@ public class ApReferenceLists : MonoBehaviour
             SpeedsterREF.FasterPassive.PassiveAp = Mathf.Clamp(SpeedsterREF.FasterPassive.PassiveAp + addend, 0, SpeedsterREF.FasterPassive.MaxPassiveAp);
             return SpeedsterREF.FasterPassive.PassiveAp;
         }
-        Debug.Log("Value to update was abnormal");
+
+        Debug.LogError("Value to update was abnormal");
         return 0;
     }
 
@@ -140,7 +141,7 @@ public class ApReferenceLists : MonoBehaviour
             return SpeedsterREF.FasterPassive.PassiveAp;
         }
 
-        Debug.Log("Value to update was abnormal");
+        Debug.LogError("Value to update was abnormal");
         return 0;
     }
 }

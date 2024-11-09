@@ -6,6 +6,7 @@ using TMPro;
 using ForeverFight.Ui;
 using ForeverFight.FlowControl;
 using ForeverFight.GameMechanics.Movement;
+using ForeverFight.Networking;
 
 namespace ForeverFight.Interactable.Abilities
 {
@@ -21,6 +22,8 @@ namespace ForeverFight.Interactable.Abilities
         private GameObject momentumDisplayUi = null;
         [SerializeField]
         private Action onMoveConfirmed = null;
+        [SerializeField]
+        private Haste hasteREF = null;
 
 
         public int StoredMomentum { get => storedMomentum; set => storedMomentum = value; }
@@ -72,6 +75,15 @@ namespace ForeverFight.Interactable.Abilities
         {
             StatusActive = true;
             AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(1, false, CurrentStatusEffectType); // Pass a 1 because you want the second index of the list because this is the second ability
+            CameraShakeParameters parameters = new CameraShakeParameters();
+            ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator, "Momentum", parameters);
+            if (hasteREF.StatusActive)
+            {
+                ToggleTimerAndUi.Instance.SetTriggerWithoutListeningForAnimEnd(
+                    LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator,
+                    "Haste",
+                    parameters);
+            }
             ClientSend.SendStatusEffectData(StatusEffect.StatusEffectType.Momentum, CurrentAbilityDuration, 0, false);
         }
 
@@ -89,6 +101,13 @@ namespace ForeverFight.Interactable.Abilities
 
         public void GetHoveredOverGridPointsCount(int value)
         {
+            //storedMomentum should never go down, only up. There is a change odd values will be passed into this method because ConfirmMove() is called many times in many places
+            //If any value is less than 1 set it to one, worst case scenerio stored momentum will not be affected
+            if (value < 1)
+            {
+                value = 1;
+            }
+
             if (StatusActive)
             {
                 storedMomentum += value - 1;

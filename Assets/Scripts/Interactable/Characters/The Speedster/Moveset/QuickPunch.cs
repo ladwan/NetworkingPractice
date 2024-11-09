@@ -11,8 +11,10 @@ namespace ForeverFight.Interactable.Abilities
     {
         [SerializeField]
         private Momentum momentumREF = null;
+        [SerializeField]
+        private Haste hasteREF = null;
 
-
+        private Animator speedsterAnimREF = null;
         private GameObject originalRadius = null;
 
 
@@ -44,13 +46,29 @@ namespace ForeverFight.Interactable.Abilities
 
         public override void CastAbility()
         {
+            if (!speedsterAnimREF)
+            {
+                speedsterAnimREF = LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator;
+                if (speedsterAnimREF == null)
+                {
+                    Debug.LogError("Speedster Anim REF was NULL !");
+                    return;
+                }
+            }
+
+            if (hasteREF.StatusActive)
+            {
+                CameraShakeParameters tempParams = new CameraShakeParameters();
+                ToggleTimerAndUi.Instance.SetTriggerWithoutListeningForAnimEnd(speedsterAnimREF, "Haste", tempParams);
+            }
+
             if (momentumREF.StatusActive)
             {
-                ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator, DeterminePunchAnim(momentumREF.StoredMomentum), currentCameraShakeParameters);
+                ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(speedsterAnimREF, DeterminePunchAnim(momentumREF.StoredMomentum), currentCameraShakeParameters);
             }
             else
             {
-                ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator, DeterminePunchAnim(1), level1PunchCameraShakeParameters);
+                ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(speedsterAnimREF, DeterminePunchAnim(1), level1PunchCameraShakeParameters);
             }
 
             DamageManager.Instance.DealDamage(AbilityDamage + momentumREF.Product);
@@ -100,7 +118,7 @@ namespace ForeverFight.Interactable.Abilities
 
         public override void ShakeCamera()
         {
-            CameraControls.Instance.StartShake(currentCameraShakeParameters);
+            CameraScreenShakeManager.Instance.StartShake(currentCameraShakeParameters);
         }
 
         public override CameraShakeParameters AssignCameraShakeParameterValues(float duration, float magnitude)

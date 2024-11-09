@@ -96,6 +96,7 @@ MonoBehaviour:
   multiplier: 2
   product: 0
   momentumDisplayUi: {fileID: 5730032930054460824, guid: 4afbde4a955f58046aba3910536a5985, type: 3}
+  hasteREF: {fileID: 3877362417826474932}
 --- !u!1 &491710907
 GameObject:
   m_ObjectHideFlags: 0
@@ -146,6 +147,7 @@ MonoBehaviour:
   abilityCost: 0
   abilityRadius: {fileID: 101378328}
   momentumREF: {fileID: 6802778721011314917}
+  hasteREF: {fileID: 3877362417826474932}
 --- !u!1 &931232967
 GameObject:
   m_ObjectHideFlags: 0

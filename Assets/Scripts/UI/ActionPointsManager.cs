@@ -198,16 +198,6 @@ namespace ForeverFight.Ui
         private void SetCurrentlyActiveReferenceList(ApReferenceLists referenceLists)
         {
             currentApReferenceListsREF = referenceLists;
-            /*
-            if (referenceLists == mainApLists)
-            {
-                currentApReferenceListsREF = referenceLists;
-            }
-            if (referenceLists.currentApDisplayType == ApReferenceLists.apDisplayTypes.speedster)
-            {
-                currentApReferenceListsREF = referenceLists;
-            }
-            */
         }
     }
 }

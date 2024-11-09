@@ -202,7 +202,7 @@ public class ClientHandle : MonoBehaviour
 
     private static void BeginLocalCameraShakeRecievedFromOpponent()
     {
-        CameraControls.Instance.StartShake(currentCameraShakeParameters);
+        CameraScreenShakeManager.Instance.StartShake(currentCameraShakeParameters);
     }
 }
 

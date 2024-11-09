@@ -58,7 +58,12 @@ namespace ForeverFight.Interactable.Abilities
             AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(2, false, CurrentStatusEffectType); // Pass a 2 because you want the third index of the list because this is the third ability
             AbilityFunctionality();
             CameraShakeParameters parameters = new CameraShakeParameters();
-            ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator, "Transition from Idle to Haste", parameters);
+            ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(
+                LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator,
+                "Transition from Idle to Haste",
+                parameters
+            );
+
             ClientSend.SendStatusEffectData(StatusEffect.StatusEffectType.Haste, CurrentAbilityDuration, 0, false);
         }
 
@@ -120,7 +125,11 @@ namespace ForeverFight.Interactable.Abilities
                     quickPunchREF.SetAbilityRadius(quickPunchREF.OriginalRadius);
                     AugmentedMovementManager.Instance.ToggleAugmentMovement(moveToRandomGPsREF);
                     CameraShakeParameters parameters = new CameraShakeParameters();
-                    ToggleTimerAndUi.Instance.FireAnimationWithoutToggleOffInteractivity(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator, "Idle", parameters);
+                    ToggleTimerAndUi.Instance.SetTriggerWithoutListeningForAnimEnd(
+                        LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator,
+                        "Idle",
+                        parameters
+                    );
                 }
             }
         }

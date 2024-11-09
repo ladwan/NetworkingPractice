@@ -18,9 +18,16 @@ public class ToDo : MonoBehaviour
     ---------------------------------------------------------------------------
 
     DO TODAY:
+    Git operation then VFX for speedster
 
-    only enable confirm button on move screen if the users move at least 1 sq
 
+
+
+    DO LATER:
+
+    1) only enable confirm button on move screen if the users move at least 1 sq
+
+    2) Game loop is broken, data from old sessions persist after win state. It is not a clean re-fresh
     ---------------------------------------------------------------------------
 
     Maybe dont need toggle because ui blockers can clean themselves up

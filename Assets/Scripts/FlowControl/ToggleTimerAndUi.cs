@@ -61,6 +61,12 @@ namespace ForeverFight.FlowControl
             sub = StartCoroutine(ListenForAnimEnd(animatorREF, triggerToFire, parameters)); //the trigger and the state should always have the same name, so this should work.
         }
 
+        //Use this when you do not need to re-enable Ui
+        public void SetTriggerWithoutListeningForAnimEnd(Animator animatorREF, string triggerToFire, CharAbility.CameraShakeParameters parameters)
+        {
+            animatorREF.SetTrigger(triggerToFire);
+            ClientSend.ClientSendAnimationTrigger(triggerToFire, parameters.duration, parameters.magnitude);
+        }
 
         private void ToggleInteractableUiAndTimer()
         {
@@ -68,17 +74,14 @@ namespace ForeverFight.FlowControl
             uiToToggle.SetActive(!uiToToggle.activeInHierarchy);
         }
 
-
         private IEnumerator ListenForAnimEnd(Animator animatorREF, string desiredStateName, CharAbility.CameraShakeParameters parameters)
         {
             var timeElapsed = 0.0f;
             var threshold = 5.0f;
 
-
             ClientSend.ClientSendAnimationTrigger(desiredStateName, parameters.duration, parameters.magnitude);
 
             yield return new WaitUntil(() => animatorREF.GetCurrentAnimatorStateInfo(0).IsName(desiredStateName) || (timeElapsed += Time.deltaTime) > threshold);
-
             if (timeElapsed > threshold)
             {
                 Debug.LogError($"Trigger: {desiredStateName} is NOT equal to current animator state name. Timeout has occured!");
