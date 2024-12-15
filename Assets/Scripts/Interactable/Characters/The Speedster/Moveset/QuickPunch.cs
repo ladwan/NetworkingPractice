@@ -102,13 +102,13 @@ namespace ForeverFight.Interactable.Abilities
                     currentCameraShakeParameters = level2PunchCameraShakeParameters;
                     break;
 
-                case > 0:
+                case >= 0:
                     animTrigger = "Level-1-Punch";
                     currentCameraShakeParameters = level1PunchCameraShakeParameters;
                     break;
 
                 default:
-                    Debug.Log("Negative int passed !");
+                    Debug.LogError("Negative int passed !");
                     animTrigger = "";
                     break;
             }

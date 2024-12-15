@@ -3114,6 +3114,7 @@ MonoBehaviour:
   health: 0
   rollAlotment: 0
   abilityNumber: 0
+  moveSpeed: 5
   characterAnimationReferences: {fileID: 4072321226200409470}
   moveset:
   - {fileID: 3262705588139688997}

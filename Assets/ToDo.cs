@@ -17,17 +17,29 @@ public class ToDo : MonoBehaviour
 
     ---------------------------------------------------------------------------
 
-    DO TODAY:
-    Git operation then VFX for speedster
+    ON DECK:
+
+    1) New grid lerp movement needs to be networked, pass hovered over gps across the network
+
+    2) Pause timer and hide ui during grid lerp movement
+
+    3) Need to re-incorparate lookAt for players
+
+    4) Augmented Hasted movement of the speedster doesnt work with new grid lerp movement
+
+    5) Make run cycle for charather & rotation animation
 
 
 
+    
 
     DO LATER:
 
     1) only enable confirm button on move screen if the users move at least 1 sq
 
     2) Game loop is broken, data from old sessions persist after win state. It is not a clean re-fresh
+
+    3) If both players dont select a charather, kick them back to the home screen
     ---------------------------------------------------------------------------
 
     Maybe dont need toggle because ui blockers can clean themselves up
