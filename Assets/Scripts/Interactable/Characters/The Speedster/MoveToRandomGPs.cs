@@ -47,21 +47,41 @@ namespace ForeverFight.Interactable.Abilities
 
         private IEnumerator Move()
         {
-            movementBeganEvent?.Invoke();
-            var playerSpawn = ClientInfo.playerNumber == 1 ? FloorGrid.Instance.Player1Spawn : FloorGrid.Instance.Player2Spawn;
-            Vector3 finalPos = playerSpawn.transform.position;
+            movementBeganEvent?.Invoke(); // Used to update camera angle
+
+            Vector3 finalPos = new Vector3(FloorGrid.Instance.DragMoverREF.transform.position.x, 0, FloorGrid.Instance.DragMoverREF.transform.position.z);
+            FloorGrid.Instance.GridDictionary[Vector3ToVector2.ConvertToVector2(finalPos)].DisplayConnections(false);
 
             for (int i = 0; i < GPs.Count - 1; i++)
             {
+                FloorGrid.Instance.RemoveAllButFirstIndexOfHoveredOverGPs();
+                if (FloorGrid.Instance.HoveredOverGridPoints.Count == 0)
+                {
+                    FloorGrid.Instance.TryHighlighting(GPs[i - 1], true);
+                }
                 FloorGrid.Instance.TryHighlighting(GPs[i], true);
+                DisableGPHighlight(GPs);
                 FloorGrid.Instance.ConfirmMove();
+
                 yield return new WaitForSecondsRealtime(0.5f);
             }
 
             Vector3 beforeLastGPposVector3 = new Vector3(finalPos.x, 0.0f, finalPos.z - 1);
             CharAbility.CameraShakeParameters parameters = new CharAbility.CameraShakeParameters();
             ToggleTimerAndUi.Instance.FireAnimationWithoutToggleOffInteractivity(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator, "Stop To Idle", parameters);
+
+
+            //We need to keep track of these GPs so we can shut off their highlights while were zipping around
+            var tempGPList = new List<GridPoint>();
+            tempGPList.Add(FloorGrid.Instance.GridDictionary[Vector3ToVector2.ConvertToVector2(FloorGrid.Instance.LocalPlayerSpawn.transform.position)]);
+            tempGPList.Add(FloorGrid.Instance.GridDictionary[Vector3ToVector2.ConvertToVector2(finalPos)]);
+
+            //Here we highlight where you currently are and where you want to go. You need at least 2 GPs in the HoveredOverGP list to make movement work
+            FloorGrid.Instance.TryHighlighting(FloorGrid.Instance.GridDictionary
+                [Vector3ToVector2.ConvertToVector2(FloorGrid.Instance.LocalPlayerSpawn.transform.position)], true);
             FloorGrid.Instance.TryHighlighting(FloorGrid.Instance.GridDictionary[Vector3ToVector2.ConvertToVector2(finalPos)], true);
+
+            DisableGPHighlight(tempGPList);
             FloorGrid.Instance.ConfirmMove();
 
             getRandomGridPointREF.ClearList(GPs);
@@ -70,5 +90,14 @@ namespace ForeverFight.Interactable.Abilities
             yield return new WaitForSecondsRealtime(1.5f);
             movementCompletedEvent?.Invoke();
         }
+
+        private void DisableGPHighlight(List<GridPoint> gridPoints)
+        {
+            foreach (var gp in gridPoints)
+            {
+                gp.ShowHighlight(false);
+            }
+        }
+
     }
 }

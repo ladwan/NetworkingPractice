@@ -34,8 +34,9 @@ namespace GameServer
         {
             int _playerUpdatedX = _packet.ReadInt();
             int _playerUpdatedY = _packet.ReadInt();
+            int _hoveredOverGPsCount = _packet.ReadInt();
 
-            ServerSend.SendUpdatedPlayerPosition(_fromClient, _playerUpdatedX, _playerUpdatedY);
+            ServerSend.SendUpdatedPlayerPosition(_fromClient, _playerUpdatedX, _playerUpdatedY, _hoveredOverGPsCount);
         }
 
         public static void ServerReadSelectionPacket(int _fromClient, Packet _packet)

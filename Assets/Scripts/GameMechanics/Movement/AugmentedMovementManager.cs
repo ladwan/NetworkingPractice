@@ -65,7 +65,7 @@ namespace ForeverFight.GameMechanics.Movement
             }
 
             LocalStoredNetworkData.squaresMovedThisInstanceOfMovement = ActionPointsManager.Instance.CurrentApReferenceListsREF.ApLightsToBeBlinked.Count;
-            FloorGrid.Instance.ConfirmMove();
+            //FloorGrid.Instance.ConfirmMove();
             augmentedMovementLogicREF.BeginMovement();
             ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating();
         }

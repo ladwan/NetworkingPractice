@@ -23,12 +23,13 @@ public class ClientSend : MonoBehaviour
         }
     }
 
-    public static void UpdatePlayerCurrentPostition(int x, int y) // Pass this a vector 2's x and y
+    public static void UpdatePlayerCurrentPostition(int x, int y, int hoveredOverGPsCount) // Pass this a vector 2's x and y
     {
         using (Packet _packet = new Packet((int)ClientPackets.updatePlayerCurrentPosition))
         {
             _packet.Write(x);
             _packet.Write(y);
+            _packet.Write(hoveredOverGPsCount);
 
             SendTcpData(_packet);
         }

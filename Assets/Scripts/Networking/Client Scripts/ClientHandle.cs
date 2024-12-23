@@ -43,7 +43,10 @@ public class ClientHandle : MonoBehaviour
     {
         int x = _packet.ReadInt();
         int y = _packet.ReadInt();
-        FloorGrid.Instance.UpdateOpponentPosition(new Vector2(x, y));
+        int hoveredOverGPsCount = _packet.ReadInt();
+
+        FormatNetworkedMovementData.Format(x, y, hoveredOverGPsCount);
+        // FloorGrid.Instance.UpdateOpponentPosition(new Vector2(x, y));
     }
 
     public static void ReceiveTotalPlayerUpdate(Packet _packet)

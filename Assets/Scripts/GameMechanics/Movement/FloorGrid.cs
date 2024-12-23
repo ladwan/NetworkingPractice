@@ -48,6 +48,8 @@ namespace ForeverFight.GameMechanics.Movement
 
         public static FloorGrid Instance { get => instance; set => instance = value; }
 
+        public List<GridPoint> HoveredOverGridPoints { get => hoveredOverGridPoints; set => hoveredOverGridPoints = value; }
+
         public DragMovement DragMoverREF { get => dragMoverREF; set => dragMoverREF = value; }
 
         public Action<int> OnMoveConfirmed { get => onMoveConfirmed; set => onMoveConfirmed = value; }
@@ -58,12 +60,16 @@ namespace ForeverFight.GameMechanics.Movement
 
         public ProceduralGridManipulation ProceduralGridManipulationREF { get => proceduralGridManipulationREF; set => proceduralGridManipulationREF = value; }
 
+        public GameObject LocalPlayerSpawn { get => localPlayerSpawn; set => localPlayerSpawn = value; }
+
 
         private static FloorGrid instance = null;
         private Vector2 currentLocation = new Vector2(0, 0);
         private GridPoint dragMoverGridPointREF = null; //this should return the gridPoint that the drag mover is on
         private Transform opponentSpawn = null;
         private GameObject localPlayerSpawn = null;
+        private Coroutine lerpMovementSub = null;
+
 
         protected void Awake()
         {
@@ -112,8 +118,14 @@ namespace ForeverFight.GameMechanics.Movement
                     Debug.Log("Nope");
                     break;
             }
+
+            FormatNetworkedMovementData.movementComplete += StartMoveTest;
         }
 
+        private void OnDestroy()
+        {
+            FormatNetworkedMovementData.movementComplete -= StartMoveTest;
+        }
 
         public void EmptyGridPointList() //Removes Highlighted Sq's
         {
@@ -186,15 +198,24 @@ namespace ForeverFight.GameMechanics.Movement
         {
             currentLocation = updatedPosGp.UniqueTag;
             updatedPosGp.DragMovementREF.UpdateDragMoverPosition(updatedPosGp.UniqueTag);
-            ClientSend.UpdatePlayerCurrentPostition((int)currentLocation.x, (int)currentLocation.y);
+            ClientSend.UpdatePlayerCurrentPostition((int)currentLocation.x, (int)currentLocation.y, 0); //TODO: FIX THIS
             var currentLocationVector3 = new Vector3(currentLocation.x, 0, currentLocation.y);
             var moveLocalPlayer = ClientInfo.playerNumber == 1 ? player1Spawn.transform.position = currentLocationVector3 : player2Spawn.transform.position = currentLocationVector3;
         }
 
         public void ConfirmMove()
         {
-            StartCoroutine(LerpMovement());
-            //ClientSend.UpdatePlayerCurrentPostition((int)currentLocation.x, (int)currentLocation.y);
+            if (lerpMovementSub == null)
+            {
+                lerpMovementSub = StartCoroutine(LerpMovement());
+            }
+            else
+            {
+                Debug.LogWarning("~~ Attempted to start LerpMove, but it is already running !");
+                return;
+            }
+
+            FormatMoveData();
             var currentLocationVector3 = new Vector3(currentLocation.x, 0, currentLocation.y);
 
             //var moveLocalPlayer = ClientInfo.playerNumber == 1 ? player1Spawn.transform.position = currentLocationVector3 : player2Spawn.transform.position = currentLocationVector3;
@@ -318,6 +339,7 @@ namespace ForeverFight.GameMechanics.Movement
         {
             for (int i = 0; i < hoveredOverGridPoints.Count; i++)
             {
+                Debug.Log($"~~~ Value of i: {i}");
                 if (i + 1 >= hoveredOverGridPoints.Count)
                 {
                     continue;
@@ -333,8 +355,8 @@ namespace ForeverFight.GameMechanics.Movement
                 var time = 0.0f;
                 while (localPlayerSpawn.transform.rotation.eulerAngles != targetRotation.eulerAngles)
                 {
-                    Debug.Log($"Euler Angle Player: {localPlayerSpawn.transform.rotation.eulerAngles}");
-                    Debug.Log($"Euler Angle Target: {targetRotation.eulerAngles}");
+                    //Debug.Log($"Euler Angle Player: {localPlayerSpawn.transform.rotation.eulerAngles}");
+                    //Debug.Log($"Euler Angle Target: {targetRotation.eulerAngles}");
                     time += Time.deltaTime;
                     localPlayerSpawn.transform.rotation = Quaternion.Slerp(localPlayerSpawn.transform.rotation, targetRotation, time * 10f);
                     yield return new WaitForSecondsRealtime(0.01f);
@@ -352,6 +374,75 @@ namespace ForeverFight.GameMechanics.Movement
             }
 
             EmptyGridPointList();
+            lerpMovementSub = null;
+            Debug.Log($"~~~ Successful move: {localPlayerSpawn.transform.position}");
+        }
+
+
+        private void StartMoveTest(List<Vector3> remotePlayersHoveredOverGPs)
+        {
+            StartCoroutine(LerpMovement(remotePlayersHoveredOverGPs));
+        }
+
+        private IEnumerator LerpMovement(List<Vector3> remotePlayersHoveredOverGPs)
+        {
+            for (int i = 0; i < remotePlayersHoveredOverGPs.Count; i++)
+            {
+                if (i + 1 >= remotePlayersHoveredOverGPs.Count)
+                {
+                    continue;
+                }
+
+                var remotePlayersSpawn = ClientInfo.playerNumber == 1 ? player2Spawn.transform : player1Spawn.transform;
+
+                Vector3 pos1 = remotePlayersSpawn.position;
+                Vector3 pos2 = remotePlayersHoveredOverGPs[i + 1];
+
+                Vector3 directionToTarget = pos2 - remotePlayersSpawn.position;
+                Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+
+                //Rotate
+                var time = 0.0f;
+                while (remotePlayersSpawn.rotation.eulerAngles != targetRotation.eulerAngles)
+                {
+                    //Debug.Log($"Euler Angle Player: {localPlayerSpawn.transform.rotation.eulerAngles}");
+                    //Debug.Log($"Euler Angle Target: {targetRotation.eulerAngles}");
+                    time += Time.deltaTime;
+                    remotePlayersSpawn.rotation = Quaternion.Slerp(remotePlayersSpawn.rotation, targetRotation, time * 10f);
+                    yield return new WaitForSecondsRealtime(0.01f);
+                }
+
+                //Translate
+                var t = 0.0f;
+                while (remotePlayersSpawn.position != pos2)
+                {
+                    t += Time.deltaTime * LocalStoredNetworkData.GetOpponentCharacter().MoveSpeed;
+                    t = Mathf.Clamp01(t);
+                    remotePlayersSpawn.position = Vector3.Lerp(pos1, pos2, t);
+                    yield return new WaitForSecondsRealtime(0.01f);
+                }
+            }
+
+            EmptyGridPointList();
+            FormatNetworkedMovementData.RemotePlayersHoveredOverGPs.Clear();
+        }
+
+        private void FormatMoveData()
+        {
+            foreach (GridPoint gp in hoveredOverGridPoints)
+            {
+                ClientSend.UpdatePlayerCurrentPostition((int)gp.UniqueTag.x, (int)gp.UniqueTag.y, hoveredOverGridPoints.Count);
+                //Debug.Log($"~~~ GP: {new Vector2((int)gp.UniqueTag.x, (int)gp.UniqueTag.y)}");
+            }
+        }
+
+        public void RemoveAllButFirstIndexOfHoveredOverGPs()
+        {
+            for (int i = 1; hoveredOverGridPoints.Count >= 2;)
+            {
+                hoveredOverGridPoints[i].ShowHighlight(false);
+                hoveredOverGridPoints.RemoveAt(i);
+            }
         }
     }
 }

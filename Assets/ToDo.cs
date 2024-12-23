@@ -19,15 +19,11 @@ public class ToDo : MonoBehaviour
 
     ON DECK:
 
-    1) New grid lerp movement needs to be networked, pass hovered over gps across the network
+    1) Make run cycle for charather & rotation animation
 
-    2) Pause timer and hide ui during grid lerp movement
+    2) Need to re-incorparate lookAt for players
 
-    3) Need to re-incorparate lookAt for players
-
-    4) Augmented Hasted movement of the speedster doesnt work with new grid lerp movement
-
-    5) Make run cycle for charather & rotation animation
+    3) Pause timer and hide ui during grid lerp movement
 
 
 

@@ -51,12 +51,13 @@ namespace GameServer
             }
         }
 
-        public static void SendUpdatedPlayerPosition(int _playerThatDoesntNeedMsgId, int x, int y)
+        public static void SendUpdatedPlayerPosition(int _playerThatDoesntNeedMsgId, int x, int y, int hoveredOverGPsCount)
         {
             using (Packet _packet = new Packet((int)ServerPackets.sendUpdatedPlayerPosition))
             {
                 _packet.Write(x);
                 _packet.Write(y);
+                _packet.Write(hoveredOverGPsCount);
 
                 SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
             }
