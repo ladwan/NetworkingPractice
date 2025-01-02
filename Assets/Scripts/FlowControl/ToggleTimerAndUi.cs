@@ -68,6 +68,13 @@ namespace ForeverFight.FlowControl
             ClientSend.ClientSendAnimationTrigger(triggerToFire, parameters.duration, parameters.magnitude);
         }
 
+        public void TestMethod(Animator animatorREF, string triggerToFire, CharAbility.CameraShakeParameters parameters)
+        {
+            ToggleInteractableUiAndTimer();
+            SetTriggerWithoutListeningForAnimEnd(animatorREF, triggerToFire, parameters);
+        }
+
+
         private void ToggleInteractableUiAndTimer()
         {
             LocalStoredNetworkData.GetCountdownTimerScript().TellNetworkToToggleTimer();

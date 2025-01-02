@@ -6,6 +6,7 @@ using ForeverFight.Networking;
 using ForeverFight.FlowControl;
 using ForeverFight.HelperScripts;
 using System.Collections;
+using static ForeverFight.Interactable.Abilities.CharAbility;
 
 namespace ForeverFight.GameMechanics.Movement
 {
@@ -337,6 +338,11 @@ namespace ForeverFight.GameMechanics.Movement
 
         private IEnumerator LerpMovement()
         {
+            var animatorREF = LocalStoredNetworkData.GetLocalCharacterAnimationReferences();
+            var parameters = new CameraShakeParameters();
+
+            ToggleTimerAndUi.Instance.TestMethod(animatorREF.CharacterAnimator, "Run", parameters);
+
             for (int i = 0; i < hoveredOverGridPoints.Count; i++)
             {
                 Debug.Log($"~~~ Value of i: {i}");
@@ -376,6 +382,7 @@ namespace ForeverFight.GameMechanics.Movement
             EmptyGridPointList();
             lerpMovementSub = null;
             Debug.Log($"~~~ Successful move: {localPlayerSpawn.transform.position}");
+            ToggleTimerAndUi.Instance.TestMethod(animatorREF.CharacterAnimator, "Idle", parameters);
         }
 
 

@@ -11612,7 +11612,7 @@ MonoBehaviour:
   health: 0
   rollAlotment: 0
   abilityNumber: 0
-  moveSpeed: 15
+  moveSpeed: 20
   characterAnimationReferences: {fileID: 8244466875435532564}
   moveset:
   - {fileID: 491710909}
