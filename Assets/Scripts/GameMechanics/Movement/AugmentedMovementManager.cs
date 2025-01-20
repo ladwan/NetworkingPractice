@@ -56,6 +56,7 @@ namespace ForeverFight.GameMechanics.Movement
         public void DetermineIfMovementIsAugmented()
         {
             lerpCameraREF.ReturnObjectBackToOriginalPos();
+            LocalStoredNetworkData.squaresMovedThisInstanceOfMovement = ActionPointsManager.Instance.CurrentApReferenceListsREF.ApLightsToBeBlinked.Count;
 
             if (augmentedMovementLogicREF == null)
             {
@@ -64,7 +65,6 @@ namespace ForeverFight.GameMechanics.Movement
                 return;
             }
 
-            LocalStoredNetworkData.squaresMovedThisInstanceOfMovement = ActionPointsManager.Instance.CurrentApReferenceListsREF.ApLightsToBeBlinked.Count;
             //FloorGrid.Instance.ConfirmMove();
             augmentedMovementLogicREF.BeginMovement();
             ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating();

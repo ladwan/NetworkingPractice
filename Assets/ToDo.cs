@@ -19,23 +19,25 @@ public class ToDo : MonoBehaviour
 
     ON DECK:
 
-    1) Make run cycle for charather & rotation animation
+    1) Need to re-incorparate lookAt for players
 
-    2) Need to re-incorparate lookAt for players
-
-    3) Pause timer and hide ui during grid lerp movement
+    2) Pause timer and hide ui during grid lerp movement
 
 
 
-    
+    how many sq's do you move with your current move speed across a given span of time
 
     DO LATER:
+
+    1) Drag movers position is begin reset after confirm movement. This can be a bit jarring. Lerp back, rather than snap
 
     1) only enable confirm button on move screen if the users move at least 1 sq
 
     2) Game loop is broken, data from old sessions persist after win state. It is not a clean re-fresh
 
     3) If both players dont select a charather, kick them back to the home screen
+
+    4) Disconnet players form server if BOTH players do not select a character in time
     ---------------------------------------------------------------------------
 
     Maybe dont need toggle because ui blockers can clean themselves up

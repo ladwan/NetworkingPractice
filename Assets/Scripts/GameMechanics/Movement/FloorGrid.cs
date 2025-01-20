@@ -39,6 +39,12 @@ namespace ForeverFight.GameMechanics.Movement
 
 
 
+
+        // ~~~ ~~~ DEBUG TEST
+        [SerializeField]
+        private CurveMoveSpeed curveMoveSpeedREF = null;
+
+
         [SerializeField]
         private Transform transformToLerp = null;
 
@@ -336,6 +342,8 @@ namespace ForeverFight.GameMechanics.Movement
             AddGridPointToList(nextDestinationsGridPoint);
         }
 
+
+        //TODO: Pop this stuff out as a new script
         private IEnumerator LerpMovement()
         {
             var animatorREF = LocalStoredNetworkData.GetLocalCharacterAnimationReferences();
@@ -343,47 +351,179 @@ namespace ForeverFight.GameMechanics.Movement
 
             ToggleTimerAndUi.Instance.TestMethod(animatorREF.CharacterAnimator, "Run", parameters);
 
-            for (int i = 0; i < hoveredOverGridPoints.Count; i++)
+            var importantMovementData = MovementPreWork();
+            //curveMoveSpeedREF.TestDynamicMoveSpeed();
+
+
+            foreach (var movementSegment in importantMovementData.Item1)
             {
-                Debug.Log($"~~~ Value of i: {i}");
-                if (i + 1 >= hoveredOverGridPoints.Count)
+                for (int i = 0; i < movementSegment.Count; i++)
+                {
+                    if (i + 1 >= movementSegment.Count)
+                    {
+                        continue;
+                    }
+
+                    var t = 0.0f;
+                    Vector3 pos1 = localPlayerSpawn.transform.position;
+                    while (localPlayerSpawn.transform.position != movementSegment[i + 1])
+                    {
+                        t += Time.deltaTime * LocalStoredNetworkData.GetLocalCharacter().MoveSpeed;
+                        t = Mathf.Clamp01(t);
+                        localPlayerSpawn.transform.position = Vector3.Lerp(pos1, movementSegment[i + 1], t);
+                        yield return new WaitForSecondsRealtime(0.01f);
+                    }
+                }
+
+
+                //You do? Run method to pop 0th index off Queue
+                //Do rotation
+
+                if (importantMovementData.Item2.Count == 0)
                 {
                     continue;
                 }
 
-                Vector3 pos1 = localPlayerSpawn.transform.position;
-                Vector3 pos2 = new Vector3(hoveredOverGridPoints[i + 1].UniqueTag.x, 0.0f, hoveredOverGridPoints[i + 1].UniqueTag.y);
-
-                Vector3 directionToTarget = pos2 - localPlayerSpawn.transform.position;
-                Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
-
-                //Rotate
                 var time = 0.0f;
-                while (localPlayerSpawn.transform.rotation.eulerAngles != targetRotation.eulerAngles)
+                var rotations = importantMovementData.Item2;
+                while (localPlayerSpawn.transform.rotation.eulerAngles != rotations[0].eulerAngles)
                 {
                     //Debug.Log($"Euler Angle Player: {localPlayerSpawn.transform.rotation.eulerAngles}");
                     //Debug.Log($"Euler Angle Target: {targetRotation.eulerAngles}");
                     time += Time.deltaTime;
-                    localPlayerSpawn.transform.rotation = Quaternion.Slerp(localPlayerSpawn.transform.rotation, targetRotation, time * 10f);
+                    localPlayerSpawn.transform.rotation = Quaternion.Slerp(localPlayerSpawn.transform.rotation, rotations[0], time * 10f);
                     yield return new WaitForSecondsRealtime(0.01f);
                 }
 
-                //Translate
-                var t = 0.0f;
-                while (localPlayerSpawn.transform.position != pos2)
-                {
-                    t += Time.deltaTime * LocalStoredNetworkData.GetLocalCharacter().MoveSpeed;
-                    t = Mathf.Clamp01(t);
-                    localPlayerSpawn.transform.position = Vector3.Lerp(pos1, pos2, t);
-                    yield return new WaitForSecondsRealtime(0.01f);
-                }
+                rotations.RemoveAt(0);
             }
+
+
+
+
+
+            //for (int i = 0; i < hoveredOverGridPoints.Count; i++)
+            //{
+            //    Debug.Log($"~~~ Value of i: {i}");
+            //    if (i + 1 >= hoveredOverGridPoints.Count)
+            //    {
+            //        continue;
+            //    }
+
+            //    Vector3 pos1 = localPlayerSpawn.transform.position;
+            //    Vector3 pos2 = new Vector3(hoveredOverGridPoints[i + 1].UniqueTag.x, 0.0f, hoveredOverGridPoints[i + 1].UniqueTag.y);
+
+            //    Vector3 directionToTarget = pos2 - localPlayerSpawn.transform.position;
+            //    Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+
+            //    //Rotate
+            //    var time = 0.0f;
+
+
+            //    //Pop this out as its own IEnum to rotate while you translate
+            //    if (localPlayerSpawn.transform.rotation.eulerAngles != targetRotation.eulerAngles)
+            //    {
+            //        StartCoroutine(RotateWhileMoving(targetRotation));
+            //    }
+            //    /*                while (localPlayerSpawn.transform.rotation.eulerAngles != targetRotation.eulerAngles)
+            //                    {
+            //                        //Debug.Log($"Euler Angle Player: {localPlayerSpawn.transform.rotation.eulerAngles}");
+            //                        //Debug.Log($"Euler Angle Target: {targetRotation.eulerAngles}");
+            //                        time += Time.deltaTime;
+            //                        localPlayerSpawn.transform.rotation = Quaternion.Slerp(localPlayerSpawn.transform.rotation, targetRotation, time * 10f);
+            //                        yield return new WaitForSecondsRealtime(0.01f);
+            //                    }*/
+
+            //    //Translate
+            //    var t = 0.0f;
+            //    while (localPlayerSpawn.transform.position != pos2)
+            //    {
+            //        t += Time.deltaTime * LocalStoredNetworkData.GetLocalCharacter().MoveSpeed;
+            //        t = Mathf.Clamp01(t);
+            //        localPlayerSpawn.transform.position = Vector3.Lerp(pos1, pos2, t);
+            //        yield return new WaitForSecondsRealtime(0.01f);
+            //    }
+            //}
 
             EmptyGridPointList();
             lerpMovementSub = null;
             Debug.Log($"~~~ Successful move: {localPlayerSpawn.transform.position}");
             ToggleTimerAndUi.Instance.TestMethod(animatorREF.CharacterAnimator, "Idle", parameters);
         }
+
+
+
+        private Tuple<List<List<Vector3>>, List<Quaternion>> MovementPreWork()
+        {
+            List<List<Vector3>> tempParentPosList = new List<List<Vector3>>();
+            List<Quaternion> tempParentRotList = new List<Quaternion>();
+            List<Vector3> tempPosList = new List<Vector3>();
+
+            GameObject tempObj = new GameObject();
+            tempObj.transform.position = localPlayerSpawn.transform.position;
+            tempObj.transform.rotation = localPlayerSpawn.transform.rotation;
+
+            return TestMove(tempParentPosList, tempParentRotList, tempPosList, tempObj, 0);
+        }
+
+
+        //TODO:
+        //Handle recusive returns
+        //Keep track of Quaternions after rotation events
+        //Return Parent list
+
+        private Tuple<List<List<Vector3>>, List<Quaternion>> TestMove(List<List<Vector3>> parentPosList, List<Quaternion> parentRotList, List<Vector3> tempList, GameObject ghost, int currentIndex)
+        {
+            tempList.Add(new Vector3(hoveredOverGridPoints[currentIndex].UniqueTag.x, 0.0f, hoveredOverGridPoints[currentIndex].UniqueTag.y));
+
+            for (int i = currentIndex; i < hoveredOverGridPoints.Count; i++)
+            {
+                if (i + 1 >= hoveredOverGridPoints.Count)
+                {
+                    continue;
+                }
+
+                Vector3 pos1 = new Vector3(hoveredOverGridPoints[i].UniqueTag.x, 0.0f, hoveredOverGridPoints[i].UniqueTag.y);
+                Vector3 pos2 = new Vector3(hoveredOverGridPoints[i + 1].UniqueTag.x, 0.0f, hoveredOverGridPoints[i + 1].UniqueTag.y);
+
+                Vector3 directionToTarget = pos2 - ghost.transform.position;
+                Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+
+                if (ghost.transform.eulerAngles == targetRotation.eulerAngles)
+                {
+                    ghost.transform.position = pos2;
+                    currentIndex++;
+                    return TestMove(parentPosList, parentRotList, tempList, ghost, currentIndex);
+                }
+                else
+                {
+                    ghost.transform.position = pos2;
+                    ghost.transform.rotation = targetRotation;
+
+                    currentIndex++;
+
+                    parentPosList.Add(tempList);
+                    parentRotList.Add(targetRotation);
+                    List<Vector3> newInstanceOfTempList = new List<Vector3>();
+                    newInstanceOfTempList.Add(pos1);
+                    return TestMove(parentPosList, parentRotList, newInstanceOfTempList, ghost, currentIndex);
+                }
+            }
+
+            parentPosList.Add(tempList);
+            var myTuple = new Tuple<List<List<Vector3>>, List<Quaternion>>(parentPosList, parentRotList);
+            return myTuple;
+        }
+
+
+
+
+
+
+
+
+
+
 
 
         private void StartMoveTest(List<Vector3> remotePlayersHoveredOverGPs)

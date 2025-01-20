@@ -42,6 +42,8 @@ namespace ForeverFight.Interactable.Characters
         private GameObject fourSqRadius = null;
         [SerializeField]
         private GameObject fiveSqRadius = null;
+        [SerializeField]
+        private List<AnimationCurve> movementCurves = null;
 
 
         public Identity CharIdentity { get => charIdentity; set => charIdentity = value; }
@@ -75,6 +77,8 @@ namespace ForeverFight.Interactable.Characters
         public GameObject FourSqRadius { get => fourSqRadius; set => fourSqRadius = value; }
 
         public GameObject FiveSqRadius { get => fiveSqRadius; set => fiveSqRadius = value; }
+
+        public List<AnimationCurve> MovementCurves => movementCurves;
 
 
         public enum Identity
