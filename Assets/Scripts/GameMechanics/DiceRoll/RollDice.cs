@@ -4,6 +4,7 @@ using ForeverFight.Ui;
 using ForeverFight.Networking;
 using System.Threading.Tasks;
 using ForeverFight.Interactable.Characters;
+using UnityEngine.Events;
 
 namespace ForeverFight.GameMechanics.DiceRoll
 {
@@ -15,12 +16,32 @@ namespace ForeverFight.GameMechanics.DiceRoll
         private ToggleObjectsOnDieRoll uiToToggle = null;
         [SerializeField]
         private ActionPointsManager apManager = null;
+        [SerializeField]
+        private BoxCollider dieInteractityCollider = null;
+        [SerializeField]
+        private UnityEvent onDieClicked = null; //This assumes that you will only use this event for methods local to this class
+        [SerializeField]
+        private bool isDebug = false;
 
 
         private Animator localCharacterAnimator = null;
+        public static int numberOfTimesCalled = 0;
 
 
-        protected void Start()
+        public Animator SixSidedDieAnimator => sixSidedDieAnimator;
+        public BoxCollider DieInteractityCollider { get => dieInteractityCollider; set => dieInteractityCollider = value; }
+
+
+        private void OnMouseDown()
+        {
+            //This will be toggled off to prevent double clicking
+            //This will be turned back on by an AnimationEvent on the Spawn anim of the 6 sided die
+            dieInteractityCollider.enabled = false;
+            onDieClicked?.Invoke();
+        }
+
+
+        private void Start()
         {
             StartCoroutine(LocalStoredNetworkData.WaitForCharacterAnimationReferences(SetCharacterAnimatorReferences));
         }
@@ -32,13 +53,16 @@ namespace ForeverFight.GameMechanics.DiceRoll
             StartCoroutine(DieRollAnimDelay());
         }
 
+        public void SetDebug()
+        {
+            isDebug = true;
+        }
 
         private int RandomRoll()
         {
             var value = Random.Range(1, 7);
             return value;
         }
-
 
         public void CallUiDelay()
         {
@@ -47,6 +71,14 @@ namespace ForeverFight.GameMechanics.DiceRoll
 
         private void TriggerSixSidedDieAnim(int rollValue)
         {
+            if (isDebug)
+            {
+                apManager.UpdateAP(apManager.MainApLists, 9);
+                sixSidedDieAnimator.SetTrigger("6sidedRoll6");
+                DistributedDieValue.distributedDieRollValue = 9;
+                return;
+            }
+
             switch (rollValue)
             {
                 case 1:
@@ -89,14 +121,16 @@ namespace ForeverFight.GameMechanics.DiceRoll
 
         private IEnumerator UiDelay()
         {
-            yield return new WaitUntil(() => !sixSidedDieAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle") && !sixSidedDieAnimator.GetCurrentAnimatorStateInfo(0).IsName("Spawn") && sixSidedDieAnimator.IsInTransition(0) == false);
-            yield return new WaitForSecondsRealtime(sixSidedDieAnimator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+            yield return new WaitUntil(() => localCharacterAnimator.GetCurrentAnimatorStateInfo(1).IsName("Camera - Birds Eye"));
+            yield return new WaitForSecondsRealtime(localCharacterAnimator.GetCurrentAnimatorClipInfo(1)[0].clip.length);
+
             uiToToggle.ToggleObjects();
         }
 
         private IEnumerator DieRollAnimDelay()
         {
             yield return new WaitForSecondsRealtime(2);
+
             if (localCharacterAnimator is not null)
             {
                 localCharacterAnimator.SetTrigger("Camera - Go to Birds Eye");

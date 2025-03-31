@@ -74,6 +74,10 @@ namespace GameServer
                 {(int)ClientPackets.hasWonTheMatch, ServerHandle.ServerRecieveWinnerStatus},
                 {(int)ClientPackets.toggleTimerCountdown, ServerHandle.ServerRecieveToggleTimerSignal},
                 {(int)(ClientPackets.clientSendAnimationTrigger),ServerHandle.ServerRecieveAnimationTrigger },
+                {(int)(ClientPackets.sendSegmentedMovementData),ServerHandle.ServerRecieveSegmentedMovementData},
+                {(int)(ClientPackets.sendSegmentedRotationData),ServerHandle.ServerRecieveSegmentedRotationData},
+                {(int)(ClientPackets.sendNetworkedMethodIndex),ServerHandle.ServerRecieveNetworkedMethodIndex},
+
             };
             Console.WriteLine("Initialized Packets..");
         }

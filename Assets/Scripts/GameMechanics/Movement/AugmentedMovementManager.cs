@@ -17,6 +17,7 @@ namespace ForeverFight.GameMechanics.Movement
         private bool movementIsAugmented = false;
         private static AugmentedMovementManager instance = null;
         private IAugmentedMovement augmentedMovementLogicREF = null;
+        private bool currentlyDoingAugmentedMovement = false;
 
 
         public bool MovementIsAugmented => movementIsAugmented;
@@ -24,6 +25,8 @@ namespace ForeverFight.GameMechanics.Movement
         public static AugmentedMovementManager Instance => instance;
 
         public IAugmentedMovement AugmentedMovementLogicREF { get => augmentedMovementLogicREF; set => augmentedMovementLogicREF = value; }
+
+        public bool CurrentlyDoingAugmentedMovement { get => currentlyDoingAugmentedMovement; set => currentlyDoingAugmentedMovement = value; }
 
 
         protected void Awake()
@@ -39,7 +42,7 @@ namespace ForeverFight.GameMechanics.Movement
             }
         }
 
-        public void ToggleAugmentMovement(IAugmentedMovement movementREF)
+        public void ToggleAugmentMovement(IAugmentedMovement movementREF = null)
         {
             if (!movementIsAugmented)
             {

@@ -24,6 +24,9 @@ namespace GameServer
         serverSendWinStatus = 14,
         toggleCountdownTimer = 15,
         serverSendAnimationTrigger = 16,
+        sendSegmentedMovementData = 17,
+        sendSegmentedRotationData = 18,
+        sendNetworkedMethodIndex = 19,
     }
 
     /// <summary>Sent from client to server.</summary>
@@ -43,6 +46,9 @@ namespace GameServer
         hasWonTheMatch = 12,
         toggleTimerCountdown = 13,
         clientSendAnimationTrigger = 14,
+        sendSegmentedMovementData = 15,
+        sendSegmentedRotationData = 16,
+        sendNetworkedMethodIndex = 17,
     }
 
     public class Packet : IDisposable

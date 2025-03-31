@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-/// <summary>Sent from server to client.</summary>
+/// <summary>Sent from client to server.</summary>
 public enum ServerPackets
 {
     welcome = 1,
@@ -21,6 +21,9 @@ public enum ServerPackets
     serverSendWinStatus = 14,
     toggleCountdownTimer = 15,
     serverSendAnimationTrigger = 16,
+    sendSegmentedMovementData = 17,
+    sendSegmentedRotationData = 18,
+    sendNetworkedMethodIndex = 19,
 }
 
 /// <summary>Sent from client to server.</summary>
@@ -40,6 +43,9 @@ public enum ClientPackets
     hasWonTheMatch = 12,
     toggleTimerCountdown = 13,
     clientSendAnimationTrigger = 14,
+    sendSegmentedMovementData = 15,
+    sendSegmentedRotationData = 16,
+    sendNetworkedMethodIndex = 17,
 }
 
 public class Packet : IDisposable

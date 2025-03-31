@@ -6,7 +6,7 @@ using ForeverFight.Interactable.Characters;
 
 namespace ForeverFight.HelperScripts.Animation
 {
-    public class ShakeShakeOnAnimationEvent : MonoBehaviour
+    public class ShakeOnAnimationEvent : MonoBehaviour
     {
         [SerializeField] private Character characterREF = null;
 

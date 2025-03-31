@@ -233,6 +233,11 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.serverSendWinStatus, ClientHandle.RecieveWinStatus},
             { (int)ServerPackets.toggleCountdownTimer, ClientHandle.ReceiveToggleTimerSignal},
             { (int)ServerPackets.serverSendAnimationTrigger, ClientHandle.ReceiveAnimationTrigger },
+            { (int)ServerPackets.sendSegmentedMovementData, ClientHandle.RecieveSegmentedMovementData },
+            { (int)ServerPackets.sendSegmentedRotationData, ClientHandle.RecieveSegmentedRotationData },
+            { (int)ServerPackets.sendNetworkedMethodIndex, ClientHandle.RecieveNetworkedMethodIndex },
+
+
         };
         Debug.Log("Initialized Packets..");
     }

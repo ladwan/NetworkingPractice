@@ -6,7 +6,6 @@ using ForeverFight.Networking;
 using ForeverFight.FlowControl;
 using ForeverFight.HelperScripts;
 using System.Collections;
-using static ForeverFight.Interactable.Abilities.CharAbility;
 
 namespace ForeverFight.GameMechanics.Movement
 {
@@ -35,9 +34,15 @@ namespace ForeverFight.GameMechanics.Movement
         [SerializeField]
         private Action<int> onMoveConfirmed = null;
         [SerializeField]
+        private Action onMoveCompleted = null;
+        [SerializeField]
         private ProceduralGridManipulation proceduralGridManipulationREF = null;
-
-
+        [SerializeField]
+        private List<List<Vector3>> networkedSegmententedMovementData = new List<List<Vector3>>();
+        [SerializeField]
+        private List<Quaternion> networkedSegmententedRotationData = new List<Quaternion>();
+        [SerializeField]
+        private float movementSpeedMultiplier = 1;
 
 
         // ~~~ ~~~ DEBUG TEST
@@ -61,6 +66,8 @@ namespace ForeverFight.GameMechanics.Movement
 
         public Action<int> OnMoveConfirmed { get => onMoveConfirmed; set => onMoveConfirmed = value; }
 
+        public Action OnMoveCompleted { get => onMoveCompleted; set => onMoveCompleted = value; }
+
         public GameObject Player1Spawn { get => player1Spawn; set => player1Spawn = value; }
 
         public GameObject Player2Spawn { get => player2Spawn; set => player2Spawn = value; }
@@ -69,6 +76,10 @@ namespace ForeverFight.GameMechanics.Movement
 
         public GameObject LocalPlayerSpawn { get => localPlayerSpawn; set => localPlayerSpawn = value; }
 
+        public List<List<Vector3>> NetworkedSegmententedMovementData { get => networkedSegmententedMovementData; set => networkedSegmententedMovementData = value; }
+
+        public float MovementSpeedMultiplier { get => movementSpeedMultiplier; set => movementSpeedMultiplier = value; }
+
 
         private static FloorGrid instance = null;
         private Vector2 currentLocation = new Vector2(0, 0);
@@ -76,7 +87,7 @@ namespace ForeverFight.GameMechanics.Movement
         private Transform opponentSpawn = null;
         private GameObject localPlayerSpawn = null;
         private Coroutine lerpMovementSub = null;
-
+        private int networkedMovementDataSent = 0; //Use this to know if both movement and rotation data has been send over, if its 2 you have both
 
         protected void Awake()
         {
@@ -126,12 +137,6 @@ namespace ForeverFight.GameMechanics.Movement
                     break;
             }
 
-            FormatNetworkedMovementData.movementComplete += StartMoveTest;
-        }
-
-        private void OnDestroy()
-        {
-            FormatNetworkedMovementData.movementComplete -= StartMoveTest;
         }
 
         public void EmptyGridPointList() //Removes Highlighted Sq's
@@ -194,7 +199,6 @@ namespace ForeverFight.GameMechanics.Movement
                 if (moveWithoutCostingAp)
                 {
                     UpdateMovementVariablesAndGpList(nextDestinationsGridPoint);
-                    //ActionPointsManager.Instance.BlinkCurrentListReference();
                     nextDestinationsGridPoint.DragMovementREF.UpdateDragMoverPosition(nextDestinationsGridPoint.UniqueTag);
                 }
             }
@@ -212,23 +216,9 @@ namespace ForeverFight.GameMechanics.Movement
 
         public void ConfirmMove()
         {
-            if (lerpMovementSub == null)
-            {
-                lerpMovementSub = StartCoroutine(LerpMovement());
-            }
-            else
-            {
-                Debug.LogWarning("~~ Attempted to start LerpMove, but it is already running !");
-                return;
-            }
-
-            FormatMoveData();
-            var currentLocationVector3 = new Vector3(currentLocation.x, 0, currentLocation.y);
-
-            //var moveLocalPlayer = ClientInfo.playerNumber == 1 ? player1Spawn.transform.position = currentLocationVector3 : player2Spawn.transform.position = currentLocationVector3;
+            MovementSetup();
 
             BroadcastHoveredOverGridPointsCount();
-            //EmptyGridPointList();
 
             ActionPointsManager.Instance.MoveWasConfirmed(ActionPointsManager.Instance.CurrentApReferenceListsREF);
         }
@@ -342,21 +332,48 @@ namespace ForeverFight.GameMechanics.Movement
             AddGridPointToList(nextDestinationsGridPoint);
         }
 
-
-        //TODO: Pop this stuff out as a new script
-        private IEnumerator LerpMovement()
+        private void MovementSetup()
         {
-            var animatorREF = LocalStoredNetworkData.GetLocalCharacterAnimationReferences();
-            var parameters = new CameraShakeParameters();
+            ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating();
 
-            ToggleTimerAndUi.Instance.TestMethod(animatorREF.CharacterAnimator, "Run", parameters);
+            var calculatedMovementData = MovementPreWork();
 
-            var importantMovementData = MovementPreWork();
-            //curveMoveSpeedREF.TestDynamicMoveSpeed();
-
-
-            foreach (var movementSegment in importantMovementData.Item1)
+            if (calculatedMovementData.Item2.Count > 0)
             {
+                PrepareMovementDataToBeSentOverNetwork(calculatedMovementData.Item1, true);
+                PrepareRotationDataToBeSentOverNetwork(calculatedMovementData.Item2);
+            }
+            else
+            {
+                PrepareMovementDataToBeSentOverNetwork(calculatedMovementData.Item1, false);
+            }
+
+            if (lerpMovementSub == null)
+            {
+                lerpMovementSub = StartCoroutine(LerpMovement(calculatedMovementData, localPlayerSpawn));
+            }
+            else
+            {
+                Debug.LogWarning("~~ Attempted to start LerpMove, but it is already running !");
+            }
+        }
+
+        private IEnumerator LerpMovement(Tuple<List<List<Vector3>>, List<Quaternion>> calculatedMovementData, GameObject playerSpawnToBeMoved)
+        {
+            var shouldMoveLocalPlayer = localPlayerSpawn == playerSpawnToBeMoved ? true : false;
+            var player = shouldMoveLocalPlayer ? LocalStoredNetworkData.GetLocalCharacter() : LocalStoredNetworkData.GetOpponentCharacter();
+
+            foreach (var movementSegment in calculatedMovementData.Item1)
+            {
+                if (curveMoveSpeedREF.CurrentlyEvaluating == true)
+                {
+                    yield return new WaitUntil(() => curveMoveSpeedREF.CurrentlyEvaluating == false);
+                }
+                if (movementSegment.Count > 1)
+                {
+                    curveMoveSpeedREF.DetermineCurveFromMovementSegment(player, movementSegment);
+                }
+
                 for (int i = 0; i < movementSegment.Count; i++)
                 {
                     if (i + 1 >= movementSegment.Count)
@@ -365,114 +382,89 @@ namespace ForeverFight.GameMechanics.Movement
                     }
 
                     var t = 0.0f;
-                    Vector3 pos1 = localPlayerSpawn.transform.position;
-                    while (localPlayerSpawn.transform.position != movementSegment[i + 1])
+                    Vector3 pos1 = playerSpawnToBeMoved.transform.position;
+                    while (playerSpawnToBeMoved.transform.position != movementSegment[i + 1])
                     {
-                        t += Time.deltaTime * LocalStoredNetworkData.GetLocalCharacter().MoveSpeed;
+                        var moveSpeed = shouldMoveLocalPlayer ? player.MoveSpeed : player.MoveSpeed;
+                        t += Time.deltaTime * (moveSpeed * movementSpeedMultiplier);
                         t = Mathf.Clamp01(t);
-                        localPlayerSpawn.transform.position = Vector3.Lerp(pos1, movementSegment[i + 1], t);
+                        playerSpawnToBeMoved.transform.position = Vector3.Lerp(pos1, movementSegment[i + 1], t);
                         yield return new WaitForSecondsRealtime(0.01f);
                     }
                 }
 
+                movementSpeedMultiplier = 1;
 
-                //You do? Run method to pop 0th index off Queue
-                //Do rotation
 
-                if (importantMovementData.Item2.Count == 0)
+                //Were there rotations in the over-arching instance of movement?
+                //If not, move on to the next iteration of the for loop
+                if (calculatedMovementData.Item2.Count == 0)
                 {
                     continue;
                 }
 
+                //If you made it here, you have rotation data saved from the movement pre-work
+                //Slerp this rotation value then remove it from the list
                 var time = 0.0f;
-                var rotations = importantMovementData.Item2;
-                while (localPlayerSpawn.transform.rotation.eulerAngles != rotations[0].eulerAngles)
+                var rotations = calculatedMovementData.Item2;
+                while (playerSpawnToBeMoved.transform.rotation.eulerAngles != rotations[0].eulerAngles)
                 {
                     //Debug.Log($"Euler Angle Player: {localPlayerSpawn.transform.rotation.eulerAngles}");
                     //Debug.Log($"Euler Angle Target: {targetRotation.eulerAngles}");
                     time += Time.deltaTime;
-                    localPlayerSpawn.transform.rotation = Quaternion.Slerp(localPlayerSpawn.transform.rotation, rotations[0], time * 10f);
+                    playerSpawnToBeMoved.transform.rotation = Quaternion.Slerp(playerSpawnToBeMoved.transform.rotation, rotations[0], time * 10f);
                     yield return new WaitForSecondsRealtime(0.01f);
                 }
 
                 rotations.RemoveAt(0);
             }
 
-
-
-
-
-            //for (int i = 0; i < hoveredOverGridPoints.Count; i++)
-            //{
-            //    Debug.Log($"~~~ Value of i: {i}");
-            //    if (i + 1 >= hoveredOverGridPoints.Count)
-            //    {
-            //        continue;
-            //    }
-
-            //    Vector3 pos1 = localPlayerSpawn.transform.position;
-            //    Vector3 pos2 = new Vector3(hoveredOverGridPoints[i + 1].UniqueTag.x, 0.0f, hoveredOverGridPoints[i + 1].UniqueTag.y);
-
-            //    Vector3 directionToTarget = pos2 - localPlayerSpawn.transform.position;
-            //    Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
-
-            //    //Rotate
-            //    var time = 0.0f;
-
-
-            //    //Pop this out as its own IEnum to rotate while you translate
-            //    if (localPlayerSpawn.transform.rotation.eulerAngles != targetRotation.eulerAngles)
-            //    {
-            //        StartCoroutine(RotateWhileMoving(targetRotation));
-            //    }
-            //    /*                while (localPlayerSpawn.transform.rotation.eulerAngles != targetRotation.eulerAngles)
-            //                    {
-            //                        //Debug.Log($"Euler Angle Player: {localPlayerSpawn.transform.rotation.eulerAngles}");
-            //                        //Debug.Log($"Euler Angle Target: {targetRotation.eulerAngles}");
-            //                        time += Time.deltaTime;
-            //                        localPlayerSpawn.transform.rotation = Quaternion.Slerp(localPlayerSpawn.transform.rotation, targetRotation, time * 10f);
-            //                        yield return new WaitForSecondsRealtime(0.01f);
-            //                    }*/
-
-            //    //Translate
-            //    var t = 0.0f;
-            //    while (localPlayerSpawn.transform.position != pos2)
-            //    {
-            //        t += Time.deltaTime * LocalStoredNetworkData.GetLocalCharacter().MoveSpeed;
-            //        t = Mathf.Clamp01(t);
-            //        localPlayerSpawn.transform.position = Vector3.Lerp(pos1, pos2, t);
-            //        yield return new WaitForSecondsRealtime(0.01f);
-            //    }
-            //}
-
             EmptyGridPointList();
             lerpMovementSub = null;
-            Debug.Log($"~~~ Successful move: {localPlayerSpawn.transform.position}");
-            ToggleTimerAndUi.Instance.TestMethod(animatorREF.CharacterAnimator, "Idle", parameters);
+            networkedSegmententedMovementData.Clear();
+            networkedSegmententedRotationData.Clear();
+            calculatedMovementData = null;
+            onMoveCompleted?.Invoke();
+            ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating();
         }
 
-
-
+        //This method is used to generate the objects that will be needed for the SegmentMovementInstance recursive method
         private Tuple<List<List<Vector3>>, List<Quaternion>> MovementPreWork()
         {
             List<List<Vector3>> tempParentPosList = new List<List<Vector3>>();
             List<Quaternion> tempParentRotList = new List<Quaternion>();
             List<Vector3> tempPosList = new List<Vector3>();
 
+            //We need an object to represent how our player will move across these gridpoints.
+            //Its important to remember this logic is calculating its way through a full movement
+            //It will basically do everything that needs to happen for movement to take place, then return the results
+            //The below method will need to move this object around to make accurate calculations, this is why we cant just use the player itself
+            //Because then it would look like the player had moved twice
             GameObject tempObj = new GameObject();
             tempObj.transform.position = localPlayerSpawn.transform.position;
             tempObj.transform.rotation = localPlayerSpawn.transform.rotation;
 
-            return TestMove(tempParentPosList, tempParentRotList, tempPosList, tempObj, 0);
+
+            //Return the segmented, calculated data that will be used to move the player
+            return SegmentMovementInstance(tempParentPosList, tempParentRotList, tempPosList, tempObj, 0);
         }
 
 
-        //TODO:
-        //Handle recusive returns
-        //Keep track of Quaternions after rotation events
-        //Return Parent list
+        //The issue this method aims to solve is that we do not translate while we rotate
+        //This seemingly small statement means that we cannot use our "bespoke movement curve" system to drive the movement
+        //The curves do not expect you to stop moving in the middle of their evaluation
+        //The curves lack any context of the movement instance and this will lead to odd behavior,
+        //To remedy this, the below method and its dependencies were created.
 
-        private Tuple<List<List<Vector3>>, List<Quaternion>> TestMove(List<List<Vector3>> parentPosList, List<Quaternion> parentRotList, List<Vector3> tempList, GameObject ghost, int currentIndex)
+        //The idea is to separate the larger movement instance into smaller, segmented, movement instances. Split by rotations
+        //Once the method detects an instance of rotation, it will stop adding GP's to the current list, and make a new list
+        //While this is happening it will also save out the quaternion value of that instance of rotation.
+
+        //When all is said and done, we will end with a list of List<Vector3> and a list of quaternions
+        //The list of lists of vector 3s stores our segmented movements, all the grid points that were right in front of one another, without a rotation
+        //The quaternion list stores all the instances of rotation that took place
+
+        private Tuple<List<List<Vector3>>, List<Quaternion>> SegmentMovementInstance(List<List<Vector3>> parentPosList, List<Quaternion> parentRotList, List<Vector3> tempList, GameObject ghost, int currentIndex)
         {
             tempList.Add(new Vector3(hoveredOverGridPoints[currentIndex].UniqueTag.x, 0.0f, hoveredOverGridPoints[currentIndex].UniqueTag.y));
 
@@ -493,21 +485,19 @@ namespace ForeverFight.GameMechanics.Movement
                 {
                     ghost.transform.position = pos2;
                     currentIndex++;
-                    return TestMove(parentPosList, parentRotList, tempList, ghost, currentIndex);
+                    return SegmentMovementInstance(parentPosList, parentRotList, tempList, ghost, currentIndex);
                 }
-                else
-                {
-                    ghost.transform.position = pos2;
-                    ghost.transform.rotation = targetRotation;
 
-                    currentIndex++;
+                ghost.transform.position = pos2;
+                ghost.transform.rotation = targetRotation;
 
-                    parentPosList.Add(tempList);
-                    parentRotList.Add(targetRotation);
-                    List<Vector3> newInstanceOfTempList = new List<Vector3>();
-                    newInstanceOfTempList.Add(pos1);
-                    return TestMove(parentPosList, parentRotList, newInstanceOfTempList, ghost, currentIndex);
-                }
+                currentIndex++;
+
+                parentPosList.Add(tempList);
+                parentRotList.Add(targetRotation);
+                List<Vector3> newInstanceOfTempList = new List<Vector3>();
+                newInstanceOfTempList.Add(pos1);
+                return SegmentMovementInstance(parentPosList, parentRotList, newInstanceOfTempList, ghost, currentIndex);
             }
 
             parentPosList.Add(tempList);
@@ -516,73 +506,6 @@ namespace ForeverFight.GameMechanics.Movement
         }
 
 
-
-
-
-
-
-
-
-
-
-
-        private void StartMoveTest(List<Vector3> remotePlayersHoveredOverGPs)
-        {
-            StartCoroutine(LerpMovement(remotePlayersHoveredOverGPs));
-        }
-
-        private IEnumerator LerpMovement(List<Vector3> remotePlayersHoveredOverGPs)
-        {
-            for (int i = 0; i < remotePlayersHoveredOverGPs.Count; i++)
-            {
-                if (i + 1 >= remotePlayersHoveredOverGPs.Count)
-                {
-                    continue;
-                }
-
-                var remotePlayersSpawn = ClientInfo.playerNumber == 1 ? player2Spawn.transform : player1Spawn.transform;
-
-                Vector3 pos1 = remotePlayersSpawn.position;
-                Vector3 pos2 = remotePlayersHoveredOverGPs[i + 1];
-
-                Vector3 directionToTarget = pos2 - remotePlayersSpawn.position;
-                Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
-
-                //Rotate
-                var time = 0.0f;
-                while (remotePlayersSpawn.rotation.eulerAngles != targetRotation.eulerAngles)
-                {
-                    //Debug.Log($"Euler Angle Player: {localPlayerSpawn.transform.rotation.eulerAngles}");
-                    //Debug.Log($"Euler Angle Target: {targetRotation.eulerAngles}");
-                    time += Time.deltaTime;
-                    remotePlayersSpawn.rotation = Quaternion.Slerp(remotePlayersSpawn.rotation, targetRotation, time * 10f);
-                    yield return new WaitForSecondsRealtime(0.01f);
-                }
-
-                //Translate
-                var t = 0.0f;
-                while (remotePlayersSpawn.position != pos2)
-                {
-                    t += Time.deltaTime * LocalStoredNetworkData.GetOpponentCharacter().MoveSpeed;
-                    t = Mathf.Clamp01(t);
-                    remotePlayersSpawn.position = Vector3.Lerp(pos1, pos2, t);
-                    yield return new WaitForSecondsRealtime(0.01f);
-                }
-            }
-
-            EmptyGridPointList();
-            FormatNetworkedMovementData.RemotePlayersHoveredOverGPs.Clear();
-        }
-
-        private void FormatMoveData()
-        {
-            foreach (GridPoint gp in hoveredOverGridPoints)
-            {
-                ClientSend.UpdatePlayerCurrentPostition((int)gp.UniqueTag.x, (int)gp.UniqueTag.y, hoveredOverGridPoints.Count);
-                //Debug.Log($"~~~ GP: {new Vector2((int)gp.UniqueTag.x, (int)gp.UniqueTag.y)}");
-            }
-        }
-
         public void RemoveAllButFirstIndexOfHoveredOverGPs()
         {
             for (int i = 1; hoveredOverGridPoints.Count >= 2;)
@@ -590,6 +513,117 @@ namespace ForeverFight.GameMechanics.Movement
                 hoveredOverGridPoints[i].ShowHighlight(false);
                 hoveredOverGridPoints.RemoveAt(i);
             }
+        }
+
+
+        public void ConstructVector3ListFromNetworkData(Vector3 vector3ToBeAdded, int count, bool hasRotations, bool completed)
+        {
+            if (networkedSegmententedMovementData.Count == 0)
+            {
+                MakeNewListForNetworkedSegmentedMovementData(vector3ToBeAdded);
+                var tempLatestList = networkedSegmententedMovementData[networkedSegmententedMovementData.Count - 1];
+
+                if (tempLatestList.Count == count && !completed)
+                {
+                    networkedSegmententedMovementData.Add(new List<Vector3>());
+                }
+                return;
+            }
+
+            var latestList = networkedSegmententedMovementData[networkedSegmententedMovementData.Count - 1];
+
+            if (latestList.Count == count)
+            {
+                MakeNewListForNetworkedSegmentedMovementData(vector3ToBeAdded);
+                return;
+            }
+
+            latestList.Add(vector3ToBeAdded);
+
+            if (latestList.Count == count && !completed)
+            {
+                networkedSegmententedMovementData.Add(new List<Vector3>());
+            }
+
+            if (completed)
+            {
+                if (hasRotations)
+                {
+                    ConstructTupleFromNetworkData(true);
+                    return;
+                    //Do stuff
+                }
+
+                ConstructTupleFromNetworkData(false);
+            }
+        }
+
+        public void ConstructQuaternionListFromNetworkData(Quaternion quaternionToBeAdded, int count)
+        {
+            networkedSegmententedRotationData.Add(quaternionToBeAdded);
+
+            if (networkedSegmententedRotationData.Count == count)
+            {
+                ConstructTupleFromNetworkData(true);
+                //Trigger bool to say list is done
+                //IncrementValue
+            }
+        }
+
+        private void MakeNewListForNetworkedSegmentedMovementData(Vector3 temp)
+        {
+            networkedSegmententedMovementData.Add(new List<Vector3>());
+            networkedSegmententedMovementData[networkedSegmententedMovementData.Count - 1].Add(temp);
+        }
+
+        private void PrepareMovementDataToBeSentOverNetwork(List<List<Vector3>> segmentedMovements, bool waitForRotationData)
+        {
+            var lastListIndex = segmentedMovements[segmentedMovements.Count - 1];
+            foreach (var list in segmentedMovements)
+            {
+                var lastGpIndex = list[list.Count - 1];
+                foreach (var GP in list)
+                {
+                    //start deconstructing the vector 3s to be written and passed across the network
+                    if (list == lastListIndex && GP == lastGpIndex)
+                    {
+                        ClientSend.SendSegmentedMovementData((int)GP.x, (int)GP.z, list.Count, waitForRotationData, true);
+                        break;
+                    }
+                    ClientSend.SendSegmentedMovementData((int)GP.x, (int)GP.z, list.Count, waitForRotationData, false);
+                }
+            }
+        }
+
+        private void PrepareRotationDataToBeSentOverNetwork(List<Quaternion> segmentedRotations)
+        {
+            foreach (var rot in segmentedRotations)
+            {
+                ClientSend.SendSegmentedRotationData(rot.x, rot.y, rot.z, rot.w, segmentedRotations.Count);
+            }
+        }
+
+        private void ConstructTupleFromNetworkData(bool waitOnRotations)
+        {
+            if (!waitOnRotations)
+            {
+                var myTuple = new Tuple<List<List<Vector3>>, List<Quaternion>>(networkedSegmententedMovementData, new List<Quaternion>());
+
+                var remotePlayersSpawn = ClientInfo.playerNumber == 1 ? player2Spawn : player1Spawn;
+                StartCoroutine(LerpMovement(myTuple, remotePlayersSpawn));
+                return;
+            }
+
+            networkedMovementDataSent++;
+            if (networkedMovementDataSent == 2)
+            {
+                var myTuple = new Tuple<List<List<Vector3>>, List<Quaternion>>(networkedSegmententedMovementData, networkedSegmententedRotationData);
+                networkedMovementDataSent = 0;
+
+                var remotePlayersSpawn = ClientInfo.playerNumber == 1 ? player2Spawn : player1Spawn;
+                StartCoroutine(LerpMovement(myTuple, remotePlayersSpawn));
+            }
+
         }
     }
 }

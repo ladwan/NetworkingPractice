@@ -321,7 +321,7 @@ GameObject:
   - component: {fileID: 23197420}
   - component: {fileID: 23197421}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Max AP Die Roll -  Debug
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -351,9 +351,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 23197419}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eca00ce919842e140af02580cd637d08, type: 3}
+  m_Script: {fileID: 11500000, guid: 43763a16dfd296946af081a19f6b89a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onEnableEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1903054656}
+        m_TargetAssemblyTypeName: ForeverFight.GameMechanics.DiceRoll.RollDice, Assembly-CSharp
+        m_MethodName: SetDebug
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  isDoOnce: 0
 --- !u!1 &32644997
 GameObject:
   m_ObjectHideFlags: 0
@@ -649,6 +665,8 @@ MonoBehaviour:
   abilityDamage: 0
   abilityCost: 0
   abilityRadius: {fileID: 0}
+  particleGameObject: {fileID: 0}
+  particleScript: {fileID: 0}
   statusActive: 0
   currentStatusEffectType: 3
   maxAbilityDuration: 1
@@ -1105,12 +1123,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 134048671}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.000000014901161, y: -0.7071068, z: -0.000000014901161, w: 0.7071068}
-  m_LocalPosition: {x: 8.483103, y: -3.2213917, z: 2.7198572}
-  m_LocalScale: {x: 1.1088722, y: 1.1088723, z: 1.108872}
-  m_ConstrainProportionsScale: 0
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.4, z: 1.2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 1992690347}
+  - {fileID: 1903054653}
   m_Father: {fileID: 7168879821103507338}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &159372890
@@ -6313,7 +6331,6 @@ Transform:
   - {fileID: 389754372}
   - {fileID: 1333339517}
   - {fileID: 808368853}
-  - {fileID: 1893315688}
   - {fileID: 1241826874}
   - {fileID: 893886384}
   - {fileID: 82241249}
@@ -13340,7 +13357,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 465574530}
-  - component: {fileID: 465574531}
   m_Layer: 0
   m_Name: Player 2 - Spawn Point
   m_TagString: Untagged
@@ -13356,28 +13372,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 465574529}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: -0, w: -0.7071068}
   m_LocalPosition: {x: 9, y: 0, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1241826874}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!114 &465574531
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 465574529}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ade80c9ca47b6f645a8be3855af325ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cameraAnimatorREF: {fileID: 0}
-  player1Transform: {fileID: 1018525768}
-  player2Transform: {fileID: 465574530}
+  m_LocalEulerAnglesHint: {x: 0, y: 270, z: 0}
 --- !u!1 &475742415
 GameObject:
   m_ObjectHideFlags: 0
@@ -14707,14 +14708,13 @@ GameObject:
   - component: {fileID: 694388382}
   - component: {fileID: 694388381}
   - component: {fileID: 694388380}
-  - component: {fileID: 694388379}
   m_Layer: 5
   m_Name: Button - Die Roll Ui  (Player 1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &694388378
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14734,21 +14734,6 @@ RectTransform:
   m_AnchoredPosition: {x: -675, y: 10}
   m_SizeDelta: {x: 319.8025, y: 290.11096}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &694388379
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 694388377}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11a90f2732cc1e44cacccc1f85cd921b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sixSidedDieAnimator: {fileID: 1992690350}
-  uiToToggle: {fileID: 1992690349}
-  apManager: {fileID: 2003473789}
 --- !u!114 &694388380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14792,43 +14777,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 694388381}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 694388379}
-        m_TargetAssemblyTypeName: RollDice, Assembly-CSharp
-        m_MethodName: RollSixSidedDie
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 694388380}
-        m_TargetAssemblyTypeName: UnityEngine.UI.Selectable, UnityEngine.UI
-        m_MethodName: set_interactable
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 694388379}
-        m_TargetAssemblyTypeName: RollDice, Assembly-CSharp
-        m_MethodName: CallUiDelay
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &694388381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15782,7 +15731,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerUi: {fileID: 1535058858}
-  playerDieAnim: {fileID: 1992690350}
+  rollDiceREF: {fileID: 1903054656}
   playerTimer: {fileID: 336035657}
   playerTimerSubtext: {fileID: 1870779468}
   dragMovementREF: {fileID: 1554892684}
@@ -16258,6 +16207,8 @@ MonoBehaviour:
   displaySelectedCharREF: {fileID: 195005824}
   dieValue: 0
   proceduralGridManipulationREF: {fileID: 880057297}
+  networkedSegmententedRotationData: []
+  movementSpeedMultiplier: 1
   curveMoveSpeedREF: {fileID: 1998170208}
   transformToLerp: {fileID: 1018525768}
 --- !u!114 &880057297
@@ -26807,7 +26758,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1018525768}
-  - component: {fileID: 1018525769}
   m_Layer: 0
   m_Name: Player 1 - Spawn Point
   m_TagString: Untagged
@@ -26823,28 +26773,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1018525767}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1241826874}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1018525769
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1018525767}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ade80c9ca47b6f645a8be3855af325ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cameraAnimatorREF: {fileID: 0}
-  player1Transform: {fileID: 1018525768}
-  player2Transform: {fileID: 465574530}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &1037483532
 GameObject:
   m_ObjectHideFlags: 0
@@ -28813,6 +28748,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1241826874}
+  - component: {fileID: 1241826875}
+  - component: {fileID: 1241826876}
   m_Layer: 0
   m_Name: Spawn Points
   m_TagString: Untagged
@@ -28833,10 +28770,38 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1893315688}
   - {fileID: 1018525768}
   - {fileID: 465574530}
   m_Father: {fileID: 195005822}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1241826875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1241826873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bee2084d7a3bae4992f59c496f80de4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player1Transform: {fileID: 1018525768}
+  player2Transform: {fileID: 465574530}
+--- !u!114 &1241826876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1241826873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ade80c9ca47b6f645a8be3855af325ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 5
 --- !u!1 &1304198254
 GameObject:
   m_ObjectHideFlags: 0
@@ -33279,15 +33244,15 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1893315687}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 4}
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: -0.7071068}
+  m_LocalPosition: {x: 9, y: 0, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 484594182}
   - {fileID: 547977244}
   - {fileID: 1187727700}
-  m_Father: {fileID: 195005822}
+  m_Father: {fileID: 1241826874}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1893315689
 MonoBehaviour:
@@ -33454,6 +33419,105 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1898352984}
   m_CullTransparentMesh: 1
+--- !u!1 &1903054652
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1903054653}
+  - component: {fileID: 1903054655}
+  - component: {fileID: 1903054656}
+  m_Layer: 0
+  m_Name: Die - Interactivity
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1903054653
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1903054652}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.65, y: 0.65, z: 0.65}
+  m_ConstrainProportionsScale: 1
+  m_Children:
+  - {fileID: 1992690347}
+  m_Father: {fileID: 134048672}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1903054655
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1903054652}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1903054656
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1903054652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11a90f2732cc1e44cacccc1f85cd921b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sixSidedDieAnimator: {fileID: 1992690350}
+  uiToToggle: {fileID: 1992690349}
+  apManager: {fileID: 2003473789}
+  dieInteractityCollider: {fileID: 1903054655}
+  onDieClicked:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1903054656}
+        m_TargetAssemblyTypeName: ForeverFight.GameMechanics.DiceRoll.RollDice, Assembly-CSharp
+        m_MethodName: RollSixSidedDie
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1903054656}
+        m_TargetAssemblyTypeName: ForeverFight.GameMechanics.DiceRoll.RollDice, Assembly-CSharp
+        m_MethodName: CallUiDelay
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  isDebug: 0
 --- !u!1 &1925647328
 GameObject:
   m_ObjectHideFlags: 0
@@ -34520,7 +34584,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 134048672}
+    m_TransformParent: {fileID: 1903054653}
     m_Modifications:
     - target: {fileID: 5888436246626738646, guid: 3868121bc64aa7c4fb94da4c0b944be6, type: 3}
       propertyPath: m_RootOrder
@@ -34528,27 +34592,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5888436246626738646, guid: 3868121bc64aa7c4fb94da4c0b944be6, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.5
+      value: 0.7692308
       objectReference: {fileID: 0}
     - target: {fileID: 5888436246626738646, guid: 3868121bc64aa7c4fb94da4c0b944be6, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.5
+      value: 0.7692308
       objectReference: {fileID: 0}
     - target: {fileID: 5888436246626738646, guid: 3868121bc64aa7c4fb94da4c0b944be6, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.5
+      value: 0.7692308
       objectReference: {fileID: 0}
     - target: {fileID: 5888436246626738646, guid: 3868121bc64aa7c4fb94da4c0b944be6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.35
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5888436246626738646, guid: 3868121bc64aa7c4fb94da4c0b944be6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.11
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5888436246626738646, guid: 3868121bc64aa7c4fb94da4c0b944be6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 8.7
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5888436246626738646, guid: 3868121bc64aa7c4fb94da4c0b944be6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -34627,6 +34691,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b203c043258aad4db7c4668d3ec8f84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dieInteractityCollider: {fileID: 1903054655}
   objectsToEnable:
   - {fileID: 92420964}
   objectsToDisable: []
@@ -36581,7 +36646,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8300748243124172687, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8300748243124172687, guid: 78e7f8eb5ff57964c919eb1ff5009856, type: 3}
       propertyPath: m_LocalRotation.w

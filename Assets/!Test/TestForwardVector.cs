@@ -20,8 +20,6 @@ public class TestForwardVector : MonoBehaviour
 
         direction = Point.position - transform.position;
         Debug.DrawLine(transform.position, direction + (height + (forwardVector * scalar)), Color.red);
-
-
         // Quaternion toRotation = Quaternion.LookRotation(direction);
         //transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, speed * Time.deltaTime);
     }

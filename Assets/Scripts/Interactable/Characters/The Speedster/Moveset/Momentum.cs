@@ -38,7 +38,6 @@ namespace ForeverFight.Interactable.Abilities
             }
         }
 
-
         protected Momentum()
         {
             AbilityName = "Momentum";
@@ -70,13 +69,44 @@ namespace ForeverFight.Interactable.Abilities
             OnStatusEffectEnded -= CleanUp;
         }
 
+        protected void Awake()
+        {
+            for (int i = 0; i < OwningCharacter.Moveset.Count; i++)
+            {
+                if (OwningCharacter.Moveset[i] == this)
+                {
+                    AbilityIndex = i;
+                }
+            }
+        }
+
+        protected enum AbilityMethodMapping
+        {
+            ToggleParticles = 0,
+        }
+
+
+        public override void NetworkedMethodCall(int methodIndex)
+        {
+            switch (methodIndex)
+            {
+                case 0:
+                    ToggleParticles(false);
+                    break;
+                default:
+                    Debug.Log($"Something weird happend in ability: {name}");
+                    break;
+            }
+        }
 
         public override void CastAbility()
         {
             StatusActive = true;
+            ToggleParticles(true);
             AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(1, false, CurrentStatusEffectType); // Pass a 1 because you want the second index of the list because this is the second ability
             CameraShakeParameters parameters = new CameraShakeParameters();
             ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator, "Momentum", parameters);
+
             if (hasteREF.StatusActive)
             {
                 ToggleTimerAndUi.Instance.SetTriggerWithoutListeningForAnimEnd(
@@ -115,6 +145,21 @@ namespace ForeverFight.Interactable.Abilities
                 ClientSend.SendStoredMomentumValue(storedMomentum);
             }
         }
+
+
+
+        public override void ToggleParticles(bool networkThisCall)
+        {
+            ParticleGameObject.SetActive(!ParticleGameObject.activeInHierarchy);
+
+            if (networkThisCall)
+            {
+                ClientSend.SendNetworkedMethodIndex(AbilityIndex, (int)AbilityMethodMapping.ToggleParticles);
+            }
+        }
+
+
+
 
 
         private void InstantiateStatusEffectUiOnButton(int index, StatusEffectType type)
@@ -167,6 +212,7 @@ namespace ForeverFight.Interactable.Abilities
                 {
                     storedMomentum = 0;
                     StatusActive = false;
+                    ToggleParticles(true);
                 }
             }
         }

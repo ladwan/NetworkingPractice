@@ -5,6 +5,9 @@ using ForeverFight.Interactable.Abilities;
 
 namespace ForeverFight.Ui
 {
+    //This class is used to enable popups that will block a player from interacting with the screen
+    //For example, if they are stunned
+
     public class UiBlockers : MonoBehaviour
     {
         [SerializeField]

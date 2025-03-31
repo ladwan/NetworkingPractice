@@ -6,8 +6,9 @@ using ForeverFight.Networking;
 using ForeverFight.HelperScripts;
 using ForeverFight.GameMechanics.Timers;
 using ForeverFight.GameMechanics.Movement;
-using TMPro;
+using ForeverFight.GameMechanics.DiceRoll;
 using ForeverFight.Interactable.Characters;
+using TMPro;
 
 namespace ForeverFight.FlowControl
 {
@@ -16,7 +17,7 @@ namespace ForeverFight.FlowControl
         [SerializeField]
         private GameObject playerUi = null;
         [SerializeField]
-        private Animator playerDieAnim = null;
+        private RollDice rollDiceREF = null;
         [SerializeField]
         private Countdown playerTimer = null;
         [SerializeField]
@@ -25,6 +26,7 @@ namespace ForeverFight.FlowControl
         private DragMovement dragMovementREF = null;
         [SerializeField]
         private Action onTurnEnd = null;
+        private Action<bool> isLocalPlayersTurnAction = null;
 
 
         [NonSerialized]
@@ -41,6 +43,18 @@ namespace ForeverFight.FlowControl
         public Action OnTurnEnd { get => onTurnEnd; set => onTurnEnd = value; }
 
         public Action OnTurnStart { get => onTurnStart; set => onTurnStart = value; }
+
+        public bool IsLocalPlayersTurn
+        {
+            get { return isLocalPlayersTurn; }
+            set
+            {
+                isLocalPlayersTurn = value;
+                isLocalPlayersTurnAction?.Invoke(value);
+            }
+        }
+
+        public Action<bool> IsLocalPlayersTurnAction { get => isLocalPlayersTurnAction; set => isLocalPlayersTurnAction = value; }
 
 
         protected void Awake()
@@ -67,10 +81,10 @@ namespace ForeverFight.FlowControl
             playerUi.SetActive(true);
             playerTimer.ResetTimer(playerTimer.MaxTime);
             playerTimerSubtext.text = "( Your Go ! )";
-            isLocalPlayersTurn = true;
-            if (playerDieAnim.GetCurrentAnimatorStateInfo(0).IsName("Despawn"))
+            IsLocalPlayersTurn = true;
+            if (rollDiceREF.SixSidedDieAnimator.GetCurrentAnimatorStateInfo(0).IsName("Despawn"))
             {
-                playerDieAnim.SetTrigger("ResetDie");
+                rollDiceREF.SixSidedDieAnimator.SetTrigger("ResetDie");
             }
 
             onTurnStart?.Invoke();
@@ -79,25 +93,25 @@ namespace ForeverFight.FlowControl
 
         public void EndTurn(bool timeRanOut)
         {
-
             if (isLocalPlayersTurn)
             {
                 CleanUpUiAfterTurn.Instance.CleanUpUi();
                 playerUi.SetActive(false);
                 playerTimer.ResetTimer(playerTimer.MaxTime);
                 playerTimerSubtext.text = "( Opponents turn... )";
-                isLocalPlayersTurn = false;
-
+                IsLocalPlayersTurn = false;
+                rollDiceREF.DieInteractityCollider.enabled = false;
 
                 if (!localCharacterAnimator.GetCurrentAnimatorStateInfo(1).IsName("Camera - Idle"))
                 {
                     localCharacterAnimator.SetTrigger("Camera - Go to Idle");
                 }
 
-                if (!playerDieAnim.GetCurrentAnimatorStateInfo(0).IsName("Despawn"))
+                if (!rollDiceREF.SixSidedDieAnimator.GetCurrentAnimatorStateInfo(0).IsName("Despawn"))
                 {
-                    playerDieAnim.Play("Despawn", 0);
+                    rollDiceREF.SixSidedDieAnimator.Play("Despawn", 0);
                 }
+
 
                 if (timeRanOut)
                 {
@@ -120,7 +134,7 @@ namespace ForeverFight.FlowControl
                 }
 
                 onTurnEnd?.Invoke();
-                isLocalPlayersTurn = false;
+                IsLocalPlayersTurn = false;
                 ClientSend.EndTurn();
                 return;
             }
@@ -132,6 +146,8 @@ namespace ForeverFight.FlowControl
             if (ClientInfo.playerNumber == 2)
             {
                 EndTurn(false);
+
+                transform.gameObject.AddComponent<BasePlayerLookAt>();
             }
         }
     }

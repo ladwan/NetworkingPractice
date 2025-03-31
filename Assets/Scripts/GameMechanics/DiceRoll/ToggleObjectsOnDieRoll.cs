@@ -6,9 +6,18 @@ namespace ForeverFight.GameMechanics.DiceRoll
     public class ToggleObjectsOnDieRoll : MonoBehaviour
     {
         [SerializeField]
+        private BoxCollider dieInteractityCollider = null;
+        [SerializeField]
         private List<GameObject> objectsToEnable = new List<GameObject>();
         [SerializeField]
         private List<GameObject> objectsToDisable = new List<GameObject>();
+
+        //This will be called by an AnimationEvent on the Spawn anim of the 6 sided die
+        public void TurnOnDieInteractivity()
+        {
+            RollDice.numberOfTimesCalled = 0;
+            dieInteractityCollider.enabled = true;
+        }
 
         public void ToggleObjects()
         {

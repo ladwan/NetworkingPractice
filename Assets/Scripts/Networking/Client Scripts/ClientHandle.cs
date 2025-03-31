@@ -45,8 +45,8 @@ public class ClientHandle : MonoBehaviour
         int y = _packet.ReadInt();
         int hoveredOverGPsCount = _packet.ReadInt();
 
-        FormatNetworkedMovementData.Format(x, y, hoveredOverGPsCount);
-        // FloorGrid.Instance.UpdateOpponentPosition(new Vector2(x, y));
+        //FormatNetworkedMovementData.Format(x, y, hoveredOverGPsCount);
+        //FloorGrid.Instance.UpdateOpponentPosition(new Vector2(x, y));
     }
 
     public static void ReceiveTotalPlayerUpdate(Packet _packet)
@@ -202,6 +202,44 @@ public class ClientHandle : MonoBehaviour
 
         winnerStatusReceived?.Invoke();
     }
+
+    public static void RecieveSegmentedMovementData(Packet _packet)
+    {
+        int _x = _packet.ReadInt();
+        int _y = _packet.ReadInt();
+        int _count = _packet.ReadInt();
+        bool _hasRotations = _packet.ReadBool();
+        bool _completed = _packet.ReadBool();
+
+        FloorGrid.Instance.ConstructVector3ListFromNetworkData((new Vector3(_x, 0, _y)), _count, _hasRotations, _completed);
+
+        //make the list of lists in a place it will be created once
+        //use method call and conditional logic to write data
+    }
+
+    public static void RecieveSegmentedRotationData(Packet _packet)
+    {
+        float _x = _packet.ReadFloat();
+        float _y = _packet.ReadFloat();
+        float _z = _packet.ReadFloat();
+        float _w = _packet.ReadFloat();
+        int _count = _packet.ReadInt();
+
+        FloorGrid.Instance.ConstructQuaternionListFromNetworkData((new Quaternion(_x, _y, _z, _w)), _count);
+
+        //make the list of lists in a place it will be created once
+        //use method call and conditional logic to write data
+    }
+
+    public static void RecieveNetworkedMethodIndex(Packet _packet)
+    {
+        int _abilityIndex = _packet.ReadInt();
+        int _methodIndex = _packet.ReadInt();
+
+        LocalStoredNetworkData.GetOpponentCharacter().Moveset[_abilityIndex].NetworkedMethodCall(_methodIndex);
+    }
+
+
 
     private static void BeginLocalCameraShakeRecievedFromOpponent()
     {

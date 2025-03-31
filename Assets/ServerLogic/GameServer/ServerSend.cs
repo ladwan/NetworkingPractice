@@ -159,12 +159,6 @@ namespace GameServer
 
 
 
-
-
-
-
-
-
         public static void SendDamageToOpponent(int _playerThatDoesntNeedMsgId, int _damageInt)
         {
             using (Packet _packet = new Packet((int)ServerPackets.sendDamageToOpponent))
@@ -221,6 +215,45 @@ namespace GameServer
             using (Packet _packet = new Packet((int)ServerPackets.serverSendWinStatus))
             {
                 _packet.Write(winStatus);
+
+                SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
+            }
+        }
+
+        public static void SendSegmentedMovementData(int _playerThatDoesntNeedMsgId, int x, int y, int count, bool hasRotations, bool completed)
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.sendSegmentedMovementData))
+            {
+                _packet.Write(x);
+                _packet.Write(y);
+                _packet.Write(count);
+                _packet.Write(hasRotations);
+                _packet.Write(completed);
+
+                SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
+            }
+        }
+
+        public static void SendSegmentedRotationData(int _playerThatDoesntNeedMsgId, float x, float y, float z, float w, int count)
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.sendSegmentedRotationData))
+            {
+                _packet.Write(x);
+                _packet.Write(y);
+                _packet.Write(z);
+                _packet.Write(w);
+                _packet.Write(count);
+
+                SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
+            }
+        }
+
+        public static void SendNetworkedMethodIndex(int _playerThatDoesntNeedMsgId, int abilityIndex, int methodIndex)
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.sendNetworkedMethodIndex))
+            {
+                _packet.Write(abilityIndex);
+                _packet.Write(methodIndex);
 
                 SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
             }

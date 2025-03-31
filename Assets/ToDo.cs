@@ -18,26 +18,28 @@ public class ToDo : MonoBehaviour
     ---------------------------------------------------------------------------
 
     ON DECK:
-
-    1) Need to re-incorparate lookAt for players
-
-    2) Pause timer and hide ui during grid lerp movement
+   
+    
 
 
+    
 
-    how many sq's do you move with your current move speed across a given span of time
 
-    DO LATER:
+    
 
-    1) Drag movers position is begin reset after confirm movement. This can be a bit jarring. Lerp back, rather than snap
+    BACK LOG:
+    
+    ** Think about what you want the environment to look like
 
-    1) only enable confirm button on move screen if the users move at least 1 sq
+    1) Drag movers position is being reset after confirm movement. This can be a bit jarring. Lerp back, rather than snap
 
-    2) Game loop is broken, data from old sessions persist after win state. It is not a clean re-fresh
+    2) only enable confirm button on move screen if the users move at least 1 sq
 
-    3) If both players dont select a charather, kick them back to the home screen
+    3) Game loop is broken, data from old sessions persist after win state. It is not a clean re-fresh
 
-    4) Disconnet players form server if BOTH players do not select a character in time
+    4) If both players dont select a character, kick them back to the home screen
+
+    5) Drag mover can be "sticky" and hard to click/manipulate , fix this!
     ---------------------------------------------------------------------------
 
     Maybe dont need toggle because ui blockers can clean themselves up

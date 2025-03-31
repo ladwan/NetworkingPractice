@@ -158,5 +158,44 @@ public class ClientSend : MonoBehaviour
             SendTcpData(_packet);
         }
     }
+
+    public static void SendSegmentedMovementData(int x, int y, int count, bool hasRotations, bool completed) // Pass this a vector 3's x and z
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.sendSegmentedMovementData))
+        {
+            _packet.Write(x);
+            _packet.Write(y);
+            _packet.Write(count);
+            _packet.Write(hasRotations);
+            _packet.Write(completed);
+
+            SendTcpData(_packet);
+        }
+    }
+
+    public static void SendSegmentedRotationData(float x, float y, float z, float w, int count)
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.sendSegmentedRotationData))
+        {
+            _packet.Write(x);
+            _packet.Write(y);
+            _packet.Write(z);
+            _packet.Write(w);
+            _packet.Write(count);
+
+            SendTcpData(_packet);
+        }
+    }
+
+    public static void SendNetworkedMethodIndex(int abilityIndex, int methodIndex)
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.sendNetworkedMethodIndex))
+        {
+            _packet.Write(abilityIndex);
+            _packet.Write(methodIndex);
+
+            SendTcpData(_packet);
+        }
+    }
     #endregion
 }

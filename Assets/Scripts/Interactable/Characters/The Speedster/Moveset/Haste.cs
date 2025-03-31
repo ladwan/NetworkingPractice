@@ -24,6 +24,7 @@ namespace ForeverFight.Interactable.Abilities
         private MoveToRandomGPs moveToRandomGPsREF = null;
 
 
+
         protected Haste()
         {
             AbilityName = "Haste";
@@ -51,10 +52,40 @@ namespace ForeverFight.Interactable.Abilities
             OnStatusEffectEnded -= CleanUp;
         }
 
+        protected void Awake()
+        {
+            for (int i = 0; i < OwningCharacter.Moveset.Count; i++)
+            {
+                if (OwningCharacter.Moveset[i] == this)
+                {
+                    AbilityIndex = i;
+                }
+            }
+        }
+
+        protected enum AbilityMethodMapping
+        {
+            ToggleParticles = 0,
+        }
+
+
+        public override void NetworkedMethodCall(int methodIndex)
+        {
+            switch (methodIndex)
+            {
+                case 0:
+                    ToggleParticles(false);
+                    break;
+                default:
+                    Debug.Log($"Something weird happend in ability: {name}");
+                    break;
+            }
+        }
 
         public override void CastAbility()
         {
             StatusActive = true;
+            ToggleParticles(true);
             AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(2, false, CurrentStatusEffectType); // Pass a 2 because you want the third index of the list because this is the third ability
             AbilityFunctionality();
             CameraShakeParameters parameters = new CameraShakeParameters();
@@ -66,6 +97,19 @@ namespace ForeverFight.Interactable.Abilities
 
             ClientSend.SendStatusEffectData(StatusEffect.StatusEffectType.Haste, CurrentAbilityDuration, 0, false);
         }
+
+
+        public override void ToggleParticles(bool networkThisCall)
+        {
+            ParticleScript.enabled = !ParticleScript.isActiveAndEnabled;
+            ParticleGameObject.SetActive(!ParticleGameObject.activeInHierarchy);
+
+            if (networkThisCall)
+            {
+                ClientSend.SendNetworkedMethodIndex(AbilityIndex, (int)AbilityMethodMapping.ToggleParticles);
+            }
+        }
+
 
         public void StopAbility()
         {
@@ -86,7 +130,7 @@ namespace ForeverFight.Interactable.Abilities
             {
                 fasterPassiveREF.SetMaxPassiveApPool(6);
                 quickPunchREF.SetAbilityRadius(increasedQuickPunchRadius);
-                AugmentedMovementManager.Instance.ToggleAugmentMovement(moveToRandomGPsREF);
+                //AugmentedMovementManager.Instance.ToggleAugmentMovement(moveToRandomGPsREF);
             }
         }
 
@@ -123,8 +167,9 @@ namespace ForeverFight.Interactable.Abilities
                     StatusActive = false;
                     fasterPassiveREF.SetMaxPassiveApPool(3);
                     quickPunchREF.SetAbilityRadius(quickPunchREF.OriginalRadius);
-                    AugmentedMovementManager.Instance.ToggleAugmentMovement(moveToRandomGPsREF);
+                    //AugmentedMovementManager.Instance.ToggleAugmentMovement();
                     CameraShakeParameters parameters = new CameraShakeParameters();
+                    ToggleParticles(true);
                     ToggleTimerAndUi.Instance.SetTriggerWithoutListeningForAnimEnd(
                         LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator,
                         "Idle",

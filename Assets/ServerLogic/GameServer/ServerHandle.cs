@@ -126,5 +126,35 @@ namespace GameServer
 
             ServerSend.SendWinStatus(_fromClient, _winnerStatus);
         }
+
+        public static void ServerRecieveSegmentedMovementData(int _fromClient, Packet _packet)
+        {
+            int _x = _packet.ReadInt();
+            int _y = _packet.ReadInt();
+            int _count = _packet.ReadInt();
+            bool _hasRotations = _packet.ReadBool();
+            bool _completed = _packet.ReadBool();
+
+            ServerSend.SendSegmentedMovementData(_fromClient, _x, _y, _count, _hasRotations, _completed);
+        }
+
+        public static void ServerRecieveSegmentedRotationData(int _fromClient, Packet _packet)
+        {
+            float _x = _packet.ReadFloat();
+            float _y = _packet.ReadFloat();
+            float _z = _packet.ReadFloat();
+            float _w = _packet.ReadFloat();
+            int _count = _packet.ReadInt();
+
+            ServerSend.SendSegmentedRotationData(_fromClient, _x, _y, _z, _w, _count);
+        }
+
+        public static void ServerRecieveNetworkedMethodIndex(int _fromClient, Packet _packet)
+        {
+            int _abilityIndex = _packet.ReadInt();
+            int _methodIndex = _packet.ReadInt();
+
+            ServerSend.SendNetworkedMethodIndex(_fromClient, _abilityIndex, _methodIndex);
+        }
     }
 }
