@@ -6,6 +6,7 @@ using ForeverFight.Networking;
 using ForeverFight.FlowControl;
 using ForeverFight.HelperScripts;
 using System.Collections;
+using ForeverFight.Interactable.Characters;
 
 namespace ForeverFight.GameMechanics.Movement
 {
@@ -88,6 +89,18 @@ namespace ForeverFight.GameMechanics.Movement
         private GameObject localPlayerSpawn = null;
         private Coroutine lerpMovementSub = null;
         private int networkedMovementDataSent = 0; //Use this to know if both movement and rotation data has been send over, if its 2 you have both
+
+        private class MovementInstanceInfo
+        {
+            public Vector3 startPos;
+            public Vector3 endPos;
+            public Character currentCharacter;
+            public GameObject spawnToBeMoved;
+            public float time;
+        }
+
+        private MovementInstanceInfo currentMovementInstance = null;
+
 
         protected void Awake()
         {
@@ -360,8 +373,7 @@ namespace ForeverFight.GameMechanics.Movement
 
         private IEnumerator LerpMovement(Tuple<List<List<Vector3>>, List<Quaternion>> calculatedMovementData, GameObject playerSpawnToBeMoved)
         {
-            var shouldMoveLocalPlayer = localPlayerSpawn == playerSpawnToBeMoved ? true : false;
-            var player = shouldMoveLocalPlayer ? LocalStoredNetworkData.GetLocalCharacter() : LocalStoredNetworkData.GetOpponentCharacter();
+            var character = localPlayerSpawn == playerSpawnToBeMoved ? LocalStoredNetworkData.GetLocalCharacter() : LocalStoredNetworkData.GetOpponentCharacter();
 
             foreach (var movementSegment in calculatedMovementData.Item1)
             {
@@ -371,7 +383,7 @@ namespace ForeverFight.GameMechanics.Movement
                 }
                 if (movementSegment.Count > 1)
                 {
-                    curveMoveSpeedREF.DetermineCurveFromMovementSegment(player, movementSegment);
+                    curveMoveSpeedREF.DetermineCurveFromMovementSegment(character, movementSegment);
                 }
 
                 for (int i = 0; i < movementSegment.Count; i++)
@@ -381,23 +393,28 @@ namespace ForeverFight.GameMechanics.Movement
                         continue;
                     }
 
-                    var t = 0.0f;
                     Vector3 pos1 = playerSpawnToBeMoved.transform.position;
-                    while (playerSpawnToBeMoved.transform.position != movementSegment[i + 1])
+
+                    var movementInstance = new MovementInstanceInfo()
                     {
-                        var moveSpeed = shouldMoveLocalPlayer ? player.MoveSpeed : player.MoveSpeed;
-                        t += Time.deltaTime * (moveSpeed * movementSpeedMultiplier);
-                        t = Mathf.Clamp01(t);
-                        playerSpawnToBeMoved.transform.position = Vector3.Lerp(pos1, movementSegment[i + 1], t);
-                        yield return new WaitForSecondsRealtime(0.01f);
-                    }
+                        startPos = playerSpawnToBeMoved.transform.position,
+                        endPos = movementSegment[i + 1],
+                        currentCharacter = character,
+                        spawnToBeMoved = playerSpawnToBeMoved,
+                        time = 0.0f
+                    };
+
+                    currentMovementInstance = movementInstance;
+
+
+                    yield return new WaitUntil(() => currentMovementInstance == null);
                 }
 
-                movementSpeedMultiplier = 1;
+                //movementSpeedMultiplier = 1;
 
 
                 //Were there rotations in the over-arching instance of movement?
-                //If not, move on to the next iteration of the for loop
+                //If not, move on to the next iteration of the foreach loop
                 if (calculatedMovementData.Item2.Count == 0)
                 {
                     continue;
@@ -622,6 +639,26 @@ namespace ForeverFight.GameMechanics.Movement
 
                 var remotePlayersSpawn = ClientInfo.playerNumber == 1 ? player2Spawn : player1Spawn;
                 StartCoroutine(LerpMovement(myTuple, remotePlayersSpawn));
+            }
+
+        }
+
+        private void Update()
+        {
+            if (currentMovementInstance != null)
+            {
+                movementSpeedMultiplier = .0066f;
+                var moveSpeed = currentMovementInstance.currentCharacter.MoveSpeed;
+                currentMovementInstance.time += (moveSpeed * movementSpeedMultiplier);
+                currentMovementInstance.time = Mathf.Clamp01(currentMovementInstance.time);
+                currentMovementInstance.time *= currentMovementInstance.currentCharacter.MoveSpeedHelper;
+                currentMovementInstance.spawnToBeMoved.transform.position = Vector3.Lerp(currentMovementInstance.startPos, currentMovementInstance.endPos, currentMovementInstance.time);
+
+
+                if (currentMovementInstance.time == 1)
+                {
+                    currentMovementInstance = null;
+                }
             }
 
         }

@@ -660,11 +660,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e38b960479131b43913a89410b21cdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owningCharacter: {fileID: 0}
   abilityName: Stunned
   abilityDescription: Yolo !?
   abilityDamage: 0
   abilityCost: 0
   abilityRadius: {fileID: 0}
+  abilityIndex: -1
+  animREF: {fileID: 0}
   particleGameObject: {fileID: 0}
   particleScript: {fileID: 0}
   statusActive: 0
@@ -7517,8 +7520,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0, y: 363}
-  m_SizeDelta: {x: 500, y: 350}
+  m_AnchoredPosition: {x: -0, y: -491}
+  m_SizeDelta: {x: 500, y: 124.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &336035657
 MonoBehaviour:
@@ -7614,8 +7617,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 125
-  m_fontSizeBase: 125
+  m_fontSize: 75
+  m_fontSizeBase: 75
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -29842,7 +29845,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1420736853
 Transform:
   m_ObjectHideFlags: 0
@@ -33119,7 +33122,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -63}
   m_SizeDelta: {x: 500, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1870779468
@@ -33169,8 +33172,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 39.8
-  m_fontSizeBase: 39.8
+  m_fontSize: 30
+  m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

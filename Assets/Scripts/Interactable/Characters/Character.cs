@@ -4,48 +4,44 @@ using UnityEngine;
 using UnityEngine.UI;
 using ForeverFight.Networking;
 using ForeverFight.Interactable.Abilities;
-
+using System;
 
 namespace ForeverFight.Interactable.Characters
 {
     public abstract class Character : MonoBehaviour
     {
-        [SerializeField]
-        private Identity charIdentity = Identity.NoIdentity;
-        [SerializeField]
-        private GameObject characterModel = null;
-        [SerializeField]
-        private Image characterIcon = null;
-        [SerializeField]
-        private string characterName = null;
-        [SerializeField]
-        private int health = 0;
-        [SerializeField]
-        private int rollAlotment = 0;
-        [SerializeField]
-        private int abilityNumber = 0;
-        [SerializeField]
-        private float baseMoveSpeed = 1.0f;
-        [SerializeField]
-        private float moveSpeed = 1.0f;
-        [SerializeField]
-        private CharacterAnimationReferences characterAnimationReferences = null;
-        [SerializeField]
-        private List<CharAbility> moveset = new List<CharAbility>();
-        [SerializeField]
-        private List<GameObject> customUiElements = new List<GameObject>();
-        [SerializeField]
-        private GameObject oneSqRadius = null;
-        [SerializeField]
-        private GameObject twoSqRadius = null;
-        [SerializeField]
-        private GameObject threeSqRadius = null;
-        [SerializeField]
-        private GameObject fourSqRadius = null;
-        [SerializeField]
-        private GameObject fiveSqRadius = null;
-        [SerializeField]
-        private List<AnimationCurve> movementCurves = null;
+        [SerializeField] private Identity charIdentity = Identity.NoIdentity;
+        [SerializeField] private GameObject characterModel = null;
+        [SerializeField] private Image characterIcon = null;
+        [SerializeField] private string characterName = null;
+        [SerializeField] private int health = 0;
+        [SerializeField] private int rollAlotment = 0;
+        [SerializeField] private int abilityNumber = 0;
+        [SerializeField] private float baseMoveSpeed = 1.0f;
+        [SerializeField] private float moveSpeed = 1.0f;
+        [SerializeField] private float moveSpeedHelper = 1.0f;
+        [SerializeField] private CharacterAnimationReferences characterAnimationReferences = null;
+        [SerializeField] private List<CharAbility> moveset = new List<CharAbility>();
+        [SerializeField] private List<GameObject> customUiElements = new List<GameObject>();
+        [SerializeField] private GameObject oneSqRadius = null;
+        [SerializeField] private GameObject twoSqRadius = null;
+        [SerializeField] private GameObject threeSqRadius = null;
+        [SerializeField] private GameObject fourSqRadius = null;
+        [SerializeField] private GameObject fiveSqRadius = null;
+        [SerializeField] private List<MovementAnimationCurves> movementAnimCurves = null;
+        private int movementIndex = 0;
+
+
+        [Serializable]
+       public class MovementAnimationCurves
+        {
+            [SerializeField]
+            private string name;
+            [SerializeField]
+            public List<AnimationCurve> movementCurves = null;
+        }
+
+
 
 
         public Identity CharIdentity { get => charIdentity; set => charIdentity = value; }
@@ -82,7 +78,11 @@ namespace ForeverFight.Interactable.Characters
 
         public GameObject FiveSqRadius { get => fiveSqRadius; set => fiveSqRadius = value; }
 
-        public List<AnimationCurve> MovementCurves => movementCurves;
+        public int MovementIndex { get => movementIndex; set => movementIndex = value; }
+
+        public List<MovementAnimationCurves> MovementAnimCurves  => movementAnimCurves;
+
+        public float MoveSpeedHelper { get => moveSpeedHelper; set => moveSpeedHelper = value; }
 
 
         public enum Identity

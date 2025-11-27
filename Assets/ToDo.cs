@@ -18,15 +18,11 @@ public class ToDo : MonoBehaviour
     ---------------------------------------------------------------------------
 
     ON DECK:
-   
+        Figure out how to turn 2d shaders into 3d shaders
+      
     
 
-
     
-
-
-    
-
     BACK LOG:
     
     ** Think about what you want the environment to look like

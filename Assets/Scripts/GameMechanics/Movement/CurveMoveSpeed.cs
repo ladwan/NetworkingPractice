@@ -3,6 +3,7 @@ using ForeverFight.Networking;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 
 namespace ForeverFight.GameMechanics.Movement
@@ -45,7 +46,9 @@ namespace ForeverFight.GameMechanics.Movement
             //You need to not use Local, this can be called by remote player too 
             curveIndex = movementSegment.Count - 1;
 
-            currentCurve = currentCharacter.MovementCurves[curveIndex];
+            //currentCurve = currentCharacter.MovementCurves[curveIndex];
+            currentCurve = currentCharacter.MovementAnimCurves[currentCharacter.MovementIndex].movementCurves[curveIndex];
+
             time = 0;
             currentlyEvaluating = true;
         }

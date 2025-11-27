@@ -7,9 +7,12 @@ namespace ForeverFight.HelperScripts
     public class ExecuteMethodAfterDelay : MonoBehaviour
     {
         private static ExecuteMethodAfterDelay instance = null;
+        private bool waitUntilTrue = false;
+        private Coroutine sub = null;
 
 
         public static ExecuteMethodAfterDelay Instance { get => instance; set => instance = value; }
+        public bool WaitUntilTrue { get => waitUntilTrue; set => waitUntilTrue = value; }
 
 
         protected void Awake()
@@ -37,5 +40,22 @@ namespace ForeverFight.HelperScripts
             callback?.Invoke();
         }
 
+
+        public void BeginWaitUntilTrue(Action callback)
+        {
+            if(sub != null) { return; }
+
+            waitUntilTrue = false;
+            sub = StartCoroutine(WaitUntilTrueIEnum(callback));
+        }
+
+        private IEnumerator WaitUntilTrueIEnum(Action callback)
+        {
+            Debug.Log($"~~~~~ {waitUntilTrue} : 02");
+            yield return new WaitUntil(()=> waitUntilTrue == true);
+            callback?.Invoke();
+            waitUntilTrue = false;
+            sub = null;
+        }
     }
 }

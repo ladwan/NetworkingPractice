@@ -101,16 +101,20 @@ namespace ForeverFight.Interactable.Abilities
 
         public override void CastAbility()
         {
+            animREF = AttemptAbility(animREF);
+            if (animREF == null) return;
+
+
             StatusActive = true;
             ToggleParticles(true);
             AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(1, false, CurrentStatusEffectType); // Pass a 1 because you want the second index of the list because this is the second ability
             CameraShakeParameters parameters = new CameraShakeParameters();
-            ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator, "Momentum", parameters);
+            ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(animREF, "Momentum", parameters);
 
             if (hasteREF.StatusActive)
             {
                 ToggleTimerAndUi.Instance.SetTriggerWithoutListeningForAnimEnd(
-                    LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator,
+                    animREF,
                     "Haste",
                     parameters);
             }

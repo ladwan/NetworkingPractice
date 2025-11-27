@@ -4,6 +4,8 @@ using UnityEngine;
 using ForeverFight.Networking;
 using ForeverFight.FlowControl;
 using ForeverFight.GameMechanics;
+using UnityEngine.UIElements;
+using ForeverFight.Interactable.Characters;
 
 namespace ForeverFight.Interactable.Abilities
 {
@@ -14,14 +16,7 @@ namespace ForeverFight.Interactable.Abilities
         [SerializeField]
         private Haste hasteREF = null;
 
-        private Animator speedsterAnimREF = null;
         private GameObject originalRadius = null;
-
-
-        private CameraShakeParameters level1PunchCameraShakeParameters;
-        private CameraShakeParameters level2PunchCameraShakeParameters;
-        private CameraShakeParameters level3PunchCameraShakeParameters;
-        private CameraShakeParameters currentCameraShakeParameters;
 
 
         public GameObject OriginalRadius { get => originalRadius; set => originalRadius = value; }
@@ -38,41 +33,38 @@ namespace ForeverFight.Interactable.Abilities
         protected void Awake()
         {
             originalRadius = AbilityRadius;
-            level1PunchCameraShakeParameters = AssignCameraShakeParameterValues(0.3f, 0.1f);
-            level2PunchCameraShakeParameters = AssignCameraShakeParameterValues(0.5f, 0.3f);
-            level3PunchCameraShakeParameters = AssignCameraShakeParameterValues(1.0f, 0.5f);
+
+            shakeParametersSettings = new List<Vector2>()
+            {
+                new Vector2(0.3f, 0.1f),
+                new Vector2(0.5f, 0.3f),
+                new Vector2(1.0f, 0.5f),
+            };
+
+            shakeParameters = ReturnParamsBasedOnSettings(shakeParametersSettings);
         }
 
 
         public override void CastAbility()
         {
-            if (!speedsterAnimREF)
-            {
-                speedsterAnimREF = LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator;
-                if (speedsterAnimREF == null)
-                {
-                    Debug.LogError("Speedster Anim REF was NULL !");
-                    return;
-                }
-            }
+            animREF = AttemptAbility(animREF);
+            if (animREF == null) return;
 
             if (hasteREF.StatusActive)
             {
                 CameraShakeParameters tempParams = new CameraShakeParameters();
-                ToggleTimerAndUi.Instance.SetTriggerWithoutListeningForAnimEnd(speedsterAnimREF, "Haste", tempParams);
+                ToggleTimerAndUi.Instance.SetTriggerWithoutListeningForAnimEnd(animREF, "Haste", tempParams);
             }
 
             if (momentumREF.StatusActive)
             {
-                ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(speedsterAnimREF, DeterminePunchAnim(momentumREF.StoredMomentum), currentCameraShakeParameters);
+                ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(animREF, DeterminePunchAnim(momentumREF.StoredMomentum), currentCameraShakeParameters);
             }
             else
             {
-                ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(speedsterAnimREF, DeterminePunchAnim(1), level1PunchCameraShakeParameters);
+                ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(animREF, DeterminePunchAnim(1), shakeParameters[0]);
             }
 
-            DamageManager.Instance.DealDamage(AbilityDamage + momentumREF.Product);
-            momentumREF.StopAbility();
             //AbilityRadius.SetActive(false);
             //Do animation
             //Screen shake?
@@ -94,17 +86,17 @@ namespace ForeverFight.Interactable.Abilities
             {
                 case > 24: //24
                     animTrigger = "Level-3-Punch";
-                    currentCameraShakeParameters = level3PunchCameraShakeParameters;
+                    currentCameraShakeParameters = shakeParameters[2];
                     break;
 
                 case > 14: //14
                     animTrigger = "Level-2-Punch";
-                    currentCameraShakeParameters = level2PunchCameraShakeParameters;
+                    currentCameraShakeParameters = shakeParameters[1];
                     break;
 
                 case >= 0:
                     animTrigger = "Level-1-Punch";
-                    currentCameraShakeParameters = level1PunchCameraShakeParameters;
+                    currentCameraShakeParameters = shakeParameters[0];
                     break;
 
                 default:
@@ -116,19 +108,13 @@ namespace ForeverFight.Interactable.Abilities
             return animTrigger;
         }
 
-        public override void ShakeCamera()
+        public override void HandleAbilityResponses(Character characterREF)
         {
-            CameraScreenShakeManager.Instance.StartShake(currentCameraShakeParameters);
-        }
+            var localPlayer = LocalCharacterIsCallingAbilityResponse(currentCameraShakeParameters, characterREF);
+            if (!localPlayer) return;
 
-        public override CameraShakeParameters AssignCameraShakeParameterValues(float duration, float magnitude)
-        {
-            CameraShakeParameters parameters = new CameraShakeParameters();
-
-            parameters.duration = duration;
-            parameters.magnitude = magnitude;
-
-            return parameters;
+            DamageManager.Instance.DealDamage(AbilityDamage + momentumREF.Product);
+            momentumREF.StopAbility();
         }
     }
 }

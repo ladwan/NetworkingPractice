@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ForeverFight.Interactable.Abilities;
 using ForeverFight.Interactable.Characters;
+using ForeverFight.Networking;
 
 namespace ForeverFight.HelperScripts.Animation
 {
@@ -21,7 +22,17 @@ namespace ForeverFight.HelperScripts.Animation
 
         public void Shake(int abilityIndex)
         {
-            moveSet[abilityIndex].ShakeCamera();
+            moveSet[abilityIndex].HandleAbilityResponses(characterREF);
+        }
+
+        public void SetMoveSpeed(float speed)
+        {
+            characterREF.MoveSpeedHelper = speed;
+        }
+
+        public void SetMovementState(int index)
+        {
+            characterREF.MovementIndex = index;
         }
     }
 }

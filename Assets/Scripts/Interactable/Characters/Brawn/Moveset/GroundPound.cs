@@ -4,6 +4,9 @@ using UnityEngine;
 using ForeverFight.Ui;
 using ForeverFight.GameMechanics;
 using ForeverFight.GameMechanics.Movement;
+using ForeverFight.FlowControl;
+using System;
+using ForeverFight.Interactable.Characters;
 
 namespace ForeverFight.Interactable.Abilities
 {
@@ -24,7 +27,7 @@ namespace ForeverFight.Interactable.Abilities
         protected GroundPound()
         {
             AbilityName = "Ground Pound";
-            AbilityDescription = "HUlk SMASH!?";
+            AbilityDescription = "Hulk SMASH!?";
             AbilityDamage = 10;
             AbilityCost = 2;
         }
@@ -32,10 +35,48 @@ namespace ForeverFight.Interactable.Abilities
         protected void Awake()
         {
             originalRadius = AbilityRadius;
+
+            shakeParametersSettings = new List<Vector2>()
+            {
+                new Vector2(0.3f, 0.1f),
+                new Vector2(0.5f, 0.3f),
+                new Vector2(1.0f, 0.5f),
+            };
+
+            shakeParameters = ReturnParamsBasedOnSettings(shakeParametersSettings);
         }
 
 
         public override void CastAbility()
+        {
+            animREF = AttemptAbility(animREF);
+            if (animREF == null) return;
+
+            var index = ireREF.StatusActive ? 2 : 0;
+            var trigger = DetermineAbilityAnim();
+
+            ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(animREF, trigger, shakeParameters[index]);
+        }
+
+        public override void HandleAbilityResponses(Character characterREF)
+        {
+            var localPlayer = LocalCharacterIsCallingAbilityResponse(currentCameraShakeParameters, characterREF);
+            vfx.BeginVFX();
+            if (!localPlayer) return;
+
+            AbilityAfterEffects();
+        }
+
+
+        private string DetermineAbilityAnim()
+        {
+            string animTrigger = ireREF.StatusActive ? "Ground Pound" : "Stomp";
+            currentCameraShakeParameters = ireREF.StatusActive ? shakeParameters[2] : shakeParameters[0];
+
+            return animTrigger;
+        }
+
+        private void AbilityAfterEffects()
         {
             var pathFromUsToEnemy = FloorGrid.Instance.ProceduralGridManipulationREF.ReturnProceduralPath();
             if (pathFromUsToEnemy != null && pathFromUsToEnemy.Count > 0)
@@ -65,9 +106,8 @@ namespace ForeverFight.Interactable.Abilities
                         break;
                 }
             }
-
-            //offBalanceREF.CastAbility();
         }
+
 
         public void SetAbilityRadius(GameObject radius)
         {

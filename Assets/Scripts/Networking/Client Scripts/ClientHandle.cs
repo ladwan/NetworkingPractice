@@ -45,8 +45,7 @@ public class ClientHandle : MonoBehaviour
         int y = _packet.ReadInt();
         int hoveredOverGPsCount = _packet.ReadInt();
 
-        //FormatNetworkedMovementData.Format(x, y, hoveredOverGPsCount);
-        //FloorGrid.Instance.UpdateOpponentPosition(new Vector2(x, y));
+        FloorGrid.Instance.UpdateOpponentPosition(new Vector2(x, y));
     }
 
     public static void ReceiveTotalPlayerUpdate(Packet _packet)
@@ -140,8 +139,10 @@ public class ClientHandle : MonoBehaviour
         {
             if (opponentAnimatior.runtimeAnimatorController.animationClips[i].name == trigger)
             {
+                AnimatorStateInfo stateInfo = opponentAnimatior.GetCurrentAnimatorStateInfo(0);
                 var shakeTime = opponentAnimatior.runtimeAnimatorController.animationClips[i].events[0].time; //events at the zero-th index is unsafe, works for now though! No guarantee the event youre looking for will be 0
-                ExecuteMethodAfterDelay.Instance.BeginDelay(shakeTime, BeginLocalCameraShakeRecievedFromOpponent);
+                ExecuteMethodAfterDelay.Instance.BeginWaitUntilTrue(BeginLocalCameraShakeRecievedFromOpponent);
+                break;
             }
         }
     }

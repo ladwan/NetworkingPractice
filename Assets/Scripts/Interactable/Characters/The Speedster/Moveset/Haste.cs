@@ -61,6 +61,7 @@ namespace ForeverFight.Interactable.Abilities
                     AbilityIndex = i;
                 }
             }
+
         }
 
         protected enum AbilityMethodMapping
@@ -84,13 +85,17 @@ namespace ForeverFight.Interactable.Abilities
 
         public override void CastAbility()
         {
+            animREF = AttemptAbility(animREF);
+            if (animREF == null) return;
+
+
             StatusActive = true;
             ToggleParticles(true);
             AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(2, false, CurrentStatusEffectType); // Pass a 2 because you want the third index of the list because this is the third ability
             AbilityFunctionality();
             CameraShakeParameters parameters = new CameraShakeParameters();
             ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(
-                LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator,
+                animREF,
                 "Transition from Idle to Haste",
                 parameters
             );
@@ -171,7 +176,7 @@ namespace ForeverFight.Interactable.Abilities
                     CameraShakeParameters parameters = new CameraShakeParameters();
                     ToggleParticles(true);
                     ToggleTimerAndUi.Instance.SetTriggerWithoutListeningForAnimEnd(
-                        LocalStoredNetworkData.GetLocalCharacter().CharacterAnimationReferences.CharacterAnimator,
+                        animREF,
                         "Idle",
                         parameters
                     );
