@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Vortex Layered
+  m_Name: Vortex Layered 02
   m_Shader: {fileID: -6465566751694194690, guid: 93df959d650e08242b62d406dd500d13, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -54,11 +54,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AlphaClipping: 0.2
+    - _AlphaMultiplier: 0.32
+    - _NoiseStrength: 0.3
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Speed: 0.3
-    - _TwirlScale: 3.8
-    - _TwirlStrength: -7
+    - _TwirlScale: 8.88
+    - _TwirlStrength: 2.66
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
