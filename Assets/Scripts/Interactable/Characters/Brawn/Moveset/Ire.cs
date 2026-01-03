@@ -21,6 +21,7 @@ namespace ForeverFight.Interactable.Abilities
         private GameObject ireDisplayUi = null;
         [SerializeField]
         private GameObject increasedGroundPoundRadius = null;
+        [SerializeField] private IreVFXManager ireVFXManagerREF = null;
 
 
         protected Ire()
@@ -71,6 +72,7 @@ namespace ForeverFight.Interactable.Abilities
             if (animREF == null) return;
 
             StatusActive = true;
+            //ireVFXManagerREF.BeginCoroutine(this);
             OwningCharacter.MovementIndex = 1;
             AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(2, false, CurrentStatusEffectType); // Pass a 2 because you want the third index of the list because this is the third ability
             AbilityFunctionality();
@@ -128,6 +130,7 @@ namespace ForeverFight.Interactable.Abilities
         public override void HandleAbilityResponses(Character characterREF)
         {
             var localPlayer = LocalCharacterIsCallingAbilityResponse(currentCameraShakeParameters, characterREF);
+            ireVFXManagerREF.BeginCoroutine(this);
             if (!localPlayer) return;
         }
 
