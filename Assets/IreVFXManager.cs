@@ -1,9 +1,11 @@
+using ForeverFight.Interactable.Abilities;
+using ForeverFight.Ui;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using ForeverFight.Interactable.Abilities;
 using UnityEditor;
 using UnityEngine;
+using static ForeverFight.Interactable.Abilities.StatusEffect;
 
 public class IreVFXManager : MonoBehaviour
 {
@@ -38,10 +40,19 @@ public class IreVFXManager : MonoBehaviour
             particleGameObject.SetActive(true);
         }
 
+        bool valid = false;
+        StatusEffectDisplayManager remoteStatusEffectDisplayManager = StatusEffectStaticManager.Instance.RemoteStatusEffectDisplayManager;
+        var ireSlot = remoteStatusEffectDisplayManager.GetMatchingStatusEffectSlot(StatusEffectType.Ire);
+
+        if (ireSlot != null) 
+        {
+            valid = true;
+        }
+
         float t = 0.0f;
         //TODO: you need to find a way to ensure the abilty is activate and inactive but you cant
         // because its not active on the remote, you need to come up with a hacky way to fix this 
-        while (tempIreREF.StatusActive || )
+        while (tempIreREF.StatusActive || valid == true && !string.IsNullOrEmpty(ireSlot.StatusEffectDurationTmp.text))
         {
             t += Time.deltaTime * pulseSpeed;
 

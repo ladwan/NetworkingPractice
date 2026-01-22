@@ -18,7 +18,9 @@ public class ToDo : MonoBehaviour
     ---------------------------------------------------------------------------
 
     ON DECK:
-        Figure out how to turn 2d shaders into 3d shaders
+        Create a enviornment for the chars to fight in
+        fix the names for players in the combat scene
+        fix the game loop
       
     
 
