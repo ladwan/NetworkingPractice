@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ForeverFight.Ui.CharacterSelection;
 using ForeverFight.Interactable.Abilities;
+using ForeverFight.Networking;
 
 public class ClientSend : MonoBehaviour
 {
@@ -76,6 +77,7 @@ public class ClientSend : MonoBehaviour
         }
     }
 
+    // This is going to be sent to BOTH players, meaning you will send this to yourself!
     public static void ToggleCountdownTimer()
     {
         using (Packet _packet = new Packet((int)ClientPackets.toggleTimerCountdown))

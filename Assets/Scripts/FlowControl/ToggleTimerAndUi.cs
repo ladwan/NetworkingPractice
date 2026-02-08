@@ -18,6 +18,7 @@ namespace ForeverFight.FlowControl
 
         public static ToggleTimerAndUi Instance { get => instance; set => instance = value; }
 
+        private bool flipFlop = false;
 
         protected void Awake()
         {
@@ -77,7 +78,7 @@ namespace ForeverFight.FlowControl
 
         private void ToggleInteractableUiAndTimer()
         {
-            LocalStoredNetworkData.GetCountdownTimerScript().TellNetworkToToggleTimer();
+            LocalStoredNetworkData.GetCountdownTimerScript().TellNetworkToToggleTimer(); //This is pause BOTH players timers
             uiToToggle.SetActive(!uiToToggle.activeInHierarchy);
         }
 

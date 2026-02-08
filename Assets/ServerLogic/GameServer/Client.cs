@@ -64,11 +64,11 @@ namespace GameServer
 
                 byte[] testBytes = _packet.ToArray();
 
-                Console.WriteLine($" ~ ~ ~ ");
+                //Console.WriteLine($" ~ ~ ~ ");
 
                 for (int i = 0; i < testBytes.Length; i++)
                 {
-                    Console.WriteLine($"Network Stream data : {testBytes[i]}");
+                    //Console.WriteLine($"Network Stream data : {testBytes[i]}");
                 }
             }
 

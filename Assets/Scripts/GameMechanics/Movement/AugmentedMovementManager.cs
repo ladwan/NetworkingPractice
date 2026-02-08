@@ -64,7 +64,7 @@ namespace ForeverFight.GameMechanics.Movement
             if (augmentedMovementLogicREF == null)
             {
                 FloorGrid.Instance.ConfirmMove();
-                LocalStoredNetworkData.GetCountdownTimerScript().TellNetworkToToggleTimer();
+                //LocalStoredNetworkData.GetCountdownTimerScript().TellNetworkToToggleTimer();
                 return;
             }
 

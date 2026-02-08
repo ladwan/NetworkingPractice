@@ -110,6 +110,7 @@ public class ClientHandle : MonoBehaviour
         CharacterSelect.Instance.CountdownTimer.Time = 4;
     }
 
+    // This is going to be recived by BOTH players anytime it runs
     public static void ReceiveToggleTimerSignal(Packet _packet)
     {
         int _signalInt = _packet.ReadInt();

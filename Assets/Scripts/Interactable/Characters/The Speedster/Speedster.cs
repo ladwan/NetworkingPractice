@@ -65,7 +65,7 @@ namespace ForeverFight.Interactable.Characters
         {
             if (!hasteREF.StatusActive)
             {
-                LocalStoredNetworkData.GetCountdownTimerScript().TellNetworkToToggleTimer(); //This should be called to turn the timer back on, timer should be shut off by Augemented Movement Manager
+                //LocalStoredNetworkData.GetCountdownTimerScript().TellNetworkToToggleTimer(); //This should be called to turn the timer back on, timer should be shut off by Augemented Movement Manager
             }
         }
     }

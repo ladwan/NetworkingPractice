@@ -442,6 +442,12 @@ namespace ForeverFight.GameMechanics.Movement
             networkedSegmententedRotationData.Clear();
             calculatedMovementData = null;
             onMoveCompleted?.Invoke();
+
+            if (localPlayerSpawn != playerSpawnToBeMoved)
+            {
+                yield break;
+            }
+
             ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating();
         }
 

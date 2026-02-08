@@ -4,6 +4,8 @@ namespace GameServer
 {
     class ServerSend
     {
+        static int count = 0;
+
         private static void SendTcpData(int _toClient, Packet _packet)
         {
             Server.connectedClients[_toClient].myClientTcp.SendData(_packet);
@@ -132,14 +134,17 @@ namespace GameServer
 
         public static void ToggleCountdownTimer(int _playerThatDoesntNeedMsgId, int _signalInt)
         {
+           
             using (Packet _packet = new Packet((int)ServerPackets.toggleCountdownTimer))
             {
                 _packet.Write(_signalInt);
 
-                SendTcpDataToOppositePlayer(1, _packet);
-                SendTcpDataToOppositePlayer(2, _packet);
-
-                Console.WriteLine($"~ ~ ~ Toggle Sent {(int)ServerPackets.toggleCountdownTimer} ~ ~ ~");
+                //SendTcpDataToOppositePlayer(1, _packet);
+                //SendTcpDataToOppositePlayer(2, _packet);
+                SendTcpDataToAll(0, _packet);
+                count++;
+                //Console.WriteLine($"[TIME] Total packets sent: {count}");
+                //Console.WriteLine($"---------------------------------------");
             }
         }
 
@@ -155,8 +160,6 @@ namespace GameServer
                 SendTcpDataToOppositePlayer(_playerThatDoesntNeedMsgId, _packet);
             }
         }
-
-
 
 
         public static void SendDamageToOpponent(int _playerThatDoesntNeedMsgId, int _damageInt)

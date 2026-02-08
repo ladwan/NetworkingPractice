@@ -50,12 +50,12 @@ namespace ForeverFight.HelperScripts
 
         private void OnDisable()
         {
-            Debug.Log("~~~ ~~~ I was Disabled");
+            //Debug.Log("~~~ ~~~ I was Disabled");
         }
 
         private void OnDestroy()
         {
-            Debug.Log("~~~ ~~~ I was destroyed");
+            //Debug.Log("~~~ ~~~ I was destroyed");
         }
 
         protected bool IsPlayerTurnAndTargetValid(Transform tempTarget)

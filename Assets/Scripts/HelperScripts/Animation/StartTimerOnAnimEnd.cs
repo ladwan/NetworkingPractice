@@ -9,7 +9,7 @@ namespace ForeverFight.HelperScripts.Animation
     {
         public void AnimEnd() //Animation events will call this to restart the timer when the animation is done !
         {
-            LocalStoredNetworkData.GetCountdownTimerScript().TellNetworkToToggleTimer();
+            //LocalStoredNetworkData.GetCountdownTimerScript().TellNetworkToToggleTimer();
         }
     }
 }

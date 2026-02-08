@@ -27,18 +27,22 @@ public class ToDo : MonoBehaviour
     
     BACK LOG:
     
-    ** Think about what you want the environment to look like
+    1) only enable confirm button on move screen if the users move at least 1 sq
 
-    1) Drag movers position is being reset after confirm movement. This can be a bit jarring. Lerp back, rather than snap
+    2) Drag mover can be "sticky" and hard to click/manipulate , fix this!
 
-    2) only enable confirm button on move screen if the users move at least 1 sq
+    3) Die roll should be automatic at the start of turns
 
-    3) Game loop is broken, data from old sessions persist after win state. It is not a clean re-fresh
+    4) You raised the floor plane up, and now its clipping the partilce effects. Fix this
 
-    4) If both players dont select a character, kick them back to the home screen
+    5) Game loop is broken, data from old sessions persist after win state. It is not a clean re-fresh
 
-    5) Drag mover can be "sticky" and hard to click/manipulate , fix this!
-    ---------------------------------------------------------------------------
+    6) Ui needs to standout from the background
+        
+    7) If both players dont select a character, kick them back to the home screen
+
+    investigate parrelsync
+    --------------------------------------------------------------------------
 
     Maybe dont need toggle because ui blockers can clean themselves up
     Make class that holds and displays ability descriptions

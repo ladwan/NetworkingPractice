@@ -73,7 +73,7 @@ namespace GameServer
         public static void ServerRecieveToggleTimerSignal(int _fromClient, Packet _packet)
         {
             int _signalInt = _packet.ReadInt();
-            Console.WriteLine("~ ~ ~ Toggle ~ ~ ~");
+            //Console.WriteLine($"[TIME] Toggle Recieved from player {_playerNumber}: {_signalString} at the {_status}");
             ServerSend.ToggleCountdownTimer(_fromClient, _signalInt);
         }
 
