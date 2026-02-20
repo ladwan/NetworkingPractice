@@ -25701,6 +25701,7 @@ MonoBehaviour:
   charIdentity: 1
   characterModel: {fileID: 1527667676067676478}
   characterIcon: {fileID: 0}
+  characterCamera: {fileID: 8475425779402961721}
   characterName: 
   health: 0
   rollAlotment: 0

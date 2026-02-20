@@ -61,7 +61,7 @@ namespace ForeverFight.Interactable.Abilities
                 renderers[i] = obj.GetComponent<Renderer>();
                 obj.SetActive(false);
                 objectPool.Add(obj);
-                Debug.Log($"~~ Material Name: {obj.GetComponent<MeshRenderer>().material.name}");
+                //Debug.Log($"~~ Material Name: {obj.GetComponent<MeshRenderer>().material.name}");
             }
         }
 

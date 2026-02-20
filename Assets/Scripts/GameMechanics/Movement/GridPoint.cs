@@ -84,7 +84,7 @@ namespace ForeverFight.GameMechanics.Movement
             }
         }
 
-        private void OnMouseEnter()
+        public void OnMouseEnterCustom()
         {
             if (dragMovementREF.ValidDrag)
             {

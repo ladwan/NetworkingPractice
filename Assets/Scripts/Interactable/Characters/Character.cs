@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using ForeverFight.Networking;
 using ForeverFight.Interactable.Abilities;
 using System;
+using ForeverFight.Interactable.PlayerInputInteractions;
 
 namespace ForeverFight.Interactable.Characters
 {
@@ -83,7 +84,6 @@ namespace ForeverFight.Interactable.Characters
         public List<MovementAnimationCurves> MovementAnimCurves  => movementAnimCurves;
 
         public float MoveSpeedHelper { get => moveSpeedHelper; set => moveSpeedHelper = value; }
-
 
         public enum Identity
         {

@@ -35,6 +35,8 @@ namespace ForeverFight.GameMechanics.Movement
         [SerializeField]
         private Action<int> onMoveConfirmed = null;
         [SerializeField]
+        private Action<int> hoveredOverGridPointsUpdated = null;
+        [SerializeField]
         private Action onMoveCompleted = null;
         [SerializeField]
         private ProceduralGridManipulation proceduralGridManipulationREF = null;
@@ -55,8 +57,6 @@ namespace ForeverFight.GameMechanics.Movement
         private Transform transformToLerp = null;
 
 
-
-
         public Dictionary<Vector2, GridPoint> GridDictionary => gridDictionary;
 
         public static FloorGrid Instance { get => instance; set => instance = value; }
@@ -66,6 +66,8 @@ namespace ForeverFight.GameMechanics.Movement
         public DragMovement DragMoverREF { get => dragMoverREF; set => dragMoverREF = value; }
 
         public Action<int> OnMoveConfirmed { get => onMoveConfirmed; set => onMoveConfirmed = value; }
+
+        public Action<int> HoveredOverGridPointsUpdated { get => hoveredOverGridPointsUpdated; set => hoveredOverGridPointsUpdated = value; }
 
         public Action OnMoveCompleted { get => onMoveCompleted; set => onMoveCompleted = value; }
 
@@ -89,6 +91,7 @@ namespace ForeverFight.GameMechanics.Movement
         private GameObject localPlayerSpawn = null;
         private Coroutine lerpMovementSub = null;
         private int networkedMovementDataSent = 0; //Use this to know if both movement and rotation data has been send over, if its 2 you have both
+
 
         private class MovementInstanceInfo
         {
@@ -159,6 +162,7 @@ namespace ForeverFight.GameMechanics.Movement
                 hoveredOverGridPoints[i].ShowHighlight(false);
             }
             hoveredOverGridPoints.Clear();
+            hoveredOverGridPointsUpdated?.Invoke(0);
             if (dragMoverGridPointREF)
             {
                 dragMoverGridPointREF.DisplayConnections(false);
@@ -177,6 +181,7 @@ namespace ForeverFight.GameMechanics.Movement
             if (AddGridPointToListBool(gp))
             {
                 hoveredOverGridPoints.Add(gp);
+                hoveredOverGridPointsUpdated?.Invoke(hoveredOverGridPoints.Count);
             }
         }
 
@@ -284,6 +289,7 @@ namespace ForeverFight.GameMechanics.Movement
                         }
                     }
                     add = false;
+                    hoveredOverGridPointsUpdated?.Invoke(hoveredOverGridPoints.Count);
                     break;
                 }
             }
@@ -536,6 +542,8 @@ namespace ForeverFight.GameMechanics.Movement
                 hoveredOverGridPoints[i].ShowHighlight(false);
                 hoveredOverGridPoints.RemoveAt(i);
             }
+
+            hoveredOverGridPointsUpdated?.Invoke(hoveredOverGridPoints.Count);
         }
 
 

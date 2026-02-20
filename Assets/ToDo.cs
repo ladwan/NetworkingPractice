@@ -18,30 +18,33 @@ public class ToDo : MonoBehaviour
     ---------------------------------------------------------------------------
 
     ON DECK:
-        Create a enviornment for the chars to fight in
-        fix the names for players in the combat scene
-        fix the game loop
-      
-    
 
-    
+    1) Die roll should be automatic at the start of turns
+
+
+
+
+
+
     BACK LOG:
-    
-    1) only enable confirm button on move screen if the users move at least 1 sq
 
-    2) Drag mover can be "sticky" and hard to click/manipulate , fix this!
+    1) You raised the floor plane up, and now its clipping the partilce effects. Fix this
 
-    3) Die roll should be automatic at the start of turns
+    2) If both players dont select a character, kick them back to the home screen
 
-    4) You raised the floor plane up, and now its clipping the partilce effects. Fix this
+    3) Game loop is broken, data from old sessions persist after win state. It is not a clean re-fresh
 
-    5) Game loop is broken, data from old sessions persist after win state. It is not a clean re-fresh
+    4) Fix the names for players in the combat scene
 
-    6) Ui needs to standout from the background
-        
-    7) If both players dont select a character, kick them back to the home screen
+    5) Ui needs to standout from the background
 
-    investigate parrelsync
+    6) Camera sometimes gets stuck in the air
+
+
+
+    animated ability buttons
+    track which characther people pick in a db
+    break idea of mouse/ touch interactions into single respo classes
     --------------------------------------------------------------------------
 
     Maybe dont need toggle because ui blockers can clean themselves up
@@ -49,5 +52,14 @@ public class ToDo : MonoBehaviour
 
 
     Read from packet to make sure the data is as expected // Do this both server side and client side
+
+
+    likley interface based
+    needs to support touch interaction
+    hover interaction
+    click interaction
+    drag/hold interactions
+    raycast through overlapped collisions
+
     */
 }

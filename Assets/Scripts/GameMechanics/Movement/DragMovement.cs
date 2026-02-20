@@ -39,23 +39,13 @@ namespace ForeverFight.GameMechanics.Movement
         public Action OnDragEnded { get => onDragEnded; set => onDragEnded = value; }
 
 
-        private void Start()
-        {
-            //Physics.queriesHitTriggers = true;
-        }
-
-        private void OnMouseDown()
-        {
-            UpdateDragMover();
-        }
-
-        private void OnMouseUp()
+        //Mouse down is handled by DragInteractable.cs
+        public void OnMouseUpCustom()
         {
             validDrag = false;
             currentlyClickedGridPoint = null;
             OnDragEnded?.Invoke();
         }
-
 
         public void UpdateDragMover()
         {

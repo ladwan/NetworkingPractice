@@ -2107,7 +2107,7 @@ GameObject:
   - component: {fileID: 161206153}
   - component: {fileID: 161206155}
   - component: {fileID: 161206154}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Aura Particle System (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7635,7 +7635,7 @@ GameObject:
   - component: {fileID: 220890651}
   - component: {fileID: 220890654}
   - component: {fileID: 220890653}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Connection Aura
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8463,6 +8463,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 67043570}
+  - {fileID: 393730068}
   - {fileID: 195005822}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9478,6 +9479,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0c94ad95a26e344cb4fe886f28d553e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &393730067
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 393730068}
+  - component: {fileID: 393730069}
+  m_Layer: 0
+  m_Name: Player Interaction
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &393730068
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393730067}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 311792656}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &393730069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393730067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6892fbfb8a99b584a9f37643bc96d053, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dragMovementREF: {fileID: 1554892684}
 --- !u!1 &397232263
 GameObject:
   m_ObjectHideFlags: 0
@@ -9664,7 +9710,7 @@ GameObject:
   - component: {fileID: 406412181}
   - component: {fileID: 406412183}
   - component: {fileID: 406412182}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Aura Particle System (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15039,7 +15085,7 @@ GameObject:
   - component: {fileID: 434829376}
   - component: {fileID: 434829375}
   - component: {fileID: 434829374}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15289,9 +15335,10 @@ GameObject:
   - component: {fileID: 459486050}
   - component: {fileID: 459486053}
   - component: {fileID: 459486052}
+  - component: {fileID: 459486056}
   - component: {fileID: 459486054}
   - component: {fileID: 459486055}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grid Point Reference
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15408,6 +15455,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &459486056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 459486049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a94ec485eaacfea4dbf6f19e4ad53a8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridPointREF: {fileID: 459486054}
 --- !u!1 &465574529
 GameObject:
   m_ObjectHideFlags: 0
@@ -15503,7 +15563,7 @@ GameObject:
   - component: {fileID: 489962864}
   - component: {fileID: 489962863}
   - component: {fileID: 489962862}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15774,6 +15834,7 @@ GameObject:
   - component: {fileID: 508807178}
   - component: {fileID: 508807177}
   - component: {fileID: 508807176}
+  - component: {fileID: 508807179}
   m_Layer: 5
   m_Name: Confirm Button - Movement Ui
   m_TagString: Untagged
@@ -15840,7 +15901,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 508807177}
   m_OnClick:
     m_PersistentCalls:
@@ -15932,6 +15993,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 508807174}
   m_CullTransparentMesh: 1
+--- !u!114 &508807179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 508807174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 583512cffa5ae514eadf185d6c2ad31d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  confirmButton: {fileID: 508807176}
 --- !u!1 &509303676
 GameObject:
   m_ObjectHideFlags: 0
@@ -16251,7 +16325,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 539104609}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Offset Parent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21089,7 +21163,7 @@ GameObject:
   - component: {fileID: 912572611}
   - component: {fileID: 912572613}
   - component: {fileID: 912572612}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Aura Particle System (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26372,7 +26446,7 @@ GameObject:
   - component: {fileID: 960881885}
   - component: {fileID: 960881887}
   - component: {fileID: 960881886}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Aura Particle System
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35502,6 +35576,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dragMoverTransformREF: {fileID: 1554892683}
+  speed: 2
 --- !u!1 &1339131499
 GameObject:
   m_ObjectHideFlags: 0
@@ -38045,9 +38120,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1554892683}
+  - component: {fileID: 1554892686}
   - component: {fileID: 1554892684}
   - component: {fileID: 1554892685}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Drag Mover
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38106,8 +38182,21 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1.5, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 3, z: 1}
+  m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &1554892686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1554892682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9275849f9bd693947b5360a373a36840, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dragMovementREF: {fileID: 1554892684}
 --- !u!1 &1567675600
 GameObject:
   m_ObjectHideFlags: 0
@@ -38119,7 +38208,7 @@ GameObject:
   - component: {fileID: 1567675601}
   - component: {fileID: 1567675604}
   - component: {fileID: 1567675603}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Highlight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42578,7 +42667,7 @@ GameObject:
   - component: {fileID: 1936672960}
   - component: {fileID: 1936672959}
   - component: {fileID: 1936672958}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42594,9 +42683,9 @@ Transform:
   m_GameObject: {fileID: 1936672956}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.70000005, z: 0}
-  m_LocalScale: {x: 0.11612, y: 0.11612001, z: 0.11612}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 0, y: 1.11, z: 0}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 489962861}
   m_Father: {fileID: 1554892683}

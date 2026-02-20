@@ -10,6 +10,8 @@ namespace ForeverFight.HelperScripts
     {
         [SerializeField]
         private Transform dragMoverTransformREF = null;
+        [SerializeField]
+        private float speed = 1.0f;
 
 
         private Coroutine sub = null;
@@ -70,7 +72,7 @@ namespace ForeverFight.HelperScripts
 
             while (localCharacterCameraParent.position != dragMoverTransformREF.position)
             {
-                time += Time.deltaTime;
+                time += Time.deltaTime * speed;
                 //var percent = time / duration;
                 yield return new WaitForEndOfFrame();
                 localCharacterCameraParent.position = Vector3.Lerp(startingPos, tempPos, time);
