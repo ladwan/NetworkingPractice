@@ -7,12 +7,10 @@ using UnityEngine;
 
 public class Client : MonoBehaviour
 {
-    //This is the client we want to update
-
     public static Client localClientInstance;
     public static int dataBufferSize = 4096;
 
-    public string serverIp = "127.0.0.1"; //local host (study this)
+    public string serverIp = "127.0.0.1";
     public int port = 32887;
     public int localClientId = 0;
     public TCP tcp;
@@ -21,12 +19,10 @@ public class Client : MonoBehaviour
     private delegate void PacketHandler(Packet _packet);
     private static Dictionary<int, PacketHandler> packetHandlers;
 
-
     protected void OnApplicationQuit()
     {
         Disconnect();
     }
-
 
     private void Awake()
     {
@@ -53,13 +49,27 @@ public class Client : MonoBehaviour
         tcp.Connect();
     }
 
+    public void HandleConnectionLost()
+    {
+        if (!isConnected)
+            return;
+
+        Debug.LogWarning("Connection to server lost!");
+        isConnected = false;
+
+        try { tcp?.socket?.Close(); } catch { }
+
+        ThreadManager.ExecuteOnMainThread(() =>
+        {
+            HandlePlayerDisconnection.ReturnToLobby();
+        });
+    }
+
     public class TCP
     {
         public TcpClient socket;
         private readonly int id;
         private NetworkStream stream;
-
-        // our network buffer into which we receive raw packets
         private byte[] buffer;
         private int offset, expected;
 
@@ -75,51 +85,61 @@ public class Client : MonoBehaviour
                 SendBufferSize = dataBufferSize,
             };
 
-            //receiveBuffer = new byte[dataBufferSize];
             socket.BeginConnect(localClientInstance.serverIp, localClientInstance.port, ConnectCallback, socket);
         }
 
         public void ConnectCallback(IAsyncResult result)
         {
-            socket.EndConnect(result);
-
-            if (!socket.Connected)
+            try
             {
-                return;
-            }
+                socket.EndConnect(result);
 
-            stream = socket.GetStream();
-            BeginReceiveHeader();
+                if (!socket.Connected)
+                {
+                    localClientInstance.HandleConnectionLost();
+                    return;
+                }
+
+                stream = socket.GetStream();
+                BeginReceiveHeader();
+            }
+            catch
+            {
+                localClientInstance.HandleConnectionLost();
+            }
         }
 
         public void SendData(Packet _packet)
         {
-            byte[] body = _packet.ToArray();
-            byte[] header = BitConverter.GetBytes(body.Length);
-            byte[] packet = new byte[header.Length + body.Length];
-
-            Array.Copy(header, 0, packet, 0, header.Length);
-            Array.Copy(body, 0, packet, header.Length, body.Length);
-
-            stream.BeginWrite(packet, 0, packet.Length, OnSentData, null);
-
-            byte[] testBytes = _packet.ToArray();
-            /*
-            for (int i = 0; i < testBytes.Length; i++)
+            try
             {
-                Debug.Log($"Network Stream data : {testBytes[i]}");
+                byte[] body = _packet.ToArray();
+                byte[] header = BitConverter.GetBytes(body.Length);
+                byte[] packet = new byte[header.Length + body.Length];
+
+                Array.Copy(header, 0, packet, 0, header.Length);
+                Array.Copy(body, 0, packet, header.Length, body.Length);
+
+                stream.BeginWrite(packet, 0, packet.Length, OnSentData, null);
             }
-            */
+            catch
+            {
+                localClientInstance.HandleConnectionLost();
+            }
         }
 
         private void OnSentData(IAsyncResult result)
         {
-            stream.EndWrite(result);
-            // NetworkStream.BeginWrite() always writes all data before returning,
-            // so no need to check whether there is more data to send (there wont be)
+            try
+            {
+                stream.EndWrite(result);
+            }
+            catch
+            {
+                localClientInstance.HandleConnectionLost();
+            }
         }
 
-        // our packet header is a single int: |len|
         private void BeginReceiveHeader()
         {
             buffer = new byte[sizeof(int)];
@@ -131,31 +151,31 @@ public class Client : MonoBehaviour
 
         private void OnReceiveHeader(IAsyncResult result)
         {
-            int received = stream.EndRead(result);
-            if (received <= 0)
+            try
             {
-                Debug.Log("Received was less than 0  : 0");
-                //localClientInstance.Disconnect();
-                // disconnect or error
-                return;
-            }
+                int received = stream.EndRead(result);
+                if (received <= 0)
+                {
+                    localClientInstance.HandleConnectionLost();
+                    return;
+                }
 
-            offset += received;
-            if (offset < expected)
+                offset += received;
+                if (offset < expected)
+                {
+                    stream.BeginRead(buffer, offset, expected - offset, OnReceiveHeader, null);
+                    return;
+                }
+
+                int length = BitConverter.ToInt32(buffer, 0);
+                BeginReceiveBody(length);
+            }
+            catch
             {
-                // there is more data in the header to be read
-                stream.BeginRead(buffer, offset, expected - offset, OnReceiveHeader, null);
-                return;
+                localClientInstance.HandleConnectionLost();
             }
-
-            // fully received header, parse it and start receiving body
-
-            int length = BitConverter.ToInt32(buffer, 0); // we only have to read the single length field
-            //Debug.Log($"Length : {length} ");
-            BeginReceiveBody(length);
         }
 
-        // our packet body is the packet id (an int), and some bytes: |id|data...|
         private void BeginReceiveBody(int length)
         {
             buffer = new byte[length];
@@ -167,51 +187,42 @@ public class Client : MonoBehaviour
 
         private void OnReceiveBody(IAsyncResult result)
         {
-            int received = stream.EndRead(result);
-            if (received <= 0)
+            try
             {
-                Debug.Log("Received was less than 0  :  1");
-                //localClientInstance.Disconnect();
-                // disconnect or error
-                return;
-            }
-
-            offset += received;
-            if (offset < expected)
-            {
-                // there is more data in the body to read
-                stream.BeginRead(buffer, offset, expected - offset, OnReceiveBody, null);
-                return;
-            }
-
-            // fully received body, handle the packet and start reading next packet
-            /*
-            for (int i = 0; i < 3; i++)
-            {
-                Debug.Log($"Buffer data : {buffer[i]}");
-            }
-            */
-
-
-            byte[] body = new byte[buffer.Length];
-            Array.Copy(buffer, 0, body, 0, body.Length);
-
-
-            ThreadManager.ExecuteOnMainThread(() =>
-            {
-                using (Packet packet = new Packet(body))
+                int received = stream.EndRead(result);
+                if (received <= 0)
                 {
-                    int id = packet.ReadInt();
-                    packetHandlers[id](packet);
+                    localClientInstance.HandleConnectionLost();
+                    return;
                 }
-                //Server.packetHandlers[id](id, packet);
-            });
 
+                offset += received;
+                if (offset < expected)
+                {
+                    stream.BeginRead(buffer, offset, expected - offset, OnReceiveBody, null);
+                    return;
+                }
 
-            BeginReceiveHeader();
+                byte[] body = new byte[buffer.Length];
+                Array.Copy(buffer, 0, body, 0, body.Length);
+
+                ThreadManager.ExecuteOnMainThread(() =>
+                {
+                    using (Packet packet = new Packet(body))
+                    {
+                        int id = packet.ReadInt();
+                        packetHandlers[id](packet);
+                    }
+                });
+
+                BeginReceiveHeader();
+            }
+            catch
+            {
+                localClientInstance.HandleConnectionLost();
+            }
         }
     }
-
 
     private void InitializeClientData()
     {
@@ -236,8 +247,6 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.sendSegmentedMovementData, ClientHandle.RecieveSegmentedMovementData },
             { (int)ServerPackets.sendSegmentedRotationData, ClientHandle.RecieveSegmentedRotationData },
             { (int)ServerPackets.sendNetworkedMethodIndex, ClientHandle.RecieveNetworkedMethodIndex },
-
-
         };
         Debug.Log("Initialized Packets..");
     }
@@ -250,13 +259,6 @@ public class Client : MonoBehaviour
 
     public void Disconnect()
     {
-        if (isConnected)
-        {
-            isConnected = false;
-            tcp.socket.Close();
-            ClientInfo.totalPlayersConnected--;
-
-            Debug.Log("Disconnected from Server");
-        }
+        HandleConnectionLost();
     }
 }

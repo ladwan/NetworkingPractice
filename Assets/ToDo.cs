@@ -19,33 +19,30 @@ public class ToDo : MonoBehaviour
 
     ON DECK:
 
-    1) Die roll should be automatic at the start of turns
+    1) If both players dont select a character, kick them back to the home screen
+    Do this is one player disconnects too!
+
+    Ride exsiting rails of disconnection logic to tell unity to go to lobby, then disconnect remaining client
 
 
-
+    --------------------------------------------------------------------------
 
 
 
     BACK LOG:
 
-    1) You raised the floor plane up, and now its clipping the partilce effects. Fix this
-
-    2) If both players dont select a character, kick them back to the home screen
-
-    3) Game loop is broken, data from old sessions persist after win state. It is not a clean re-fresh
-
-    4) Fix the names for players in the combat scene
-
-    5) Ui needs to standout from the background
-
-    6) Camera sometimes gets stuck in the air
+    1) Ui needs to standout from the background *polish, on hold for now*
+    2) Camera sometimes gets stuck in the air *Couldnt replicate, may have been fixed when die became automatic*
 
 
 
+    --------------------------------------------------------------------------
+    
+    SUGGESTIONS:
+    
     animated ability buttons
     track which characther people pick in a db
     break idea of mouse/ touch interactions into single respo classes
-    --------------------------------------------------------------------------
 
     Maybe dont need toggle because ui blockers can clean themselves up
     Make class that holds and displays ability descriptions

@@ -1,3 +1,4 @@
+using ForeverFight.Networking;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -41,15 +42,7 @@ namespace ForeverFight.FlowControl
 
         public void ReturnToLobby()
         {
-            StartCoroutine(LoadScene());
-            Client.localClientInstance.Disconnect();
-        }
-
-
-        private IEnumerator LoadScene()
-        {
-            yield return new WaitForSecondsRealtime(loadSceneDelay);
-            SceneManager.LoadScene(sceneToLoad);
+            HandlePlayerDisconnection.ReturnToLobby(loadSceneDelay);
         }
     }
 }

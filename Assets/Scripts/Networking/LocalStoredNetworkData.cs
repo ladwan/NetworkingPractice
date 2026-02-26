@@ -136,6 +136,33 @@ namespace ForeverFight.Networking
                 return null;
             }
         }
+
+        public static void Reset()
+        {
+            locallyStoredOpponentsName = "";
+
+            isPlayer1Turn = true;
+            damageableObjectDetected = false;
+
+            localPlayerSelectAbilityToCast = null;
+
+            localPlayerHealthSlider = null;
+            opponentHealthSlider = null;
+
+            localPlayerCharacter = null;
+            opponentCharacter = null;
+
+            localPlayerCharacterAnimationReferences = null;
+
+            localPlayerAttackConfirmButton = null;
+
+            localPlayerCurrentAP = 3;
+            opponentsCurrentAP = 3;
+
+            countdownTimerScript = null;
+
+            squaresMovedThisInstanceOfMovement = 0;
+        }
     }
 }
 

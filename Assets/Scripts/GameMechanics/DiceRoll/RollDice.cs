@@ -17,10 +17,6 @@ namespace ForeverFight.GameMechanics.DiceRoll
         [SerializeField]
         private ActionPointsManager apManager = null;
         [SerializeField]
-        private BoxCollider dieInteractityCollider = null;
-        [SerializeField]
-        private UnityEvent onDieClicked = null; //This assumes that you will only use this event for methods local to this class
-        [SerializeField]
         private bool isDebug = false;
 
 
@@ -29,16 +25,7 @@ namespace ForeverFight.GameMechanics.DiceRoll
 
 
         public Animator SixSidedDieAnimator => sixSidedDieAnimator;
-        public BoxCollider DieInteractityCollider { get => dieInteractityCollider; set => dieInteractityCollider = value; }
 
-
-        private void OnMouseDown()
-        {
-            //This will be toggled off to prevent double clicking
-            //This will be turned back on by an AnimationEvent on the Spawn anim of the 6 sided die
-            dieInteractityCollider.enabled = false;
-            onDieClicked?.Invoke();
-        }
 
 
         private void Start()

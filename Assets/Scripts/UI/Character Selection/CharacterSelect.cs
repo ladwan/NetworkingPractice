@@ -34,23 +34,23 @@ namespace ForeverFight.Ui.CharacterSelection
 
 
         [NonSerialized]
-        private CharacterPanel currentlySelectedPanel;
+        private CharacterPanel currentlySelectedPanel = null;
         [NonSerialized]
         private CharacterPanel otherPlayerCurrentPanel;
         [NonSerialized]
         private CharacterPanel otherPlayerOldPanel;
 
 
-        public static CharacterSelect Instance { get => instance; set => instance = value; }
+        public static CharacterSelect Instance  => instance;
         public DisplayCharacterInfo InfoDisplay { get => infoDisplay; set => infoDisplay = value; }
-        public CharacterPanel CurrentlySelectedPanel { get => currentlySelectedPanel; set => currentlySelectedPanel = value; }
-        public CharacterPanel OtherPlayerOldPanel { get => otherPlayerOldPanel; set => otherPlayerOldPanel = value; }
+        public CharacterPanel CurrentlySelectedPanel => currentlySelectedPanel;
+        public CharacterPanel OtherPlayerCurrentPanel => otherPlayerCurrentPanel;
+        public CharacterPanel OtherPlayerOldPanel => otherPlayerOldPanel;
         public List<CharacterPanel> CharacterPanelsList { get => characterPanelsList; set => characterPanelsList = value; }
         public Dictionary<int, CharacterPanel> CharacterPanels { get => characterPanels; set => characterPanels = value; }
         public Text OtherUsername { get => otherUsername; set => otherUsername = value; }
         public GameObject OtherPlayerCheckmark { get => otherPlayerCheckmark; set => otherPlayerCheckmark = value; }
         public Countdown CountdownTimer { get => countdownTimer; set => countdownTimer = value; }
-
 
         private void Awake()
         {
@@ -60,7 +60,7 @@ namespace ForeverFight.Ui.CharacterSelection
             }
             else if (instance != this)
             {
-                Debug.Log("Instance already exsists, destroying object!");
+                Debug.Log("CharacterSelect instance already exsists, destroying object!");
                 Destroy(this);
             }
         }

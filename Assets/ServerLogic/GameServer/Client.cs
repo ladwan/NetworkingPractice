@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 
@@ -92,10 +93,25 @@ namespace GameServer
 
             private void OnReceiveHeader(IAsyncResult result)
             {
-                int received = stream.EndRead(result);
+                if (stream == null)
+                    return;
+
+                int received;
+
+                try
+                {
+                    received = stream.EndRead(result);
+                }
+                catch
+                {
+                    return;
+                }
+
                 if (received <= 0)
                 {
-                    Server.connectedClients[id].Disconnect();
+                    Server.DisconnectAll();
+
+                    //Server.connectedClients[id].Disconnect();
                     // disconnect or error
                     return;
                 }
@@ -127,10 +143,24 @@ namespace GameServer
 
             private void OnReceiveBody(IAsyncResult result)
             {
-                int received = stream.EndRead(result);
+                if (stream == null)
+                    return;
+
+                int received;
+
+                try
+                {
+                    received = stream.EndRead(result);
+                }
+                catch
+                {
+                    return;
+                }
+
                 if (received <= 0)
                 {
-                    Server.connectedClients[id].Disconnect();
+                    Server.DisconnectAll();
+                    //Server.connectedClients[id].Disconnect();
                     // disconnect or error
                     return;
                 }

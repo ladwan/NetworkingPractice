@@ -82,6 +82,12 @@ namespace ForeverFight.FlowControl
             playerTimer.ResetTimer(playerTimer.MaxTime);
             playerTimerSubtext.text = "( Your Go ! )";
             IsLocalPlayersTurn = true;
+
+            if (!SafetyNet.IsValid(rollDiceREF, "Dice Reference on turn START"))
+            {
+                return;
+            }
+
             if (rollDiceREF.SixSidedDieAnimator.GetCurrentAnimatorStateInfo(0).IsName("Despawn"))
             {
                 rollDiceREF.SixSidedDieAnimator.SetTrigger("ResetDie");
@@ -100,7 +106,6 @@ namespace ForeverFight.FlowControl
                 playerTimer.ResetTimer(playerTimer.MaxTime);
                 playerTimerSubtext.text = "( Opponents turn... )";
                 IsLocalPlayersTurn = false;
-                rollDiceREF.DieInteractityCollider.enabled = false;
 
                 if (!localCharacterAnimator.GetCurrentAnimatorStateInfo(1).IsName("Camera - Idle"))
                 {

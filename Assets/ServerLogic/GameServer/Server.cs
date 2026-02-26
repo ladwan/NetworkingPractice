@@ -17,6 +17,7 @@ namespace GameServer
         public static Dictionary<int, PacketHandler> packetHandlers;
 
         private static TcpListener tcpListener = null; // check this if it doesnt work
+        private static bool disconnectLogicIsRunning = false;
 
         public static void Start(int _maxPlayers, int _port)
         {
@@ -80,6 +81,21 @@ namespace GameServer
 
             };
             Console.WriteLine("Initialized Packets..");
+        }
+
+        public static void DisconnectAll()
+        {
+            if (!disconnectLogicIsRunning)
+            {
+                disconnectLogicIsRunning = true;
+
+                foreach (Client i in connectedClients.Values)
+                {
+                    i.Disconnect();
+                }
+
+                disconnectLogicIsRunning = false;
+            }
         }
     }
 }
