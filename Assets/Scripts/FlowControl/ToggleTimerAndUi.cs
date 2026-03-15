@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ForeverFight.Networking;
 using ForeverFight.Interactable.Abilities;
+using ForeverFight.HelperScripts;
 
 namespace ForeverFight.FlowControl
 {
@@ -78,6 +79,11 @@ namespace ForeverFight.FlowControl
 
         private void ToggleInteractableUiAndTimer()
         {
+            if (!SafetyNet.IsValid(LocalStoredNetworkData.GetCountdownTimerScript(), "LocalStoredNetworkData.GetCountdownTimerScript() was null"))
+            {
+                return;
+            }
+
             LocalStoredNetworkData.GetCountdownTimerScript().TellNetworkToToggleTimer(); //This is pause BOTH players timers
             uiToToggle.SetActive(!uiToToggle.activeInHierarchy);
         }

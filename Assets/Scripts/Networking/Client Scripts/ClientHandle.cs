@@ -1,16 +1,18 @@
-﻿using System;
+﻿using ForeverFight.FlowControl;
+using ForeverFight.GameMechanics;
+using ForeverFight.GameMechanics.Movement;
+using ForeverFight.HelperScripts;
+using ForeverFight.Interactable.Abilities;
+using ForeverFight.Networking;
+using ForeverFight.Ui;
+using ForeverFight.Ui.CharacterSelection;
+using GameServer;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using ForeverFight.Ui;
-using ForeverFight.Networking;
-using ForeverFight.FlowControl;
-using ForeverFight.HelperScripts;
-using ForeverFight.GameMechanics;
-using ForeverFight.Ui.CharacterSelection;
-using ForeverFight.Interactable.Abilities;
-using ForeverFight.GameMechanics.Movement;
 using System.Threading.Tasks;
+using UnityEngine;
+using UnityEngine.Rendering;
 using static ForeverFight.Interactable.Abilities.CharAbility;
 
 public class ClientHandle : MonoBehaviour
@@ -24,33 +26,17 @@ public class ClientHandle : MonoBehaviour
     {
         string _msg = _packet.ReadString();
         int _myId = _packet.ReadInt();
-        int _totalPlayers = _packet.ReadInt();
-        ClientInfo.totalPlayersConnected = _totalPlayers;
-        if (ClientInfo.totalPlayersConnected == 1)
-        {
-            ClientInfo.playerNumber = 1;
-        }
-        else if (ClientInfo.totalPlayersConnected == 2)
-        {
-            ClientInfo.playerNumber = 2;
-        }
-        Debug.Log($"Message from server: {_msg}. Player id: {_myId} Total PLayers :{ClientInfo.totalPlayersConnected}");
-        Client.localClientInstance.localClientId = _myId;
 
+        Client.localClientInstance.localClientId = _myId;
+        ClientInfo.totalPlayersConnected++;
         ClientSend.WelcomeReceived();
     }
-    public static void RecieveUpdatedPlayerPosition(Packet _packet)
-    {
-        int x = _packet.ReadInt();
-        int y = _packet.ReadInt();
-        int hoveredOverGPsCount = _packet.ReadInt();
 
-        FloorGrid.Instance.UpdateOpponentPosition(new Vector2(x, y));
-    }
-
-    public static void ReceiveTotalPlayerUpdate(Packet _packet)
+    public static void ReceiveInitialMatchDetails(Packet _packet)
     {
-        int _totalPlayers = _packet.ReadInt();
+        ClientInfo.matchIndex = _packet.ReadInt();
+        ClientInfo.playerNumber = _packet.ReadInt();
+        ClientInfo.otherUsername = _packet.ReadString();
         ClientInfo.totalPlayersConnected++;
     }
 
@@ -61,37 +47,7 @@ public class ClientHandle : MonoBehaviour
         string _otherPlayersCharName = _packet.ReadString();
         CharacterSelect.Instance.UpdateOtherPlayerSelection(_panelIndex, _playerIndex);
         LocalStoredNetworkData.locallyStoredOpponentsName = _otherPlayersCharName;
-    }
-
-    public static void ReceiveUsername(Packet _packet)
-    {
-        string _username = _packet.ReadString();
-
-
-        ClientInfo.otherUsername = _username;
-    }
-
-    public async static void ReceiveStartTurnSignal(Packet _packet)
-    {
-        int signalInt = _packet.ReadInt();
-
-        if (PlayerTurnManager.Instance == null)
-        {
-            await DelayedExecutionAsync();
-        }
-
-        PlayerTurnManager.Instance.StartTurn();
-    }
-
-    private static async Task DelayedExecutionAsync()
-    {
-        // Polling interval (e.g., 100 milliseconds)
-        const int pollingInterval = 100;
-
-        while (PlayerTurnManager.Instance == null && Application.isPlaying)
-        {
-            await Task.Delay(pollingInterval);
-        }
+        Debug.Log("~~[MATCH] Made it");
     }
 
     public static void ReceiveReadyUpSignal(Packet _packet)
@@ -107,7 +63,40 @@ public class ClientHandle : MonoBehaviour
     public static void ReceiveSyncedTimerTime(Packet _packet)
     {
         int _timeLeft = _packet.ReadInt();
+        if (_timeLeft <= 4)
+        {
+            return;
+        }
+
         CharacterSelect.Instance.CountdownTimer.Time = 4;
+    }
+
+    public static void RecieveSegmentedMovementData(Packet _packet)
+    {
+        int _x = _packet.ReadInt();
+        int _y = _packet.ReadInt();
+        int _count = _packet.ReadInt();
+        bool _hasRotations = _packet.ReadBool();
+        bool _completed = _packet.ReadBool();
+
+        FloorGrid.Instance.ConstructVector3ListFromNetworkData((new Vector3(_x, 0, _y)), _count, _hasRotations, _completed);
+
+        //make the list of lists in a place it will be created once
+        //use method call and conditional logic to write data
+    }
+
+    public static void RecieveSegmentedRotationData(Packet _packet)
+    {
+        float _x = _packet.ReadFloat();
+        float _y = _packet.ReadFloat();
+        float _z = _packet.ReadFloat();
+        float _w = _packet.ReadFloat();
+        int _count = _packet.ReadInt();
+
+        FloorGrid.Instance.ConstructQuaternionListFromNetworkData((new Quaternion(_x, _y, _z, _w)), _count);
+
+        //make the list of lists in a place it will be created once
+        //use method call and conditional logic to write data
     }
 
     // This is going to be recived by BOTH players anytime it runs
@@ -115,6 +104,18 @@ public class ClientHandle : MonoBehaviour
     {
         int _signalInt = _packet.ReadInt();
         LocalStoredNetworkData.GetCountdownTimerScript().ToggleCountdownTimer();
+    }
+
+    public async static void ReceiveStartTurnSignal(Packet _packet)
+    {
+        int signalInt = _packet.ReadInt();
+
+        if (PlayerTurnManager.Instance == null)
+        {
+            await DelayedExecutionAsync();
+        }
+
+        PlayerTurnManager.Instance.StartTurn();
     }
 
     public static void ReceiveAnimationTrigger(Packet _packet)
@@ -165,28 +166,13 @@ public class ClientHandle : MonoBehaviour
         //Debug.Log($"Status Effect Identifer : {_statusEffectIdentifier} Ownership is Player {_ownership}");
     }
 
-    public static void ClientReceiveCurrentStatusEffectDuration(Packet _packet)
+    public static void RecieveUpdatedPlayerPosition(Packet _packet)
     {
-        int _currentDuration = _packet.ReadInt();
+        int x = _packet.ReadInt();
+        int y = _packet.ReadInt();
+        int hoveredOverGPsCount = _packet.ReadInt();
 
-        //StatusEffectStaticManager.Instance.Test(_statusEffectIdentifier, _duration, _ownership);
-        //Debug.Log($"Status Effect Identifer : {_statusEffectIdentifier} Ownership is Player {_ownership}");
-    }
-
-    public static void ClientReceiveStoredMomentumValue(Packet _packet)
-    {
-        int _storedMomentum = _packet.ReadInt();
-
-        var slot = StatusEffectStaticManager.Instance.RemoteStatusEffectDisplayManager.GetMatchingStatusEffectSlot(StatusEffect.StatusEffectType.Momentum);
-        var displayReferences = slot.CharacterSpecificUi.GetComponent<MomentumDisplayReferences>();
-        if (displayReferences)
-        {
-            displayReferences.StoredMomentumDisplayTmp.text = _storedMomentum.ToString();
-        }
-        else
-        {
-            Debug.Log("Could not find display references!");
-        }
+        FloorGrid.Instance.UpdateOpponentPosition(new Vector2(x, y));
     }
 
     public static void RecieveOverrodePosition(Packet _packet)
@@ -205,34 +191,6 @@ public class ClientHandle : MonoBehaviour
         winnerStatusReceived?.Invoke();
     }
 
-    public static void RecieveSegmentedMovementData(Packet _packet)
-    {
-        int _x = _packet.ReadInt();
-        int _y = _packet.ReadInt();
-        int _count = _packet.ReadInt();
-        bool _hasRotations = _packet.ReadBool();
-        bool _completed = _packet.ReadBool();
-
-        FloorGrid.Instance.ConstructVector3ListFromNetworkData((new Vector3(_x, 0, _y)), _count, _hasRotations, _completed);
-
-        //make the list of lists in a place it will be created once
-        //use method call and conditional logic to write data
-    }
-
-    public static void RecieveSegmentedRotationData(Packet _packet)
-    {
-        float _x = _packet.ReadFloat();
-        float _y = _packet.ReadFloat();
-        float _z = _packet.ReadFloat();
-        float _w = _packet.ReadFloat();
-        int _count = _packet.ReadInt();
-
-        FloorGrid.Instance.ConstructQuaternionListFromNetworkData((new Quaternion(_x, _y, _z, _w)), _count);
-
-        //make the list of lists in a place it will be created once
-        //use method call and conditional logic to write data
-    }
-
     public static void RecieveNetworkedMethodIndex(Packet _packet)
     {
         int _abilityIndex = _packet.ReadInt();
@@ -241,7 +199,32 @@ public class ClientHandle : MonoBehaviour
         LocalStoredNetworkData.GetOpponentCharacter().Moveset[_abilityIndex].NetworkedMethodCall(_methodIndex);
     }
 
+    public static void ClientReceiveStoredMomentumValue(Packet _packet)
+    {
+        int _storedMomentum = _packet.ReadInt();
 
+        var slot = StatusEffectStaticManager.Instance.RemoteStatusEffectDisplayManager.GetMatchingStatusEffectSlot(StatusEffect.StatusEffectType.Momentum);
+        var displayReferences = slot.CharacterSpecificUi.GetComponent<MomentumDisplayReferences>();
+        if (displayReferences)
+        {
+            displayReferences.StoredMomentumDisplayTmp.text = _storedMomentum.ToString();
+        }
+        else
+        {
+            Debug.Log("Could not find display references!");
+        }
+    }
+
+    private static async Task DelayedExecutionAsync()
+    {
+        // Polling interval (e.g., 100 milliseconds)
+        const int pollingInterval = 100;
+
+        while (PlayerTurnManager.Instance == null && Application.isPlaying)
+        {
+            await Task.Delay(pollingInterval);
+        }
+    }
 
     private static void BeginLocalCameraShakeRecievedFromOpponent()
     {

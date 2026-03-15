@@ -17,13 +17,9 @@ public class ToDo : MonoBehaviour
 
     ---------------------------------------------------------------------------
 
-    ON DECK:
-
-    1) If both players dont select a character, kick them back to the home screen
-    Do this is one player disconnects too!
-
-    Ride exsiting rails of disconnection logic to tell unity to go to lobby, then disconnect remaining client
-
+    ON DECK
+    Test stability of game loop
+    Get Multiple matches to work 
 
     --------------------------------------------------------------------------
 

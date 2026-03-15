@@ -9,6 +9,12 @@ namespace GameServer
     {
         public static int maxPlayers { get; private set; }
         public static int port { get; private set; }
+
+
+        public static Dictionary<int, Match> matches = new Dictionary<int, Match>();
+        private static int nextMatchId = 1;
+
+
         public static Dictionary<int, Client> connectedClients = new Dictionary<int, Client>();
         public static Dictionary<int, string> usernames = new Dictionary<int, string>();
         public static int currentPlayers = 0;
@@ -62,26 +68,51 @@ namespace GameServer
             packetHandlers = new Dictionary<int, PacketHandler>()
             {
                 {(int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
-                {(int)ClientPackets.updatePlayerCurrentPosition, ServerHandle.ReadUpdatedPlayerPosition },
-                {(int)ClientPackets.sendSelectionData, ServerHandle.ServerReadSelectionPacket},
-                {(int)ClientPackets.endTurn, ServerHandle.ServerRecieveEndTurnSignal},
-                {(int)ClientPackets.sendReadyUp, ServerHandle.ServerRecieveReadyUpSignal},
-                {(int)ClientPackets.enterSyncTimerQueue, ServerHandle.ServerRecieveCurrentTime},
-                {(int)ClientPackets.requestToDamageOpponentsHealth, ServerHandle.ServerRecieveRequestToDamageOpponent},
-                {(int)ClientPackets.clientSendStatusEffectData, ServerHandle.ServerRecieveStatusEffectData},
-                {(int)ClientPackets.sendCurrentStatusEffectDuration, ServerHandle.ServerRecieveStatusEffectCurrentDuration},
-                {(int)ClientPackets.sendStoredMomentumValue, ServerHandle.ServerRecieveStoredMomentumValue},
-                {(int)ClientPackets.overrideOppositePlayersPos, ServerHandle.ServerRecieveOverrodePosition},
-                {(int)ClientPackets.hasWonTheMatch, ServerHandle.ServerRecieveWinnerStatus},
-                {(int)ClientPackets.toggleTimerCountdown, ServerHandle.ServerRecieveToggleTimerSignal},
-                {(int)(ClientPackets.clientSendAnimationTrigger),ServerHandle.ServerRecieveAnimationTrigger },
-                {(int)(ClientPackets.sendSegmentedMovementData),ServerHandle.ServerRecieveSegmentedMovementData},
-                {(int)(ClientPackets.sendSegmentedRotationData),ServerHandle.ServerRecieveSegmentedRotationData},
-                {(int)(ClientPackets.sendNetworkedMethodIndex),ServerHandle.ServerRecieveNetworkedMethodIndex},
+                {(int)ClientPackets.sendSelectionData, ServerHandle.ServerReadFromClient},
+                {(int)ClientPackets.sendReadyUp, ServerHandle.ServerReadFromClient},
+                {(int)ClientPackets.enterSyncTimerQueue, ServerHandle.ServerReadFromClient},
+                {(int)(ClientPackets.sendSegmentedMovementData),ServerHandle.ServerReadFromClient},
+                {(int)(ClientPackets.sendSegmentedRotationData),ServerHandle.ServerReadFromClient},
+                {(int)ClientPackets.toggleTimerCountdown, ServerHandle.ServerReadFromClient},
+                {(int)ClientPackets.endTurn, ServerHandle.ServerReadFromClient},
+                {(int)(ClientPackets.clientSendAnimationTrigger),ServerHandle.ServerReadFromClient},
+                {(int)ClientPackets.requestToDamageOpponentsHealth, ServerHandle.ServerReadFromClient},
+                {(int)ClientPackets.clientSendStatusEffectData, ServerHandle.ServerReadFromClient},
+                {(int)ClientPackets.updatePlayerCurrentPosition, ServerHandle.ServerReadFromClient },
+                {(int)ClientPackets.overrideOppositePlayersPos, ServerHandle.ServerReadFromClient},
+                {(int)ClientPackets.hasWonTheMatch, ServerHandle.ServerReadFromClient},
+                {(int)(ClientPackets.sendNetworkedMethodIndex),ServerHandle.ServerReadFromClient},
+                {(int)ClientPackets.sendStoredMomentumValue, ServerHandle.ServerReadFromClient},
 
             };
             Console.WriteLine("Initialized Packets..");
         }
+
+
+        public static void CreateMatch(Client player1, Client player2)
+        {
+            int matchId = nextMatchId++;
+
+            Match match = new Match(matchId, player1, player2);
+
+            matches.Add(matchId, match);
+
+            player1.MatchId = matchId;
+            player1.playerNumber = 1;
+
+            player2.MatchId = matchId;
+            player2.playerNumber = 2;
+
+            ServerSend.SendInitialMatchDetails(player1.id, matchId, player1.playerNumber, player2.username);
+            ServerSend.SendInitialMatchDetails(player2.id, matchId, player2.playerNumber, player1.username);
+
+
+            Console.WriteLine($"[MATCH CREATED] Match ID {matchId} | P1: {player1.username} | P2: {player2.username}");
+            Console.WriteLine($"[MATCH CREATED] {matchId} | P1: {player1.id} | P2: {player2.id}");
+            Console.WriteLine($"Active Matches: {matches.Count}");
+        }
+
+
 
         public static void DisconnectAll()
         {

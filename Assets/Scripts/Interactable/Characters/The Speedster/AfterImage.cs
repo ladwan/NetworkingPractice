@@ -181,7 +181,10 @@ namespace ForeverFight.Interactable.Abilities
             // Deactivate all objects in the pool
             foreach (var obj in objectPool)
             {
-                obj.SetActive(false);
+                if (obj != null)
+                {
+                    obj.SetActive(false);
+                }
             }
         }
 

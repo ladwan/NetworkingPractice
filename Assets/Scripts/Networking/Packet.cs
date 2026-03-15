@@ -7,7 +7,7 @@ public enum ServerPackets
 {
     welcome = 1,
     sendUpdatedPlayerPosition = 2,
-    totalPlayers = 3,
+    totalPlayers = 3,// Deprecated
     sendSelectionPacket = 4,
     sendUsername = 5,
     startTurn = 6,
@@ -24,6 +24,7 @@ public enum ServerPackets
     sendSegmentedMovementData = 17,
     sendSegmentedRotationData = 18,
     sendNetworkedMethodIndex = 19,
+    initalMatchDetails = 20,
 }
 
 /// <summary>Sent from client to server.</summary>
@@ -37,7 +38,7 @@ public enum ClientPackets
     enterSyncTimerQueue = 6,
     requestToDamageOpponentsHealth = 7,
     clientSendStatusEffectData = 8,
-    sendCurrentStatusEffectDuration = 9,
+    sendCurrentStatusEffectDuration = 9, // Deprecated
     sendStoredMomentumValue = 10,
     overrideOppositePlayersPos = 11,
     hasWonTheMatch = 12,

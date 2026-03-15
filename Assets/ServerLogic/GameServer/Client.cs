@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 
 namespace GameServer
 {
-    class Client
+    public class Client
     {
         public int id;
         public TCP myClientTcp;
+        public string username = "";
+        public int playerNumber = -1;
         public static int dataBufferSize = 4096;
+        public int MatchId { get; set; } = -1;
 
         public Client(int _clientId)
         {
@@ -48,8 +52,8 @@ namespace GameServer
                 BeginReceiveHeader();
 
                 Server.currentPlayers++;
-                ServerSend.Welcome(id, "Hey man, belive it or not.. you're now connected!", Server.currentPlayers);
-                ServerSend.SendTotalPlayerUpdate(id, Server.currentPlayers);
+
+                ServerSend.Welcome(id, "Hey man, belive it or not.. you're now connected!");
             }
 
             public void SendData(Packet _packet)
@@ -206,6 +210,22 @@ namespace GameServer
         public void Disconnect()
         {
             Console.WriteLine($"{myClientTcp.socket.Client.RemoteEndPoint} has disconnected ");
+
+            if (MatchId != -1)
+            {
+                if (Server.matches.TryGetValue(MatchId, out Match match))
+                {
+                    Console.WriteLine($"[MATCH DESTROYED] {MatchId}");
+
+                    match.Player1.MatchId = -1;
+                    match.Player2.MatchId = -1;
+
+                    Server.matches.Remove(MatchId);
+                }
+
+                MatchId = -1;
+            }
+
 
             myClientTcp.Disconnect();
         }

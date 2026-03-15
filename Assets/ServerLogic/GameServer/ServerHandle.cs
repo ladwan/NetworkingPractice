@@ -6,6 +6,7 @@ namespace GameServer
     {
         private static int desyncedTimersRecived = 0;
 
+
         public static void WelcomeReceived(int _fromClient, Packet _packet)
         {
             int _clientIdCheck = _packet.ReadInt();
@@ -13,148 +14,47 @@ namespace GameServer
 
             Console.WriteLine($"{Server.connectedClients[_fromClient].myClientTcp.socket.Client.RemoteEndPoint} connected successfully and is now player {_fromClient}");
             Console.WriteLine($"Welcome {_clientUsername} ..you have no idea how long i've been waiting for you");
-            Server.usernames.Add(_fromClient, _clientUsername);
-            //ServerSend.SendUsernames(_fromClient, _clientUsername);
-            Server.trackerInt++;
-            Console.WriteLine($" ---- ---- -- tracker value : {Server.trackerInt}");
-            if (Server.trackerInt >= 2)
+            Server.connectedClients[_fromClient].username = _clientUsername;
+            Console.WriteLine($"~~~[USERNAME] {_clientUsername} Has been saved at {_fromClient} index");
+
+            if (Server.currentPlayers % 2 == 0)
             {
-                Console.WriteLine(Server.usernames.Count);
-                ServerSend.SendUsernames(_fromClient, _clientUsername);
-                ServerSend.SendUsernames(1, Server.usernames[1]);
+                Client p1 = Server.connectedClients[Server.currentPlayers - 1];
+                Client p2 = Server.connectedClients[Server.currentPlayers];
+
+                Server.CreateMatch(p1, p2);
             }
+
             if (_fromClient != _clientIdCheck)
             {
                 Console.WriteLine($"Player \"{_clientUsername}\" (ID: {_fromClient}) has assumed the wrong client ID ({_clientIdCheck})!");
             }
-            //TODO: Send player into game
         }
 
-        public static void ReadUpdatedPlayerPosition(int _fromClient, Packet _packet)
-        {
-            int _playerUpdatedX = _packet.ReadInt();
-            int _playerUpdatedY = _packet.ReadInt();
-            int _hoveredOverGPsCount = _packet.ReadInt();
 
-            ServerSend.SendUpdatedPlayerPosition(_fromClient, _playerUpdatedX, _playerUpdatedY, _hoveredOverGPsCount);
-        }
-
-        public static void ServerReadSelectionPacket(int _fromClient, Packet _packet)
+        public static void ServerReadFromClient(int _fromClient, Packet _packet)
         {
-            int _panelIndex = _packet.ReadInt();
-            int _playerIndex = _packet.ReadInt();
-            string _playerName = _packet.ReadString();
+            Console.WriteLine($"~~~[SERVER] Server Recieved Welcome Ack from Client: {_fromClient} !");
+            int _packetId = _packet.ReadInt();
+            Console.WriteLine($"~~~[SERVER] Packet ID: {_packetId} !");
 
-            ServerSend.ServerSendSelectionPacket(_fromClient, _panelIndex, _playerIndex, _playerName);
-        }
+            Client sender = Server.connectedClients[_fromClient];
+            Console.WriteLine($"~~~[SERVER] Client null ?: {sender} !");
 
-        public static void ServerRecieveEndTurnSignal(int _fromClient, Packet _packet)
-        {
-            int _signalInt = _packet.ReadInt();
-            ServerSend.StartTurn(_fromClient, _signalInt);
-        }
-
-        public static void ServerRecieveReadyUpSignal(int _fromClient, Packet _packet)
-        {
-            int _signalInt = _packet.ReadInt();
-            ServerSend.RelayReadyUp(_fromClient, _signalInt);
-        }
-        public static void ServerRecieveCurrentTime(int _fromClient, Packet _packet)
-        {
-            desyncedTimersRecived++;
-            if (desyncedTimersRecived >= 2)
+            if (sender.MatchId == -1)
             {
-                int _currentTime = _packet.ReadInt();
-                ServerSend.SyncTimers(_fromClient, _currentTime);
-                Console.WriteLine("~ ~ ~ Sync ~ ~ ~");
-                desyncedTimersRecived = 0;
+                Console.WriteLine($"~~~[SERVER] Invalid Match ID !");
+                return;
             }
-        }
-        public static void ServerRecieveToggleTimerSignal(int _fromClient, Packet _packet)
-        {
-            int _signalInt = _packet.ReadInt();
-            //Console.WriteLine($"[TIME] Toggle Recieved from player {_playerNumber}: {_signalString} at the {_status}");
-            ServerSend.ToggleCountdownTimer(_fromClient, _signalInt);
-        }
 
-        public static void ServerRecieveAnimationTrigger(int _fromClient, Packet _packet)
-        {
-            string trigger = _packet.ReadString();
-            float duration = _packet.ReadFloat();
-            float magnitude = _packet.ReadFloat();
-            ServerSend.ServerSendAnimationTrigger(_fromClient, trigger, duration, magnitude);
-        }
 
-        public static void ServerRecieveRequestToDamageOpponent(int _fromClient, Packet _packet)
-        {
-            int _damageInt = _packet.ReadInt();
-            ServerSend.SendDamageToOpponent(_fromClient, _damageInt);
-        }
+            if (!Server.matches.TryGetValue(sender.MatchId, out Match match))
+            {
+                Console.WriteLine($"~~~[SERVER] No match found !");
+                return;
+            }
 
-        public static void ServerRecieveStatusEffectData(int _fromClient, Packet _packet)
-        {
-            int _statusEffectIdentifier = _packet.ReadInt();
-            int _duration = _packet.ReadInt();
-            int _ownership = _packet.ReadInt();
-            bool _endThisStatusEffect = _packet.ReadBool();
-            ServerSend.ServerSendStatusEffectData(_fromClient, _statusEffectIdentifier, _duration, _ownership, _endThisStatusEffect);
-        }
-
-        public static void ServerRecieveStatusEffectCurrentDuration(int _fromClient, Packet _packet)
-        {
-            int _currentDuration = _packet.ReadInt();
-            ServerSend.ServerSendCurrentStatusEffectDuration(_fromClient, _currentDuration);
-        }
-
-        public static void ServerRecieveStoredMomentumValue(int _fromClient, Packet _packet)
-        {
-            int _storedMomentum = _packet.ReadInt();
-            ServerSend.ServerSendStoredMomentumValue(_fromClient, _storedMomentum);
-        }
-
-        public static void ServerRecieveOverrodePosition(int _fromClient, Packet _packet)
-        {
-            int _playerUpdatedX = _packet.ReadInt();
-            int _playerUpdatedY = _packet.ReadInt();
-
-            ServerSend.SendOverrodePosition(_fromClient, _playerUpdatedX, _playerUpdatedY);
-        }
-
-        public static void ServerRecieveWinnerStatus(int _fromClient, Packet _packet)
-        {
-            bool _winnerStatus = _packet.ReadBool();
-
-            ServerSend.SendWinStatus(_fromClient, _winnerStatus);
-        }
-
-        public static void ServerRecieveSegmentedMovementData(int _fromClient, Packet _packet)
-        {
-            int _x = _packet.ReadInt();
-            int _y = _packet.ReadInt();
-            int _count = _packet.ReadInt();
-            bool _hasRotations = _packet.ReadBool();
-            bool _completed = _packet.ReadBool();
-
-            ServerSend.SendSegmentedMovementData(_fromClient, _x, _y, _count, _hasRotations, _completed);
-        }
-
-        public static void ServerRecieveSegmentedRotationData(int _fromClient, Packet _packet)
-        {
-            float _x = _packet.ReadFloat();
-            float _y = _packet.ReadFloat();
-            float _z = _packet.ReadFloat();
-            float _w = _packet.ReadFloat();
-            int _count = _packet.ReadInt();
-
-            ServerSend.SendSegmentedRotationData(_fromClient, _x, _y, _z, _w, _count);
-        }
-
-        public static void ServerRecieveNetworkedMethodIndex(int _fromClient, Packet _packet)
-        {
-            int _abilityIndex = _packet.ReadInt();
-            int _methodIndex = _packet.ReadInt();
-
-            ServerSend.SendNetworkedMethodIndex(_fromClient, _abilityIndex, _methodIndex);
+            match.HandlePacket(_fromClient, _packetId, _packet);
         }
     }
 }
