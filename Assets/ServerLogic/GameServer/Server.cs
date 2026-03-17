@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Text.RegularExpressions;
 
 namespace GameServer
 {
@@ -114,16 +115,22 @@ namespace GameServer
 
 
 
-        public static void DisconnectAll()
+        public static void DisconnectAllMatchClients(int matchId, Client _client)
         {
             if (!disconnectLogicIsRunning)
             {
                 disconnectLogicIsRunning = true;
 
-                foreach (Client i in connectedClients.Values)
+                if (!matches.TryGetValue(matchId, out Match match))
                 {
-                    i.Disconnect();
+                    _client.Disconnect();
+                    disconnectLogicIsRunning = false;
+                    return;
                 }
+
+
+                matches[matchId].Player1.Disconnect();
+                matches[matchId].Player2.Disconnect();
 
                 disconnectLogicIsRunning = false;
             }

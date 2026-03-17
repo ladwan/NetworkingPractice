@@ -17,9 +17,7 @@ public class ToDo : MonoBehaviour
 
     ---------------------------------------------------------------------------
 
-    ON DECK
-    Test stability of game loop
-    Get Multiple matches to work 
+    ON DECK   
 
     --------------------------------------------------------------------------
 
@@ -29,6 +27,8 @@ public class ToDo : MonoBehaviour
 
     1) Ui needs to standout from the background *polish, on hold for now*
     2) Camera sometimes gets stuck in the air *Couldnt replicate, may have been fixed when die became automatic*
+    3) There is a sq on the grid that the drag mover just will not go into, investigate this
+    4) Speedster ult seems to persist after attack, fix this
 
 
 

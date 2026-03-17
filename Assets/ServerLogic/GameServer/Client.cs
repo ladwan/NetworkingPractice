@@ -113,7 +113,8 @@ namespace GameServer
 
                 if (received <= 0)
                 {
-                    Server.DisconnectAll();
+                   
+                    Server.DisconnectAllMatchClients(Server.connectedClients[id].MatchId, Server.connectedClients[id]);
 
                     //Server.connectedClients[id].Disconnect();
                     // disconnect or error
@@ -163,7 +164,7 @@ namespace GameServer
 
                 if (received <= 0)
                 {
-                    Server.DisconnectAll();
+                    Server.DisconnectAllMatchClients(Server.connectedClients[id].MatchId, Server.connectedClients[id]);
                     //Server.connectedClients[id].Disconnect();
                     // disconnect or error
                     return;

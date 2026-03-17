@@ -162,6 +162,8 @@ namespace ForeverFight.Networking
             countdownTimerScript = null;
 
             squaresMovedThisInstanceOfMovement = 0;
+
+            ClientInfo.Reset();
         }
     }
 }

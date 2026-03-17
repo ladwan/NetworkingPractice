@@ -14,5 +14,16 @@ public static class ClientInfo
 
     public static string otherUsername = "";
 
+    public static void Reset()
+    {
+        playerNumber = 0;
 
+        totalPlayersConnected = 0;
+
+        matchIndex = -1;
+
+        username = "";
+
+        otherUsername = "";
+    }
 }
