@@ -18,7 +18,8 @@ public class ToDo : MonoBehaviour
     ---------------------------------------------------------------------------
 
     ON DECK   
-
+    Fix Ui to work with differnt aspect ratios 
+    Update char info to be useful, ensure players can learn how to use chars
     --------------------------------------------------------------------------
 
 

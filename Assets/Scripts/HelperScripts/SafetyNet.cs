@@ -14,7 +14,7 @@ namespace ForeverFight.HelperScripts
                     string errorMsg = string.IsNullOrEmpty(context)
                         ? $"{typeof(T).Name} was null!"
                         : $"[{context}] {typeof(T).Name} was null!";
-                    Debug.Log(errorMsg);
+                    Debug.LogWarning(errorMsg);
                     return false;
                 }
             }
@@ -24,7 +24,7 @@ namespace ForeverFight.HelperScripts
                 string errorMsg = string.IsNullOrEmpty(context)
                     ? $"{typeof(T).Name} was null!"
                     : $"[{context}] {typeof(T).Name} was null!";
-                Debug.Log(errorMsg);
+                Debug.LogWarning(errorMsg);
                 return false;
             }
 
