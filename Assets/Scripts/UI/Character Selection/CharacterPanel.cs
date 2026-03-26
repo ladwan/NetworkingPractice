@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using ForeverFight.Interactable.Characters;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,9 +15,15 @@ namespace ForeverFight.Ui.CharacterSelection
         [SerializeField]
         private CharacterInfo info;
         [SerializeField]
+        private Character.Identity identity;
+        [SerializeField]
         private Color player1Color = Color.red;
         [SerializeField]
         private Color player2Color = Color.blue;
+
+
+        public Character.Identity Identity => identity;
+
 
         public void OnEnable()
         {

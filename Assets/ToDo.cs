@@ -20,6 +20,7 @@ public class ToDo : MonoBehaviour
     ON DECK   
     Fix Ui to work with differnt aspect ratios 
     Update char info to be useful, ensure players can learn how to use chars
+    info text for chars is out of date
     --------------------------------------------------------------------------
 
 
@@ -37,6 +38,7 @@ public class ToDo : MonoBehaviour
     
     SUGGESTIONS:
     
+    Make turn times user configureable. Maybe they can play a match where one user has a handicap
     animated ability buttons
     track which characther people pick in a db
     break idea of mouse/ touch interactions into single respo classes

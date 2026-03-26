@@ -51,9 +51,9 @@ public class ClientHandle : MonoBehaviour
 
     public static void ReceiveReadyUpSignal(Packet _packet)
     {
-        CharacterSelect.Instance.OtherPlayerCheckmark.SetActive(true);
+        CharacterSelect.Instance.OtherPlayerCheckmark.enabled = true;
 
-        if (SendReadyUp.Instance.LocalPlayerCheckmark.activeInHierarchy)
+        if (SendReadyUp.Instance.LocalPlayerCheckmark.enabled == true)
         {
             ClientSend.EnterSyncTimerQueue();
         }

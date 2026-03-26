@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using ForeverFight.GameMechanics.Timers;
+using TMPro;
 
 namespace ForeverFight.Ui.CharacterSelection
 {
@@ -28,9 +29,11 @@ namespace ForeverFight.Ui.CharacterSelection
         [SerializeField]
         private Button confirmButton = null;
         [SerializeField]
-        private GameObject otherPlayerCheckmark = null;
+        private Image otherPlayerCheckmark = null;
         [SerializeField]
         private Countdown countdownTimer = null;
+        [SerializeField]
+        private CharacterIdentityManager charIdentityManagerREF;
 
 
         [NonSerialized]
@@ -49,7 +52,7 @@ namespace ForeverFight.Ui.CharacterSelection
         public List<CharacterPanel> CharacterPanelsList { get => characterPanelsList; set => characterPanelsList = value; }
         public Dictionary<int, CharacterPanel> CharacterPanels { get => characterPanels; set => characterPanels = value; }
         public Text OtherUsername { get => otherUsername; set => otherUsername = value; }
-        public GameObject OtherPlayerCheckmark { get => otherPlayerCheckmark; set => otherPlayerCheckmark = value; }
+        public Image OtherPlayerCheckmark => otherPlayerCheckmark;
         public Countdown CountdownTimer { get => countdownTimer; set => countdownTimer = value; }
 
         private void Awake()
@@ -124,6 +127,7 @@ namespace ForeverFight.Ui.CharacterSelection
                         }
 
                         characterPanels[i].Parent.SetActive(true);
+                        charIdentityManagerREF.SetSelectedIdentity(selectedCharPanel.Identity);
                         ClientSend.SendSelectionData(i, ClientInfo.playerNumber, characterPanels[i].Info.CharName);
                     }
                 }

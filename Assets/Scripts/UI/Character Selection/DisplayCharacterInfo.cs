@@ -37,7 +37,6 @@ namespace ForeverFight.Ui.CharacterSelection
             otherNameField.text = info.CharName;
             info.Abilities = info.Abilities.Replace("\\n", "\n");
             otherAbiliitesField.text = info.Abilities;
-
         }
     }
 

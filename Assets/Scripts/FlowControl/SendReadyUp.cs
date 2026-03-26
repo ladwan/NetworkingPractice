@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ForeverFight.Ui.CharacterSelection;
+using UnityEngine.UI;
 
 namespace ForeverFight.FlowControl
 {
@@ -11,11 +12,11 @@ namespace ForeverFight.FlowControl
         [SerializeField]
         private static SendReadyUp instance = null;
         [SerializeField]
-        private GameObject localPlayerCheckmark = null;
+        private Image localPlayerCheckmark = null;
 
 
-        public static SendReadyUp Instance { get => instance; set => instance = value; }
-        public GameObject LocalPlayerCheckmark { get => localPlayerCheckmark; set => localPlayerCheckmark = value; }
+        public static SendReadyUp Instance => instance;
+        public Image LocalPlayerCheckmark => localPlayerCheckmark;
 
 
         private void Awake()
@@ -29,17 +30,17 @@ namespace ForeverFight.FlowControl
                 Debug.Log("SendReadyUp Instance already exsists, destroying object!");
                 Destroy(this);
             }
+
         }
 
         public void SendReadyUpSignal()
         {
             ClientSend.SendReadyUp();
 
-            if (CharacterSelect.Instance.OtherPlayerCheckmark.activeInHierarchy)
+            if (CharacterSelect.Instance.OtherPlayerCheckmark.enabled)
             {
                 ClientSend.EnterSyncTimerQueue();
             }
-
         }
     }
 }
