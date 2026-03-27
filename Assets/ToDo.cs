@@ -18,9 +18,11 @@ public class ToDo : MonoBehaviour
     ---------------------------------------------------------------------------
 
     ON DECK   
+    lock game to landscape views
     Fix Ui to work with differnt aspect ratios 
-    Update char info to be useful, ensure players can learn how to use chars
-    info text for chars is out of date
+    add visible version of game 
+    speedsters distortion cube on mobile
+
     --------------------------------------------------------------------------
 
 
