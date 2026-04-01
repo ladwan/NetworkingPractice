@@ -22,6 +22,7 @@ public class ToDo : MonoBehaviour
     Fix Ui to work with differnt aspect ratios 
     add visible version of game 
     speedsters distortion cube on mobile
+    There is a sq on the grid that the drag mover just will not go into, investigate this
 
     --------------------------------------------------------------------------
 
@@ -31,7 +32,6 @@ public class ToDo : MonoBehaviour
 
     1) Ui needs to standout from the background *polish, on hold for now*
     2) Camera sometimes gets stuck in the air *Couldnt replicate, may have been fixed when die became automatic*
-    3) There is a sq on the grid that the drag mover just will not go into, investigate this
     4) Speedster ult seems to persist after attack, fix this
 
 
@@ -40,6 +40,7 @@ public class ToDo : MonoBehaviour
     
     SUGGESTIONS:
     
+    Do we want the confirm buttons? or would the gameplay be smoother without them?
     Make turn times user configureable. Maybe they can play a match where one user has a handicap
     animated ability buttons
     track which characther people pick in a db
