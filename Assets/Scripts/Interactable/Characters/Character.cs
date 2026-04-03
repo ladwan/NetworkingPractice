@@ -133,6 +133,31 @@ namespace ForeverFight.Interactable.Characters
 
             //abilty.AbilityRadius.SetActive(true);
         }
+
+        public void ParentCustomUi(GameObject parent)
+        {
+            if (customUiElements.Count == 0) return;
+
+            foreach (var uiElement in customUiElements) 
+            {
+                uiElement.transform.SetParent(parent.transform, false);
+                uiElement.transform.position = Vector3.zero;
+                uiElement.transform.rotation = Quaternion.identity;
+
+                if (uiElement.TryGetComponent<RectTransform>(out var t))
+                {
+                    // Reset stretch offsets (this is the "position" for stretched UI)
+                    t.offsetMin = Vector2.zero;
+                    t.offsetMax = Vector2.zero;
+
+                    // Reset rotation only
+                    t.localRotation = Quaternion.identity;
+
+                    // Optional safety (usually already zero, but ensures no drift)
+                    t.anchoredPosition = Vector2.zero;
+                }
+            }
+        }
     }
 }
 

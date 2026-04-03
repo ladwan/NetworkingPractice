@@ -16,6 +16,8 @@ public class DisplaySelectedChar : MonoBehaviour
     private CharacterScriptableObject characterScriptableObjRef;
     [SerializeField]
     private AbilitySelectionUiManager abilitySelectionUiManagerREF = null;
+    [SerializeField]
+    private GameObject customUiparent = null;
 
     protected void Awake()
     {
@@ -32,12 +34,14 @@ public class DisplaySelectedChar : MonoBehaviour
             var localPlayerCharInstance = Instantiate(value, spawnPoint);
             localPlayerCharInstance.CharacterAnimationReferences.CharacterCamera.enabled = true;
             localPlayerCharInstance.CharacterAnimationReferences.CharacterCameraAudioListener.enabled = true;
+            localPlayerCharInstance.ParentCustomUi(customUiparent);
             var opponentCharInstance = GameMechanicsManager.Instance.HandleSpawningOpponent();
             LocalStoredNetworkData.localPlayerCharacter = localPlayerCharInstance;
             LocalStoredNetworkData.opponentCharacter = opponentCharInstance;
             GameMechanicsManager.Instance.UpdateHealthSliderValues(localPlayerCharInstance, LocalStoredNetworkData.GetLocalHealthSlider());
             GameMechanicsManager.Instance.UpdateHealthSliderValues(opponentCharInstance, LocalStoredNetworkData.GetOpponentHealthSlider());
             abilitySelectionUiManagerREF.PopulateAbilityData();
+
         }
     }
 }

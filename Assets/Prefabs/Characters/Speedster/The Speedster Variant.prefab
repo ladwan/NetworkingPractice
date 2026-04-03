@@ -9012,15 +9012,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7221130700412631962, guid: bec1f6531868fda4ba43a8004a029bd1, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.25
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 7221130700412631962, guid: bec1f6531868fda4ba43a8004a029bd1, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.25
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 7221130700412631962, guid: bec1f6531868fda4ba43a8004a029bd1, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.25
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 7221130700412631962, guid: bec1f6531868fda4ba43a8004a029bd1, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9088,7 +9088,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3285412381849166100, guid: bec1f6531868fda4ba43a8004a029bd1, type: 3}
   m_PrefabInstance: {fileID: 915133011421374644}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 7531611481394254639}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 49cf7761cf39b084f83b4e59e589eeaf, type: 3}
@@ -9163,6 +9163,11 @@ MonoBehaviour:
 --- !u!224 &7531611481394254638 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7221130700412631962, guid: bec1f6531868fda4ba43a8004a029bd1, type: 3}
+  m_PrefabInstance: {fileID: 915133011421374644}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7531611481394254639 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7221130700412631963, guid: bec1f6531868fda4ba43a8004a029bd1, type: 3}
   m_PrefabInstance: {fileID: 915133011421374644}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1004693826353312285
@@ -11627,7 +11632,6 @@ MonoBehaviour:
   charIdentity: 2
   characterModel: {fileID: 5752506705235420953}
   characterIcon: {fileID: 0}
-  characterCamera: {fileID: 3420656686187156766}
   characterName: 
   health: 0
   rollAlotment: 0
@@ -11640,7 +11644,8 @@ MonoBehaviour:
   - {fileID: 491710909}
   - {fileID: 6802778721011314917}
   - {fileID: 3877362417826474932}
-  customUiElements: []
+  customUiElements:
+  - {fileID: 7531611481394254639}
   oneSqRadius: {fileID: 0}
   twoSqRadius: {fileID: 0}
   threeSqRadius: {fileID: 0}
