@@ -18,16 +18,11 @@ public class ToDo : MonoBehaviour
     ---------------------------------------------------------------------------
 
     ON DECK
-    integrate charather specific ui into layout group
 
-
-    lock game to landscape views
-    turn off or shrink fps
+    gameplay is broken, fix the nulls
+    speedster quick punch is not disabling ult
     turn off debug Die roll
-    Fix Ui to work with differnt aspect ratios 
-    add visible version of game 
     speedsters distortion cube on mobile
-    There is a sq on the grid that the drag mover just will not go into, investigate this
 
     --------------------------------------------------------------------------
 
@@ -39,6 +34,10 @@ public class ToDo : MonoBehaviour
     2) Camera sometimes gets stuck in the air *Couldnt replicate, may have been fixed when die became automatic*
     3) Move die roll anim to right side of screen and update anims 
     4) Speedster ult seems to persist after attack, fix this
+
+
+    lock game to landscape views
+
 
 
 

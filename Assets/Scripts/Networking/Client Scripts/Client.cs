@@ -11,7 +11,7 @@ public class Client : MonoBehaviour
     public static int dataBufferSize = 4096;
 
     //public string serverIp = "18.212.101.78";
-    public string serverIp = "127.0.0.1";
+    public string serverIp = "";
     public int port = 32887;
     public int localClientId = 0;
     public TCP tcp;
@@ -30,6 +30,7 @@ public class Client : MonoBehaviour
         if (localClientInstance == null)
         {
             localClientInstance = this;
+            serverIp = ServerConfig.GetServerIP();
         }
         else if (localClientInstance != this)
         {

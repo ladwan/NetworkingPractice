@@ -124,8 +124,23 @@ namespace ForeverFight.GameMechanics.Movement
             {
                 for (int i = 0; i < 10; i++) //Create grid rows
                 {
-                    GameObject instantiatedGridPoint = Instantiate(gridPoint, new Vector3(this.transform.position.x + i, this.transform.position.y, this.transform.position.z + p), new Quaternion(), this.gameObject.transform);
-                    gridDictionary.Add(new Vector2(this.transform.position.x + i, this.transform.position.z + p), instantiatedGridPoint.GetComponent<GridPoint>());
+                    GameObject instantiatedGridPoint = Instantiate(
+                        gridPoint,
+                        new Vector3(
+                            this.transform.position.x + i,
+                            this.transform.position.y,
+                            this.transform.position.z + p
+                        ),
+                        Quaternion.identity,
+                        this.gameObject.transform
+                    );
+
+                    Vector2Int key = new Vector2Int(
+                        Mathf.RoundToInt(this.transform.position.x + i),
+                        Mathf.RoundToInt(this.transform.position.z + p)
+                    );
+
+                    gridDictionary.Add(key, instantiatedGridPoint.GetComponent<GridPoint>());
                 }
             }
 
@@ -152,7 +167,6 @@ namespace ForeverFight.GameMechanics.Movement
                     Debug.Log("Nope");
                     break;
             }
-
         }
 
         public void EmptyGridPointList() //Removes Highlighted Sq's

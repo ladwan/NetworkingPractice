@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 public class UiManager : MonoBehaviour
@@ -10,6 +11,8 @@ public class UiManager : MonoBehaviour
     private GameObject startMenu = null;
     [SerializeField]
     private InputField usernameInput = null;
+    [SerializeField]
+    private TMP_Text versionText = null;
 
 
     public static UiManager Instance { get => instance; set => instance = value; }
@@ -31,6 +34,12 @@ public class UiManager : MonoBehaviour
             Destroy(this);
         }
     }
+
+    private void Start()
+    {
+        versionText.text = "v" + Application.version;
+    }
+
 
     public void ConnectToSever()
     {
