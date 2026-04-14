@@ -14,8 +14,8 @@ namespace ForeverFight.FlowControl
 {
     public class PlayerTurnManager : MonoBehaviour
     {
-        [SerializeField]
-        private GameObject playerUi = null;
+        //[SerializeField]
+        //private GameObject playerUi = null;
         [SerializeField]
         private RollDice rollDiceREF = null;
         [SerializeField]
@@ -78,7 +78,7 @@ namespace ForeverFight.FlowControl
 
         public void StartTurn()
         {
-            playerUi.SetActive(true);
+            //playerUi.SetActive(true);
             playerTimer.ResetTimer(playerTimer.MaxTime);
             playerTimerSubtext.text = "( Your Go ! )";
             IsLocalPlayersTurn = true;
@@ -102,7 +102,7 @@ namespace ForeverFight.FlowControl
             if (isLocalPlayersTurn)
             {
                 CleanUpUiAfterTurn.Instance.CleanUpUi();
-                playerUi.SetActive(false);
+                //playerUi.SetActive(false);
                 playerTimer.ResetTimer(playerTimer.MaxTime);
                 playerTimerSubtext.text = "( Opponents turn... )";
                 IsLocalPlayersTurn = false;

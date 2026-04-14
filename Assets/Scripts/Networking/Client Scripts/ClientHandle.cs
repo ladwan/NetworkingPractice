@@ -46,7 +46,6 @@ public class ClientHandle : MonoBehaviour
         string _otherPlayersCharName = _packet.ReadString();
         CharacterSelect.Instance.UpdateOtherPlayerSelection(_panelIndex, _playerIndex);
         LocalStoredNetworkData.locallyStoredOpponentsName = _otherPlayersCharName;
-        Debug.Log("~~[MATCH] Made it");
     }
 
     public static void ReceiveReadyUpSignal(Packet _packet)

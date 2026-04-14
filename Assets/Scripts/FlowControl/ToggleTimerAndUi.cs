@@ -10,7 +10,7 @@ namespace ForeverFight.FlowControl
     public class ToggleTimerAndUi : MonoBehaviour
     {
         [SerializeField]
-        private GameObject uiToToggle = null;
+        private List<GameObject> uiToToggle = null;
 
 
         private static ToggleTimerAndUi instance = null;
@@ -85,7 +85,11 @@ namespace ForeverFight.FlowControl
             }
 
             LocalStoredNetworkData.GetCountdownTimerScript().TellNetworkToToggleTimer(); //This is pause BOTH players timers
-            uiToToggle.SetActive(!uiToToggle.activeInHierarchy);
+
+            foreach (GameObject ui in uiToToggle)
+            {
+                ui.SetActive(!ui.activeInHierarchy);
+            }
         }
 
         private IEnumerator ListenForAnimEnd(Animator animatorREF, string desiredStateName, CharAbility.CameraShakeParameters parameters)

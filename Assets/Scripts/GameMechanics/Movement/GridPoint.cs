@@ -86,14 +86,12 @@ namespace ForeverFight.GameMechanics.Movement
 
         public void OnMouseEnterCustom()
         {
-            Debug.Log($"[GRID] Unique Tag: {uniqueTag}");
             if (dragMovementREF.ValidDrag)
             {
                 //Debug.Log($"[GRID] Drag is valid");
                 dragMovementREF.CurrentlyClickedGridPoint = this;
                 if (dragMovementREF.IsThisGridPointConnected())
                 {
-                    Debug.Log($"[GRID] This GP is connected");
                     //If this is a vaild connected grid point, then were going to move there, but first turn off the connection aura from the grid point we are currently on.
                     var currentLocationOfDragMover = Vector3ToVector2.ConvertToVector2(dragMovementREF.transform.position);
                     if (floorGridREF.GridDictionary.TryGetValue(currentLocationOfDragMover, out GridPoint previousGp))

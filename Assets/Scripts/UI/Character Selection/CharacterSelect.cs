@@ -90,6 +90,8 @@ namespace ForeverFight.Ui.CharacterSelection
 
         public void UpdateSelection(CharacterPanel selectedCharPanel)
         {
+            selectedCharPanel.PanelButton.interactable = false;
+
             if (selectedCharPanel != otherPlayerCurrentPanel)
             {
                 confirmButton.interactable = true;
@@ -108,11 +110,19 @@ namespace ForeverFight.Ui.CharacterSelection
                             if (characterPanels[i] != otherPlayerCurrentPanel)
                             {
                                 characterPanels[i].Parent.SetActive(false);
+                                if (characterPanels[i].Active)
+                                {
+                                    characterPanels[i].PanelButton.interactable = true;
+                                }
                             }
                         }
                         else
                         {
                             characterPanels[i].Parent.SetActive(false);
+                            if (characterPanels[i].Active)
+                            {
+                                characterPanels[i].PanelButton.interactable = true;
+                            }
                         }
                     }
                     else

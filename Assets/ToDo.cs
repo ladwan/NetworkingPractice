@@ -19,21 +19,21 @@ public class ToDo : MonoBehaviour
 
     ON DECK
 
-    gameplay is broken, fix the nulls
-    speedster quick punch is not disabling ult
-    turn off debug Die roll
-    speedsters distortion cube on mobile
-
     --------------------------------------------------------------------------
 
 
 
     BACK LOG:
 
-    1) Ui needs to standout from the background *polish, on hold for now*
+
     2) Camera sometimes gets stuck in the air *Couldnt replicate, may have been fixed when die became automatic*
     3) Move die roll anim to right side of screen and update anims 
-    4) Speedster ult seems to persist after attack, fix this
+    4) Way for users to report bugs
+    5) Write a shader that makes sure player can see through obj's that overlap the camera
+    6) Aspect ratio for foldable landscape is 3:4 not 4:3 
+    7) Ui needs to standout from the background *polish, on hold for now*
+    8) Keep track of disconnections that are likely linked to griefing, If > 3 || 4 in some span of time , time player out
+
 
 
     lock game to landscape views

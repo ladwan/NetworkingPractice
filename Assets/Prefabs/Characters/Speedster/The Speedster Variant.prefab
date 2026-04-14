@@ -151,7 +151,7 @@ MonoBehaviour:
   abilityName: Quick Punch
   abilityDescription: See options for ability details
   abilityDamage: 5
-  abilityCost: 0
+  abilityCost: 2
   abilityRadius: {fileID: 101378328}
   abilityIndex: -1
   animREF: {fileID: 0}

@@ -23,7 +23,7 @@ namespace ForeverFight.GameMechanics.Timers
 
 
         [NonSerialized]
-        private int maxTime = 30;
+        private int maxTime = 25;
         [NonSerialized]
         private Countdown instance;
         [NonSerialized]

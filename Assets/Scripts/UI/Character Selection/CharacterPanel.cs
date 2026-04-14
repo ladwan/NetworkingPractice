@@ -13,6 +13,8 @@ namespace ForeverFight.Ui.CharacterSelection
         [SerializeField]
         private GameObject highlight;
         [SerializeField]
+        private Button panelButton;
+        [SerializeField]
         private CharacterInfo info;
         [SerializeField]
         private Character.Identity identity;
@@ -20,6 +22,8 @@ namespace ForeverFight.Ui.CharacterSelection
         private Color player1Color = Color.red;
         [SerializeField]
         private Color player2Color = Color.blue;
+        [SerializeField]
+        private bool active = false;
 
 
         public Character.Identity Identity => identity;
@@ -46,5 +50,8 @@ namespace ForeverFight.Ui.CharacterSelection
         public Color Player1Color { get => player1Color; set => player1Color = value; }
 
         public Color Player2Color { get => player2Color; set => player2Color = value; }
+        public Button PanelButton  => panelButton;
+
+        public bool Active => active;
     }
 }

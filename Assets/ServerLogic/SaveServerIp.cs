@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class SaveServerIp : MonoBehaviour
 {
-    [SerializeField] private Client client;
     public TMP_InputField ipInputField;
 
     void Start()
@@ -12,11 +11,11 @@ public class SaveServerIp : MonoBehaviour
         if (ServerConfig.HasServerIP())
         {
             ipInputField.text = ServerConfig.GetServerIP();
-            client.serverIp = ipInputField.text;
+            Client.localClientInstance.serverIp = ipInputField.text;
         }
         else
         {
-            client.serverIp = "127.0.0.1";
+            Client.localClientInstance.serverIp = "127.0.0.1";
         }
     }
 
@@ -24,7 +23,7 @@ public class SaveServerIp : MonoBehaviour
     {
         string ip = ipInputField.text.Trim();
         ServerConfig.SaveServerIP(ip);
-        client.serverIp = ipInputField.text;
+        Client.localClientInstance.serverIp = ipInputField.text;
         Debug.Log("Saved IP: " + ip);
     }
 
@@ -32,7 +31,7 @@ public class SaveServerIp : MonoBehaviour
     {
         ServerConfig.ClearServerIP();
         ipInputField.text = "";
-        client.serverIp = "127.0.0.1";
+        Client.localClientInstance.serverIp = "127.0.0.1";
         Debug.Log("Cleared saved IP");
     }
 }

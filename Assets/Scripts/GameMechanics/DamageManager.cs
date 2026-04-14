@@ -17,7 +17,9 @@ namespace ForeverFight.GameMechanics
         [SerializeField]
         private Slider otherPlayerHealthBar = null;
         [SerializeField]
-        private HealthUpdateNumbersManager healthUpdateNumbersManagerREF = null;
+        private HealthUpdateNumbersManager localHealthUpdateNumbersManagerREF = null;
+        [SerializeField]
+        private HealthUpdateNumbersManager otherHealthUpdateNumbersManagerREF = null;
         [SerializeField]
         private GameLoopManager gameLoopManagerREF = null;
 
@@ -46,8 +48,8 @@ namespace ForeverFight.GameMechanics
         {
             otherPlayerHealthBar.value -= dmg;
             ClientSend.RequestToDamageOpponentsHealth(dmg);
-            healthUpdateNumbersManagerREF.Animator.SetTrigger("OpponentHealthEvent");
-            healthUpdateNumbersManagerREF.HealthDecreased(healthUpdateNumbersManagerREF.OpponentHealthUpdateNumber, dmg);
+            otherHealthUpdateNumbersManagerREF.Animator.SetTrigger("OpponentHealthEvent");
+            otherHealthUpdateNumbersManagerREF.HealthDecreased(otherHealthUpdateNumbersManagerREF.OpponentHealthUpdateNumber, dmg);
         }
 
         public void ReceiveDamage(int dmg)
@@ -57,8 +59,8 @@ namespace ForeverFight.GameMechanics
             {
                 health.value -= dmg;
             }
-            healthUpdateNumbersManagerREF.Animator.SetTrigger("LocalPlayerHealthEvent");
-            healthUpdateNumbersManagerREF.HealthDecreased(healthUpdateNumbersManagerREF.LocalPlayerHealthUpdateNumber, dmg);
+            localHealthUpdateNumbersManagerREF.Animator.SetTrigger("LocalPlayerHealthEvent");
+            localHealthUpdateNumbersManagerREF.HealthDecreased(localHealthUpdateNumbersManagerREF.LocalPlayerHealthUpdateNumber, dmg);
 
             if (health.value <= 0)
             {
