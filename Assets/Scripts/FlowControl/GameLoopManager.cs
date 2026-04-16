@@ -31,12 +31,14 @@ namespace ForeverFight.FlowControl
         public void ShowWinnerScreen()
         {
             winnerScreen.SetActive(true);
+            PlayerPrefHelper.IncrementPlayerPrefValue(Constants.WinTextKey);
             ReturnToLobby();
         }
 
         public void ShowLoserScreen()
         {
             loserScreen.SetActive(true);
+            PlayerPrefHelper.IncrementPlayerPrefValue(Constants.LossTextKey);
             ReturnToLobby();
         }
 

@@ -45,6 +45,7 @@ public class ToDo : MonoBehaviour
     
     SUGGESTIONS:
     
+    Areas of interest that benifit the players to draw them into fighting more (cheek ripper char otw)
     Do we want the confirm buttons? or would the gameplay be smoother without them?
     Make turn times user configureable. Maybe they can play a match where one user has a handicap
     animated ability buttons
