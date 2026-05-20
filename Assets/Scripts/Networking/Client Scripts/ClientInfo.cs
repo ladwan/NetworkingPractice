@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +7,17 @@ public static class ClientInfo
 {
     public static int playerNumber = 0;
 
-    public static int totalPlayersConnected = 0;
+    private static int _totalPlayersConnected = 0;
+    public static event Action<int> OnTotalPlayersConnectedChanged;
+    public static int totalPlayersConnected
+    {
+        get => _totalPlayersConnected;
+        set
+        {
+            _totalPlayersConnected = value;
+            OnTotalPlayersConnectedChanged?.Invoke(_totalPlayersConnected);
+        }
+    }
 
     public static int matchIndex = -1;
 

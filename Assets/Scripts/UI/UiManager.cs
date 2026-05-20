@@ -1,5 +1,8 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
+using ForeverFight.GameMechanics.Timers;
+using ForeverFight.HelperScripts;
+using Networking;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,9 +13,17 @@ public class UiManager : MonoBehaviour
     [SerializeField]
     private GameObject startMenu = null;
     [SerializeField]
+    private GameObject lobbyPanel = null;
+    [SerializeField]
     private InputField usernameInput = null;
     [SerializeField]
     private TMP_Text versionText = null;
+    [SerializeField]
+    private Countdown lobbyCountdown = null;
+    [SerializeField]
+    private Text lobbyMatchStartCountdownText = null;
+    [SerializeField]
+    private Text lobbyNumOfPlayerText = null;
 
 
     public static UiManager Instance { get => instance; set => instance = value; }
@@ -30,7 +41,7 @@ public class UiManager : MonoBehaviour
         }
         else if (instance != this)
         {
-            Debug.Log("Instance already exsists, destroying object!");
+            Debug.Log("Instance already exists, destroying object!");
             Destroy(this);
         }
     }
@@ -38,6 +49,35 @@ public class UiManager : MonoBehaviour
     private void Start()
     {
         versionText.text = "v" + Application.version;
+        UpdateUiIfAlreadyConnected();
+        InitLobbyCountdownIfNeeded();
+    }
+
+    private void InitLobbyCountdownIfNeeded()
+    {
+        ScenePersistentNetworkUiConnectionManager networkUi = ScenePersistentNetworkUiConnectionManager.Instance;
+        if (!SafetyNet.IsValid(networkUi, "ScenePersistentNetworkUiConnectionManager in UiManager.cs")) return;
+
+        PlayerCountListener playerCountListener = networkUi.PlayerCountListener;
+        if (!SafetyNet.IsValid(playerCountListener, "PlayerCountListener in UiManager.cs")) return;
+
+        if (playerCountListener.LobbyStartMatchTimer == null)
+        {
+            if (!SafetyNet.IsValid(lobbyCountdown, "lobbyCountdown in UiManager.cs")) return;
+            playerCountListener.LobbyStartMatchTimer = lobbyCountdown;
+        }
+
+        if (playerCountListener.LobbyMatchStartCountdown == null)
+        {
+            if (!SafetyNet.IsValid(lobbyMatchStartCountdownText, "lobbyMatchStartCountdownText in UiManager.cs")) return;
+            playerCountListener.LobbyMatchStartCountdown = lobbyMatchStartCountdownText;
+        }
+
+        if (playerCountListener.LobbyNumOfPlayerText == null)
+        {
+            if (!SafetyNet.IsValid(lobbyNumOfPlayerText, "lobbyNumOfPlayerText in UiManager.cs")) return;
+            playerCountListener.LobbyNumOfPlayerText = lobbyNumOfPlayerText;
+        }
     }
 
 
@@ -47,5 +87,16 @@ public class UiManager : MonoBehaviour
         usernameInput.interactable = false;
         ClientInfo.username = usernameInput.text;
         Client.localClientInstance.ConnectToServer();
+    }
+
+    public void UpdateUiIfAlreadyConnected()
+    {
+        if (!Client.localClientInstance.IsConnected)
+        {
+            return;
+        }
+
+        startMenu.SetActive(false);
+        lobbyPanel.SetActive(true);
     }
 }

@@ -87,7 +87,7 @@ MonoBehaviour:
   abilityName: Momentum
   abilityDescription: See options for ability details
   abilityDamage: 0
-  abilityCost: 4
+  abilityCost: 3
   abilityRadius: {fileID: 1093007782179111487}
   abilityIndex: -1
   animREF: {fileID: 0}
@@ -96,8 +96,8 @@ MonoBehaviour:
   vfx: {fileID: 0}
   statusActive: 0
   currentStatusEffectType: 1
-  maxAbilityDuration: 3
-  currentAbilityDuration: 3
+  maxAbilityDuration: 4
+  currentAbilityDuration: 4
   storedMomentum: 0
   multiplier: 2
   product: 0
@@ -150,7 +150,7 @@ MonoBehaviour:
   owningCharacter: {fileID: 7115587971985286945}
   abilityName: Quick Punch
   abilityDescription: See options for ability details
-  abilityDamage: 5
+  abilityDamage: 10
   abilityCost: 2
   abilityRadius: {fileID: 101378328}
   abilityIndex: -1
@@ -211,7 +211,7 @@ MonoBehaviour:
   abilityName: Haste
   abilityDescription: See options for ability details
   abilityDamage: 0
-  abilityCost: 7
+  abilityCost: 6
   abilityRadius: {fileID: 1093007782179111487}
   abilityIndex: -1
   animREF: {fileID: 0}

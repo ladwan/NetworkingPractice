@@ -11,14 +11,20 @@ public class Client : MonoBehaviour
     public static int dataBufferSize = 4096;
 
     //public string serverIp = "18.212.101.78";
-    public string serverIp = "";
+    public string serverIp = "foreverfight.nogoodgames.io";
     public int port = 32887;
     public int localClientId = 0;
     public TCP tcp;
 
     private bool isConnected = false;
+    public bool IsConnected => isConnected;
+    private Action<bool> onConnectionStatusChanged = null;
     private delegate void PacketHandler(Packet _packet);
     private static Dictionary<int, PacketHandler> packetHandlers;
+
+    //public Action<bool> OnConnectionStatusChanged => onConnectionStatusChanged;
+
+    public Action<bool> OnConnectionStatusChanged { get => onConnectionStatusChanged; set => onConnectionStatusChanged = value; }
 
     protected void OnApplicationQuit()
     {
@@ -47,24 +53,38 @@ public class Client : MonoBehaviour
     public void ConnectToServer()
     {
         InitializeClientData();
-        isConnected = true;
+        UpdateConnectionStatus(true);
         tcp.Connect();
     }
 
     public void HandleConnectionLost()
     {
+        //Debug.Log($"[Disconnect 5/6] Client.HandleConnectionLost entry. isConnected={isConnected}");
         if (!isConnected)
+        {
+            //Debug.Log("[Disconnect 5/6 EARLY RETURN] isConnected is already false — skipping");
             return;
+        }
 
-        Debug.LogWarning("Connection to server lost!");
         isConnected = false;
 
+        Debug.LogWarning("Connection to server lost!");
+
         try { tcp?.socket?.Close(); } catch { }
+        //Debug.Log("[Disconnect 5a/6] TCP socket closed");
 
         ThreadManager.ExecuteOnMainThread(() =>
         {
+            //Debug.Log("[Disconnect 6/6] ThreadManager callback — invoking OnConnectionStatusChanged then ReturnToLobby");
+            onConnectionStatusChanged?.Invoke(false);
             HandlePlayerDisconnection.ReturnToLobby();
         });
+    }
+
+    private void UpdateConnectionStatus(bool status)
+    {
+        isConnected = status;
+        onConnectionStatusChanged?.Invoke(status);
     }
 
     public class TCP
@@ -172,7 +192,7 @@ public class Client : MonoBehaviour
                 int length = BitConverter.ToInt32(buffer, 0);
                 BeginReceiveBody(length);
             }
-            catch
+            catch (Exception)
             {
                 localClientInstance.HandleConnectionLost();
             }
@@ -219,7 +239,7 @@ public class Client : MonoBehaviour
 
                 BeginReceiveHeader();
             }
-            catch
+            catch (Exception)
             {
                 localClientInstance.HandleConnectionLost();
             }
@@ -259,6 +279,7 @@ public class Client : MonoBehaviour
 
     public void Disconnect()
     {
+        //Debug.Log("[Disconnect 4/6] Client.Disconnect");
         HandleConnectionLost();
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 using ForeverFight.Ui;
 using ForeverFight.Networking;
 using ForeverFight.Interactable.Characters;
+using UnityEngine.UI;
 
 public class ApReferenceLists : MonoBehaviour
 {
@@ -143,5 +144,18 @@ public class ApReferenceLists : MonoBehaviour
 
         Debug.LogError("Value to update was abnormal");
         return 0;
+    }
+
+
+    public void ColorAp(Color color, int amount)
+    {
+        for (int i = 0; i < amount && amount < apLights.Count; i++)
+        {
+            var image = apLights[i].gameObject.GetComponent<Image>();
+            if (image != null)
+            {
+                image.color = color;
+            }
+        }
     }
 }

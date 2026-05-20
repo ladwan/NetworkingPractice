@@ -36,6 +36,9 @@ namespace ForeverFight.FlowControl
         private Action onTurnStart = null;
         [NonSerialized]
         private Animator localCharacterAnimator = null;
+        [NonSerialized] private int turnsUntilOverdrive = 5;
+        [NonSerialized] private int overdriveAp = -1;
+        [NonSerialized] private bool doOnce = false;
 
 
         public static PlayerTurnManager Instance { get => instance; set => instance = value; }
@@ -55,6 +58,8 @@ namespace ForeverFight.FlowControl
         }
 
         public Action<bool> IsLocalPlayersTurnAction { get => isLocalPlayersTurnAction; set => isLocalPlayersTurnAction = value; }
+        public int TurnsUntilOverdrive => turnsUntilOverdrive;
+        public int OverdriveAp  => overdriveAp;
 
 
         protected void Awake()
@@ -91,6 +96,13 @@ namespace ForeverFight.FlowControl
             if (rollDiceREF.SixSidedDieAnimator.GetCurrentAnimatorStateInfo(0).IsName("Despawn"))
             {
                 rollDiceREF.SixSidedDieAnimator.SetTrigger("ResetDie");
+            }
+
+            if (turnsUntilOverdrive < 0)
+            {
+                overdriveAp = Mathf.Abs(turnsUntilOverdrive);
+
+                ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.MainApLists, overdriveAp);
             }
 
             onTurnStart?.Invoke();
@@ -138,6 +150,8 @@ namespace ForeverFight.FlowControl
                     // LocalStoredNetworkData.localPlayerSelectAbilityToCast.ToggleAbilityRadius(false);
                 }
 
+                UpdateTurnsUntilOverdrive();
+
                 onTurnEnd?.Invoke();
                 IsLocalPlayersTurn = false;
                 ClientSend.EndTurn();
@@ -153,6 +167,33 @@ namespace ForeverFight.FlowControl
                 EndTurn(false);
 
                 transform.gameObject.AddComponent<BasePlayerLookAt>();
+            }
+        }
+
+        private void UpdateTurnsUntilOverdrive()
+        {
+            if (ClientInfo.playerNumber == 2 && doOnce == false)
+            {
+                doOnce = true;
+                return;
+            }
+
+            turnsUntilOverdrive--;
+
+            if (turnsUntilOverdrive < -9)
+            {
+                turnsUntilOverdrive = -9;
+            }
+
+            if (turnsUntilOverdrive == 0)
+            {
+                turnsUntilOverdrive = -1;
+            }
+
+
+            if (turnsUntilOverdrive < 0)
+            {
+                overdriveAp = Mathf.Abs(turnsUntilOverdrive);
             }
         }
     }

@@ -1742,7 +1742,7 @@ MonoBehaviour:
   abilityName: Ire
   abilityDescription: See options for ability details
   abilityDamage: 0
-  abilityCost: 4
+  abilityCost: 6
   abilityRadius: {fileID: 8789733998745498740}
   abilityIndex: -1
   animREF: {fileID: 0}
@@ -1751,8 +1751,8 @@ MonoBehaviour:
   vfx: {fileID: 0}
   statusActive: 0
   currentStatusEffectType: 5
-  maxAbilityDuration: 4
-  currentAbilityDuration: 4
+  maxAbilityDuration: 3
+  currentAbilityDuration: 3
   groundPoundREF: {fileID: 155684929829131791}
   haymakerREF: {fileID: 3262705588139688997}
   ireDisplayUi: {fileID: 5730032930054460824, guid: 77211838ef4b5cf43905d7e1356b29d3, type: 3}
@@ -25701,7 +25701,6 @@ MonoBehaviour:
   charIdentity: 1
   characterModel: {fileID: 1527667676067676478}
   characterIcon: {fileID: 0}
-  characterCamera: {fileID: 8475425779402961721}
   characterName: 
   health: 0
   rollAlotment: 0

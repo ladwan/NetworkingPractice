@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Main Menu.unity
+    guid: 018b14a8bbda8264c832cffdb593766d
+  - enabled: 1
     path: Assets/Scenes/Lobby.unity
     guid: fb618eca59a57c14fa28d15fc9f65010
   - enabled: 1
@@ -14,4 +17,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/CombatScene.unity
     guid: 4a401b1f3f8fdd2419070265f908d83a
+  - enabled: 1
+    path: Assets/Scenes/How To Play.unity
+    guid: bccf620b46fd1d846a7a3bff8391be48
+  - enabled: 1
+    path: Assets/Scenes/Fighters Menu.unity
+    guid: d08e080b7f4da994c886a3b1851a8e0e
   m_configObjects: {}
