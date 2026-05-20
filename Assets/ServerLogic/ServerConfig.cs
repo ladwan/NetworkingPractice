@@ -12,6 +12,7 @@ public static class ServerConfig
 
     public static string GetServerIP()
     {
+        //return PlayerPrefs.GetString(ServerIpKey, "foreverfight.nogoodgames.io");
         return PlayerPrefs.GetString(ServerIpKey, "127.0.0.1");
     }
 

@@ -11,7 +11,7 @@ public class DoNotDestroy : MonoBehaviour
     {
         if (instance != null)
         {
-            Destroy(this);
+            Destroy(this.transform.gameObject);
             return;
         }
 

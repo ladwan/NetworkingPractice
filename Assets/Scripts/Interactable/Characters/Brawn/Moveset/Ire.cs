@@ -98,7 +98,7 @@ namespace ForeverFight.Interactable.Abilities
             if (StatusActive)
             {
                 groundPoundREF.SetAbilityRadius(increasedGroundPoundRadius);
-                groundPoundREF.AbilityDamage = 20;
+                groundPoundREF.AbilityDamage = 15;
                 haymakerREF.AbilityDamage = 25;
             }
         }

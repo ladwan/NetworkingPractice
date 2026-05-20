@@ -18,14 +18,19 @@ public class ToDo : MonoBehaviour
     ---------------------------------------------------------------------------
 
     ON DECK
-
+    Add back button to how to play scene
+    make prefab to typed tutorial content
+    
+    fix connection icon, its stretched make it square
+    add w/l to profile scene
+    do something with the settings button
     --------------------------------------------------------------------------
 
 
 
     BACK LOG:
 
-
+    1) Info button in combat scene doesnt work. Make it appear when its not your turn
     2) Camera sometimes gets stuck in the air *Couldnt replicate, may have been fixed when die became automatic*
     3) Move die roll anim to right side of screen and update anims 
     4) Way for users to report bugs
@@ -33,8 +38,9 @@ public class ToDo : MonoBehaviour
     6) Aspect ratio for foldable landscape is 3:4 not 4:3 
     7) Ui needs to standout from the background *polish, on hold for now*
     8) Keep track of disconnections that are likely linked to griefing, If > 3 || 4 in some span of time , time player out
-
-
+    9) Implement overdrive AP system or some equivent to speed up the game, or make it more action packed
+    10) Create a way to visualize how far away the opponent is percisley 
+    11) Interactive tutorial walkthrough for all basic mechanics
 
     lock game to landscape views
 
@@ -66,5 +72,49 @@ public class ToDo : MonoBehaviour
     drag/hold interactions
     raycast through overlapped collisions
 
+
+        Passive : 
+        ---------------------------
+
+        69 health
+
+            
+        Passive bonuses increase based on number of AP at start of turn. More damage for fire, Evasion for wind , Healing for Nat
+
+        Fire: Flame trail
+                where you move leaves fire for 2 turns that damages enemies
+
+        Wind: Extra movements per turn like the speedster
+                if you run through fire, it becomes "Fanned" and deals enhanced damage
+                  (potentially extra evasion?)
+
+        Nature: Healing over time
+                    5+ health each turn + amount of AP you have
+                    
+        
+        ---------------------------
+        1st Ability :
+        ---------------------------
+        Fire: Fireball
+                    just deals damage, maybe add DoT debufff
+
+        Wind: Torando
+                Push Enemies away and enhance all fire in range (make this cost a good amount like an ult)
+
+        Nature: Hibernation (extra healing & AP Regen at the cost of movement)
+                    Double healing and gain one AP at the end of turn
+        
+        ---------------------------    
+        2nd Ability :
+        ---------------------------
+
+        Stance switch: cost 1
+
+        ---------------------------    
+        Ultimate Ability : 
+        ---------------------------
+
+        Stance switch: cost 1
+        
     */
 }

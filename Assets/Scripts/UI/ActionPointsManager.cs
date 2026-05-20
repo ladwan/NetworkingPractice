@@ -1,9 +1,11 @@
+using ForeverFight.FlowControl;
+using ForeverFight.GameMechanics.Movement;
+using ForeverFight.Networking;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ForeverFight.Networking;
-using ForeverFight.GameMechanics.Movement;
+using static ApReferenceLists;
 
 
 namespace ForeverFight.Ui
@@ -75,6 +77,16 @@ namespace ForeverFight.Ui
                     referenceLists.StopBlink();
                     referenceLists.ApLightsToBeBlinked.Clear();
                 }
+            }
+
+            if (referenceLists.currentApDisplayType != apDisplayTypes.main)
+            {
+                return;
+            }
+
+            if (PlayerTurnManager.Instance?.OverdriveAp > 0)
+            {
+                referenceLists.ColorAp(Color.red, PlayerTurnManager.Instance.OverdriveAp);
             }
         }
 

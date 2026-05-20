@@ -90,6 +90,7 @@ namespace ForeverFight.Ui.CharacterSelection
 
         public void UpdateSelection(CharacterPanel selectedCharPanel)
         {
+            //To prevent double clicking
             selectedCharPanel.PanelButton.interactable = false;
 
             if (selectedCharPanel != otherPlayerCurrentPanel)
@@ -141,7 +142,6 @@ namespace ForeverFight.Ui.CharacterSelection
                         ClientSend.SendSelectionData(i, ClientInfo.playerNumber, characterPanels[i].Info.CharName);
                     }
                 }
-
             }
         }
 
