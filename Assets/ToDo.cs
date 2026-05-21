@@ -115,6 +115,5 @@ public class ToDo : MonoBehaviour
         ---------------------------
 
         Stance switch: cost 1
-        
     */
 }

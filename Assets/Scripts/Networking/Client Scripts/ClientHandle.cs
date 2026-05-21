@@ -194,7 +194,10 @@ public class ClientHandle : MonoBehaviour
         int _abilityIndex = _packet.ReadInt();
         int _methodIndex = _packet.ReadInt();
 
-        LocalStoredNetworkData.GetOpponentCharacter().Moveset[_abilityIndex].NetworkedMethodCall(_methodIndex);
+        var opponent = LocalStoredNetworkData.GetOpponentCharacter();
+        if (!SafetyNet.IsValid(opponent, "Opponent was null ClientHandle ReceiveNetworkedMethodIndex")) return;
+
+        opponent.Moveset[_abilityIndex].NetworkedMethodCall(_methodIndex);
     }
 
     public static void ClientReceiveStoredMomentumValue(Packet _packet)

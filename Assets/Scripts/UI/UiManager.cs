@@ -17,8 +17,6 @@ public class UiManager : MonoBehaviour
     [SerializeField]
     private InputField usernameInput = null;
     [SerializeField]
-    private TMP_Text versionText = null;
-    [SerializeField]
     private Countdown lobbyCountdown = null;
     [SerializeField]
     private Text lobbyMatchStartCountdownText = null;
@@ -48,7 +46,6 @@ public class UiManager : MonoBehaviour
 
     private void Start()
     {
-        versionText.text = "v" + Application.version;
         UpdateUiIfAlreadyConnected();
         InitLobbyCountdownIfNeeded();
     }
