@@ -58,6 +58,7 @@ namespace ForeverFight.Interactable.Characters
             CharacterName = "The Brawn";
             Health = 150;
             RollAlotment = 3;
+            AssignDefaultStance();
         }
 
 

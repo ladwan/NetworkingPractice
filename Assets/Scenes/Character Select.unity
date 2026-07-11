@@ -1199,7 +1199,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneToLoad: CombatScene
-  sceneLoaderREF: {fileID: 1690847862}
 --- !u!4 &285153816
 Transform:
   m_ObjectHideFlags: 0
@@ -4262,19 +4261,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4055043081801924654, guid: cc0358028bff8c542849324273c590f5, type: 3}
       propertyPath: m_Color.b
-      value: 0.2830189
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4055043081801924654, guid: cc0358028bff8c542849324273c590f5, type: 3}
       propertyPath: m_Color.g
-      value: 0.2830189
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4055043081801924654, guid: cc0358028bff8c542849324273c590f5, type: 3}
       propertyPath: m_Color.r
-      value: 0.2830189
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4055043081823818789, guid: cc0358028bff8c542849324273c590f5, type: 3}
       propertyPath: m_Interactable
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4055043081823818789, guid: cc0358028bff8c542849324273c590f5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -4458,15 +4457,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5829409213435848779, guid: cc0358028bff8c542849324273c590f5, type: 3}
       propertyPath: charName
-      value: The Mage
+      value: The Elemental
+      objectReference: {fileID: 0}
+    - target: {fileID: 5829409213435848779, guid: cc0358028bff8c542849324273c590f5, type: 3}
+      propertyPath: identity
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5829409213435848779, guid: cc0358028bff8c542849324273c590f5, type: 3}
       propertyPath: abilityDescription
       value: 
       objectReference: {fileID: 1092397736}
+    - target: {fileID: 5829409213435848779, guid: cc0358028bff8c542849324273c590f5, type: 3}
+      propertyPath: charIdentityManagerREF
+      value: 
+      objectReference: {fileID: 546255844}
+    - target: {fileID: 6223408165618010248, guid: cc0358028bff8c542849324273c590f5, type: 3}
+      propertyPath: active
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6223408165618010248, guid: cc0358028bff8c542849324273c590f5, type: 3}
+      propertyPath: identity
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6223408165618010248, guid: cc0358028bff8c542849324273c590f5, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4485,7 +4500,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 1092397732}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 01b89e8a9ac275547bdfcd370970668d, type: 3}
   m_Name: 
@@ -6275,7 +6290,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1485406344
 RectTransform:
   m_ObjectHideFlags: 0

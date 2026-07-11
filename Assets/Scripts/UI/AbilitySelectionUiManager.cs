@@ -152,7 +152,8 @@ namespace ForeverFight.Ui
         {
             if (abilityValue < 3 && abilityValue >= 0)
             {
-                charReference.Moveset[abilityValue].CastAbility();
+                //charReference.Moveset[abilityValue].CastAbility();
+                charReference.CurrentStance.StanceMoveset[abilityValue].CastAbility();
                 ActionPointsManager.Instance.ResetApUsage(ActionPointsManager.Instance.MainApLists);
                 ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.MainApLists, -charReference.Moveset[abilityValue].AbilityCost);
             }

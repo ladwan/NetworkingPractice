@@ -22,6 +22,8 @@ namespace ForeverFight.Interactable.Characters
         [SerializeField] private float moveSpeed = 1.0f;
         [SerializeField] private float moveSpeedHelper = 1.0f;
         [SerializeField] private CharacterAnimationReferences characterAnimationReferences = null;
+        [SerializeField] private CharStance currentStance = null;
+        [SerializeField] private List<CharStance>  stances = new List<CharStance>();
         [SerializeField] private List<CharAbility> moveset = new List<CharAbility>();
         [SerializeField] private List<GameObject> customUiElements = new List<GameObject>();
         [SerializeField] private GameObject oneSqRadius = null;
@@ -84,12 +86,26 @@ namespace ForeverFight.Interactable.Characters
         public List<MovementAnimationCurves> MovementAnimCurves  => movementAnimCurves;
 
         public float MoveSpeedHelper { get => moveSpeedHelper; set => moveSpeedHelper = value; }
+        
+        public CharStance CurrentStance
+        {
+            get => currentStance;
+            set => currentStance = value;
+        }
+        
+        public List<CharStance> Stances => stances;
 
+        protected void AssignDefaultStance()
+        {
+            currentStance = stances[0];
+        }
+        
         public enum Identity
         {
             NoIdentity,
             Brawn,
             Speedster,
+            Elemental,
         }
 
         public struct Abilty
