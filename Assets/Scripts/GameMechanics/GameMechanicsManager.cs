@@ -46,13 +46,10 @@ namespace ForeverFight.GameMechanics
             {
 
                 return spawnOpponentScriptREF.SpawnOpponent(StringToCharIdentity.IdentifyOponent(opponentsName));
-
             }
-            else
-            {
-                Debug.Log("There was no name found for opponent, so they could not be spawned ! ");
-                return null;
-            }
+            
+            Debug.LogError("There was no name found for opponent, so they could not be spawned ! ");
+            return null;
         }
 
         public void UpdateHealthSliderValues(Character selectedChar, Slider healthSlider)

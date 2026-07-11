@@ -26,6 +26,7 @@ namespace ForeverFight.Interactable.Characters
             CharacterName = "The Speedster";
             Health = 100;
             RollAlotment = 5;
+            AssignDefaultStance();
 
             if (FloorGrid.Instance)
             {

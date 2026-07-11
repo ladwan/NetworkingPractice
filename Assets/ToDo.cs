@@ -38,9 +38,8 @@ public class ToDo : MonoBehaviour
     6) Aspect ratio for foldable landscape is 3:4 not 4:3 
     7) Ui needs to standout from the background *polish, on hold for now*
     8) Keep track of disconnections that are likely linked to griefing, If > 3 || 4 in some span of time , time player out
-    9) Implement overdrive AP system or some equivent to speed up the game, or make it more action packed
-    10) Create a way to visualize how far away the opponent is percisley 
-    11) Interactive tutorial walkthrough for all basic mechanics
+    9) Create a way to visualize how far away the opponent is percisley 
+    10) Interactive tutorial walkthrough for all basic mechanics
 
     lock game to landscape views
 

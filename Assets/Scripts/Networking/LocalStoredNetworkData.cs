@@ -6,6 +6,7 @@ using ForeverFight.Interactable.Characters;
 using System.Threading.Tasks;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace ForeverFight.Networking
 {
@@ -50,13 +51,17 @@ namespace ForeverFight.Networking
             }
             else
             {
-                Debug.LogWarning("Callback was null!");
+                Debug.LogError("Callback was null!");
             }
         }
 
+        private static readonly Dictionary<string, Task> NullCheckTimeoutTasks = new Dictionary<string, Task>();
+
+        private static int nullCheckResetGeneration;
+
         public static Character GetLocalCharacter()
         {
-            if (localPlayerCharacter)
+            if (localPlayerCharacter is not null)
             {
                 if (localPlayerCharacterAnimationReferences is null)
                 {
@@ -65,10 +70,30 @@ namespace ForeverFight.Networking
 
                 return localPlayerCharacter;
             }
-            else
+
+            StartNullCheckTimeout(() => localPlayerCharacter is null, "No Local player could be found");
+            return null;
+        }
+
+        private static void StartNullCheckTimeout(Func<bool> isStillNull, string errorMessage)
+        {
+            if (NullCheckTimeoutTasks.TryGetValue(errorMessage, out var runningTask) && !runningTask.IsCompleted)
             {
-                Debug.LogWarning("No Local player could be found");
-                return null;
+                return;
+            }
+
+            NullCheckTimeoutTasks[errorMessage] = LogErrorIfStillNull(isStillNull, errorMessage);
+        }
+
+        private static async Task LogErrorIfStillNull(Func<bool> isStillNull, string errorMessage)
+        {
+            var generationWhenStarted = nullCheckResetGeneration;
+
+            await Task.Delay(2000);
+
+            if (generationWhenStarted == nullCheckResetGeneration && isStillNull())
+            {
+                Debug.LogError(errorMessage);
             }
         }
 
@@ -78,11 +103,9 @@ namespace ForeverFight.Networking
             {
                 return localPlayerCharacterAnimationReferences;
             }
-            else
-            {
-                Debug.LogWarning("No localPlayerCharacterAnimationReferences could be found, searching again in a momement..");
-                return null;
-            }
+
+            StartNullCheckTimeout(() => !localPlayerCharacterAnimationReferences, "No localPlayerCharacterAnimationReferences could be found");
+            return null;
         }
 
         public static Character GetOpponentCharacter()
@@ -91,11 +114,9 @@ namespace ForeverFight.Networking
             {
                 return opponentCharacter;
             }
-            else
-            {
-                Debug.LogWarning("No Opponent player could be found");
-                return null;
-            }
+
+            StartNullCheckTimeout(() => !opponentCharacter, "No Opponent player could be found");
+            return null;
         }
 
         public static Slider GetLocalHealthSlider()
@@ -104,11 +125,9 @@ namespace ForeverFight.Networking
             {
                 return localPlayerHealthSlider;
             }
-            else
-            {
-                Debug.LogWarning("No local player health slider could be found");
-                return null;
-            }
+
+            StartNullCheckTimeout(() => !localPlayerHealthSlider, "No local player health slider could be found");
+            return null;
         }
 
         public static Slider GetOpponentHealthSlider()
@@ -117,11 +136,9 @@ namespace ForeverFight.Networking
             {
                 return opponentHealthSlider;
             }
-            else
-            {
-                Debug.LogWarning("No opponent health slider could be found");
-                return null;
-            }
+
+            StartNullCheckTimeout(() => !opponentHealthSlider, "No opponent health slider could be found");
+            return null;
         }
 
         public static Countdown GetCountdownTimerScript()
@@ -130,11 +147,9 @@ namespace ForeverFight.Networking
             {
                 return countdownTimerScript;
             }
-            else
-            {
-                Debug.LogWarning("No Count Down Script could be found");
-                return null;
-            }
+
+            StartNullCheckTimeout(() => !countdownTimerScript, "No Count Down Script could be found");
+            return null;
         }
 
         public static void Reset()
@@ -162,6 +177,9 @@ namespace ForeverFight.Networking
             countdownTimerScript = null;
 
             squaresMovedThisInstanceOfMovement = 0;
+
+            nullCheckResetGeneration++;
+            NullCheckTimeoutTasks.Clear();
 
             ClientInfo.Reset();
         }

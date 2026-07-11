@@ -1,0 +1,74 @@
+HOW TO ADD A NEW CHARACTER
+(Based on everywhere "The Elemental" was touched, July 2026. Line numbers are from that change set and will drift over time — search for the Elemental entries as a reference example.)
+
+IMPORTANT: Four things must all agree for spawning to work:
+the display-name string ("The Elemental"), the Character.Identity enum value,
+the index in ListOfAllChars.asset, and the index used in DisplaySelectedChar.
+Spawn flow: opponent's char name arrives over the network as a string ->
+StringToCharIdentity.IdentifyOponent() -> GameMechanicsManager.SpawnOpponentCharacter()
+-> SpawnOpponentScript.SpawnOpponent() -> DisplaySelectedChar.myCharacterDictionary lookup
+-> Instantiate(prefab from ListOfAllChars).
+
+--- NEW FILES TO CREATE ---
+
+* Character script: Assets/Scripts/Interactable/Characters/<Name>/<Name>.cs
+  - Subclass of Character (see Elemental.cs lines 11-15 as the template). Must set:
+    CharIdentity = Identity.<Name>;
+    CharacterName = "The <Name>";   <- must EXACTLY match the string used everywhere else
+    Health, RollAlotment, and call AssignDefaultStance();
+
+* Character prefab: Assets/Prefabs/Characters/<Name>/The <Name> Variant.prefab
+  - Prefab variant with the new character script attached (mirrors
+    "Assets/Prefabs/Characters/Elemental/The Elemental Variant.prefab").
+  - Populate its Stances list so AssignDefaultStance() (stances[0]) doesn't throw.
+
+--- EXISTING SCRIPTS TO EDIT ---
+
+* Assets/Scripts/Interactable/Characters/Character.cs — line 108
+  - Add the new entry to the Identity enum (e.g. "Elemental,").
+    Note the enum order: NoIdentity=0, Brawn=1, Speedster=2, Elemental=3.
+    The scene's char-select button stores this as a raw int, so never reorder existing entries.
+
+* Assets/Scripts/FlowControl/StringToCharIdentity.cs — lines 23-24
+  - Add a switch case mapping the display name to the enum:
+    case "The Elemental": return Character.Identity.Elemental;
+  - This is how the OPPONENT gets identified from the name sent over the network.
+    Miss this and the opponent spawns as NoIdentity (spawn fails).
+
+* Assets/Scripts/ScriptableObjects/DisplaySelectedChar.cs — line 27
+  - Register the identity in the dictionary:
+    myCharacterDictionary.Add(Character.Identity.Elemental, characterScriptableObjRef.allCharacters[2]);
+  - The [index] must match the prefab's position in ListOfAllChars.asset (below).
+
+--- ASSETS TO EDIT (in the Unity Inspector) ---
+
+* Assets/Scripts/ScriptableObjects/ListOfAllChars.asset — line 19 (allCharacters list)
+  - Add the new character prefab variant to the "All Characters" list.
+  - Its list index must match the index used in DisplaySelectedChar.cs above.
+
+--- SCENES TO EDIT ---
+
+* Assets/Scenes/Character Select.unity — the char-select slot prefab instance
+  (overrides around lines 4457-4500; "value: The Elemental" is at line 4460)
+  - Set charName on the slot to the exact display name ("The Elemental").
+  - Set identity to the new enum's int value (lines 4463 / 4479: identity = 3).
+  - Set the button Interactable = true and restore its color to white
+    (locked/unreleased chars are greyed out + non-interactable).
+  - Wire charIdentityManagerREF and abilityDescription references.
+  - Enable the slot's CheckPlayerCharacter component (m_Enabled = 1).
+
+* Assets/Scenes/CombatScene.unity — around line 45514
+  - A CharacterAnimationReferences component was added to the "Environment" object
+    as part of the Elemental change, but its fields (characterAnimator,
+    characterCamera, etc.) are still unwired ({fileID: 0}) — double-check whether
+    this was intentional and wire it up if the new char needs it.
+
+--- RELATED (stance system, done alongside Elemental — only needed once) ---
+
+* Assets/Prefabs/Character Holder.prefab — a "Stances" child GameObject was added
+  (holder for stance UI/objects). New stance objects for a character likely go here.
+* Brawn.cs line 61 / Speedster.cs got AssignDefaultStance() added to match —
+  every Character subclass must call it, including new ones.
+* AbilitySelectionUiManager.cs line 155 now casts abilities through
+  charReference.CurrentStance.StanceMoveset[...] instead of Moveset[...],
+  so a character without a CurrentStance will NullRef when casting.

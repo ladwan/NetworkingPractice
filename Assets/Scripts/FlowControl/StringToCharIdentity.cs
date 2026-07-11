@@ -19,7 +19,10 @@ namespace FlowControl
 
                 case "The Brawn":
                     return Character.Identity.Brawn;
-
+                
+                case "The Elemental":
+                    return Character.Identity.Elemental;
+                
                 default:
                     return Character.Identity.NoIdentity;
             }

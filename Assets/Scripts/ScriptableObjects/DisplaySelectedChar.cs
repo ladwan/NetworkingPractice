@@ -24,6 +24,7 @@ public class DisplaySelectedChar : MonoBehaviour
         playersIdentity = characterScriptableObjRef.selectedIdentity;
         myCharacterDictionary.Add(Character.Identity.Brawn, characterScriptableObjRef.allCharacters[0]);
         myCharacterDictionary.Add(Character.Identity.Speedster, characterScriptableObjRef.allCharacters[1]);
+        myCharacterDictionary.Add(Character.Identity.Elemental, characterScriptableObjRef.allCharacters[2]);
     }
 
 
