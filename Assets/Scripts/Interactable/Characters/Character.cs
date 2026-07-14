@@ -6,6 +6,7 @@ using ForeverFight.Networking;
 using ForeverFight.Interactable.Abilities;
 using System;
 using ForeverFight.Interactable.PlayerInputInteractions;
+using ForeverFight.GameMechanics.Movement;
 
 namespace ForeverFight.Interactable.Characters
 {
@@ -32,10 +33,14 @@ namespace ForeverFight.Interactable.Characters
         [SerializeField] private GameObject fourSqRadius = null;
         [SerializeField] private GameObject fiveSqRadius = null;
         [SerializeField] private List<MovementAnimationCurves> movementAnimCurves = null; // TODO: dead since the grid refactor, remove with prefab cleanup
-        // Speed multiplier over normalized path progress (0..1) for free movement.
+        // TODO: dead since MovePlaybackPlan - pacing now comes from LocomotionProfile.
         [SerializeField]
         private AnimationCurve runSpeedCurve = new AnimationCurve(
             new Keyframe(0f, 0.5f), new Keyframe(0.2f, 1f), new Keyframe(0.8f, 1f), new Keyframe(1f, 0.5f));
+        // How this character paces + animates moves by distance. Subclasses replace the
+        // default in OnEnable (Speedster); buffs override at runtime (Ire, Haste).
+        [SerializeField] private LocomotionProfile locomotionProfile = LocomotionProfile.CreateDefaultWalk();
+        private LocomotionProfile locomotionProfileOverride = null;
         private int movementIndex = 0;
 
 
@@ -88,6 +93,17 @@ namespace ForeverFight.Interactable.Characters
         public int MovementIndex { get => movementIndex; set => movementIndex = value; }
 
         public AnimationCurve RunSpeedCurve => runSpeedCurve;
+
+        /// <summary>The profile the next move is planned with: buff override if one is active, else the base.</summary>
+        public LocomotionProfile ActiveLocomotionProfile => locomotionProfileOverride ?? locomotionProfile;
+
+        /// <summary>Buff seam (Ire, Haste): swaps how this character paces + animates moves while active.</summary>
+        public void SetLocomotionProfileOverride(LocomotionProfile profile) => locomotionProfileOverride = profile;
+
+        public void ClearLocomotionProfileOverride() => locomotionProfileOverride = null;
+
+        /// <summary>For subclasses that ship their own base profile (e.g. Speedster's distance-scaled gaits).</summary>
+        protected void SetBaseLocomotionProfile(LocomotionProfile profile) => locomotionProfile = profile;
 
         public List<MovementAnimationCurves> MovementAnimCurves  => movementAnimCurves;
 

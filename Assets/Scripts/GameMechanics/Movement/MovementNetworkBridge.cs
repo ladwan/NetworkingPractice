@@ -56,19 +56,23 @@ namespace ForeverFight.GameMechanics.Movement
             float pathDistance = planner.PlannedPathLength;
             int apSpent = ApDistanceBank.Instance.PendingCost;
 
+            // Derive the pacing once from the mover's active profile (buffs included)
+            // and use the same params locally and on the wire - identical playback.
+            var localCharacter = LocalStoredNetworkData.GetLocalCharacter();
+            var locomotion = localCharacter.ActiveLocomotionProfile.ParamsForDistance(pathDistance);
+
             ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating();
 
             // Send before local playback: TCP ordering guarantees the opponent has the
             // full move before any subsequent endTurn from this client.
-            ClientSend.SendMovementPath(waypoints, pathDistance, apSpent);
+            ClientSend.SendMovementPath(waypoints, pathDistance, apSpent, locomotion);
 
             ApDistanceBank.Instance.Commit();
             planner.NotifyMoveConfirmed(pathDistance);
 
             var localSpawn = PlayerSpawnManager.Instance.LocalPlayerSpawn;
-            var localCharacter = LocalStoredNetworkData.GetLocalCharacter();
 
-            executor.Play(localSpawn, localCharacter, waypoints, () =>
+            executor.Play(localSpawn, localCharacter, waypoints, locomotion, () =>
             {
                 Vector3 finalPosition = waypoints[waypoints.Count - 1];
                 ClientSend.UpdatePlayerPosition(finalPosition); // Cheap drift insurance.
@@ -79,7 +83,7 @@ namespace ForeverFight.GameMechanics.Movement
         }
 
         /// <summary>Called by ClientHandle with a validated waypoint list from the opponent.</summary>
-        public void ReplayRemoteMove(List<Vector3> waypoints, float totalPathDistance, int apSpent)
+        public void ReplayRemoteMove(List<Vector3> waypoints, float totalPathDistance, int apSpent, LocomotionParams locomotion)
         {
             if (waypoints == null || waypoints.Count < 2)
             {
@@ -93,7 +97,7 @@ namespace ForeverFight.GameMechanics.Movement
             var opponentSpawn = PlayerSpawnManager.Instance.OpponentSpawn;
             var opponentCharacter = LocalStoredNetworkData.GetOpponentCharacter();
 
-            MovementExecutor.Instance.Play(opponentSpawn, opponentCharacter, waypoints, () =>
+            MovementExecutor.Instance.Play(opponentSpawn, opponentCharacter, waypoints, locomotion, () =>
             {
                 MovementPlanner.Instance.NotifyMoveCompleted();
             });

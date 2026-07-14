@@ -7,11 +7,14 @@ using ForeverFight.Interactable.Characters;
 namespace ForeverFight.GameMechanics.Movement
 {
     /// <summary>
-    /// Walks a player spawn along a waypoint polyline. Replaces the grid system's
-    /// LerpMovement / SegmentMovementInstance / CurveMoveSpeed trio with a single
-    /// distance-cursor advance and smooth turn-while-walking. Runs no NavMesh queries
-    /// at execution time, so a serialized waypoint list replays identically on the
-    /// remote client.
+    /// Walks a player spawn along a waypoint polyline by evaluating an immutable
+    /// MovePlaybackPlan at absolute elapsed time: position, velocity and the CharSpeed
+    /// blend value are all reads of the same baked function at the same t, so
+    /// translation and animation cannot desync on frame drops or slow devices - a
+    /// hitch just samples the identical motion later. The plan's trapezoid velocity
+    /// shape gives the ramp-up launch and the gradual, anticipatory stop.
+    /// Runs no NavMesh queries at execution time, so a serialized waypoint list plus
+    /// the four LocomotionParams floats replays identically on the remote client.
     /// </summary>
     public class MovementExecutor : MonoBehaviour
     {
@@ -22,14 +25,10 @@ namespace ForeverFight.GameMechanics.Movement
 
         private Coroutine playbackCoroutine = null;
         private bool isPlaying = false;
-        // Ability seam replacing the old Character.MovementIndex anim-curve swap (Ire).
-        private float speedMultiplier = 1f;
 
         public static MovementExecutor Instance { get; private set; }
 
         public bool IsPlaying => isPlaying;
-
-        public float SpeedMultiplier { get => speedMultiplier; set => speedMultiplier = value; }
 
 
         private void Awake()
@@ -53,7 +52,23 @@ namespace ForeverFight.GameMechanics.Movement
             }
         }
 
+        /// <summary>
+        /// Plays a move paced by the character's own ActiveLocomotionProfile
+        /// (local abilities like the Speedster dash use this directly).
+        /// </summary>
         public void Play(GameObject spawnToMove, Character character, IReadOnlyList<Vector3> waypoints, Action onComplete)
+        {
+            var profile = character != null ? character.ActiveLocomotionProfile : LocomotionProfile.CreateDefaultWalk();
+            float pathLength = PathLength(waypoints);
+            Play(spawnToMove, character, waypoints, profile.ParamsForDistance(pathLength), onComplete);
+        }
+
+        /// <summary>
+        /// Plays a move paced by explicit LocomotionParams - the networked path. The
+        /// mover's client derives the params once and sends them with the waypoints,
+        /// so both clients bake and replay the exact same plan.
+        /// </summary>
+        public void Play(GameObject spawnToMove, Character character, IReadOnlyList<Vector3> waypoints, LocomotionParams locomotion, Action onComplete)
         {
             if (isPlaying)
             {
@@ -67,62 +82,34 @@ namespace ForeverFight.GameMechanics.Movement
                 return;
             }
 
+            var plan = new MovePlaybackPlan(waypoints, PathLength(waypoints), locomotion, minimumMoveDuration);
             isPlaying = true;
-            playbackCoroutine = StartCoroutine(MoveAlongPath(spawnToMove, character, waypoints, onComplete));
+            playbackCoroutine = StartCoroutine(PlayPlan(spawnToMove, character, plan, onComplete));
         }
 
 
-        private IEnumerator MoveAlongPath(GameObject spawnToMove, Character character, IReadOnlyList<Vector3> waypoints, Action onComplete)
+        private IEnumerator PlayPlan(GameObject spawnToMove, Character character, MovePlaybackPlan plan, Action onComplete)
         {
-            float totalLength = NavPathUtility.PathLength(new List<Vector3>(waypoints));
-            float baseSpeed = character != null ? Mathf.Max(0.01f, character.BaseMoveSpeed) : 1f;
-
-            // Respect a minimum duration so tiny moves still read as motion.
-            float duration = Mathf.Max(minimumMoveDuration, totalLength / baseSpeed);
-            float effectiveBaseSpeed = totalLength / duration;
-
             Animator animator = character != null && character.CharacterAnimationReferences != null
                 ? character.CharacterAnimationReferences.CharacterAnimator
                 : null;
-            AnimationCurve speedCurve = character != null ? character.RunSpeedCurve : null;
-            bool hasCurve = speedCurve != null && speedCurve.length > 0;
 
             var transformToMove = spawnToMove.transform;
+            var waypoints = plan.Waypoints;
             transformToMove.position = waypoints[0];
 
-            float traveled = 0f;
-            int segmentIndex = 1;
-            float segmentStartDistance = 0f;
-            float segmentLength = Vector3.Distance(waypoints[0], waypoints[1]);
-
-            while (traveled < totalLength)
+            float elapsed = 0f;
+            while (elapsed < plan.Duration)
             {
-                float t01 = totalLength > Mathf.Epsilon ? traveled / totalLength : 1f;
-                float curveMultiplier = hasCurve ? Mathf.Max(0.05f, speedCurve.Evaluate(t01)) : 1f;
-                float currentSpeed = effectiveBaseSpeed * curveMultiplier * speedMultiplier;
+                elapsed = Mathf.Min(plan.Duration, elapsed + Time.deltaTime);
+                float t01 = elapsed / plan.Duration;
 
-                traveled = Mathf.Min(totalLength, traveled + currentSpeed * Time.deltaTime);
+                // One t, three reads: translation, steering target and blend value all
+                // come from the same baked plan - they cannot drift apart.
+                float traveled = plan.DistanceAt(t01);
+                transformToMove.position = PointAlongPath(waypoints, traveled);
 
-                // Advance the segment cursor past any fully-consumed segments.
-                while (segmentIndex < waypoints.Count - 1 && traveled > segmentStartDistance + segmentLength)
-                {
-                    segmentStartDistance += segmentLength;
-                    segmentIndex++;
-                    segmentLength = Vector3.Distance(waypoints[segmentIndex - 1], waypoints[segmentIndex]);
-                }
-
-                Vector3 from = waypoints[segmentIndex - 1];
-                Vector3 to = waypoints[segmentIndex];
-                float alongSegment = segmentLength > Mathf.Epsilon
-                    ? Mathf.Clamp01((traveled - segmentStartDistance) / segmentLength)
-                    : 1f;
-
-                transformToMove.position = Vector3.Lerp(from, to, alongSegment);
-
-                // Steer toward a point ahead on the path rather than the current segment:
-                // the target heading drifts continuously through corners, so a multi-corner
-                // path reads as one long arc instead of a snap at each waypoint.
-                Vector3 lookPoint = PointAlongPath(waypoints, Mathf.Min(totalLength, traveled + rotationLookAhead));
+                Vector3 lookPoint = PointAlongPath(waypoints, Mathf.Min(plan.TotalLength, traveled + rotationLookAhead));
                 Vector3 flatDirection = lookPoint - transformToMove.position;
                 flatDirection.y = 0f;
                 if (flatDirection.sqrMagnitude > 0.0001f)
@@ -135,7 +122,7 @@ namespace ForeverFight.GameMechanics.Movement
 
                 if (animator != null)
                 {
-                    animator.SetFloat("CharSpeed", currentSpeed / effectiveBaseSpeed);
+                    animator.SetFloat("CharSpeed", plan.GaitAt(t01));
                 }
 
                 yield return null;
@@ -158,6 +145,22 @@ namespace ForeverFight.GameMechanics.Movement
             isPlaying = false;
             playbackCoroutine = null;
             onComplete?.Invoke();
+        }
+
+        private static float PathLength(IReadOnlyList<Vector3> waypoints)
+        {
+            if (waypoints == null || waypoints.Count < 2)
+            {
+                return 0f;
+            }
+
+            float length = 0f;
+            for (int i = 1; i < waypoints.Count; i++)
+            {
+                length += Vector3.Distance(waypoints[i - 1], waypoints[i]);
+            }
+
+            return length;
         }
 
         private static Vector3 PointAlongPath(IReadOnlyList<Vector3> waypoints, float distance)

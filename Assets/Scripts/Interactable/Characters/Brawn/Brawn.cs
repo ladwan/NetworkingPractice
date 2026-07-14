@@ -1,11 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ForeverFight.GameMechanics.Movement;
 
 namespace ForeverFight.Interactable.Characters
 {
     public class Brawn : Character
     {
+        // Brawn walks everywhere on the base profile; Ire overrides to this one (run gait).
+        [SerializeField] private LocomotionProfile ireLocomotionProfile = LocomotionProfile.CreateBrawnIre();
+
+        public LocomotionProfile IreLocomotionProfile => ireLocomotionProfile;
+
         /*
         Passive : Hard Knock Life
         ---------------------------
