@@ -17,6 +17,8 @@ namespace ForeverFight.Interactable.Abilities
         [SerializeField]
         private float multiplier = 2f;
         [SerializeField]
+        private float unitsPerMomentum = 1.0f; // 1 unit ~= 1 old grid square; tune for balance
+        [SerializeField]
         private int product = 0;
         [SerializeField]
         private GameObject momentumDisplayUi = null;
@@ -51,7 +53,7 @@ namespace ForeverFight.Interactable.Abilities
 
         protected void OnEnable()
         {
-            FloorGrid.Instance.OnMoveConfirmed += GetHoveredOverGridPointsCount;
+            MovementPlanner.Instance.OnMoveConfirmed += AccumulateMomentumFromDistance;
             PlayerTurnManager.Instance.OnTurnEnd += UpdateAbilityDuration;
             AbilitySelectionUiManager.Instance.OnSpawnButtonUi += InstantiateStatusEffectUiOnButton;
             AbilitySelectionUiManager.Instance.OnReadyToBeFormatted += SendStatusEffectDataToBeFormatted;
@@ -61,7 +63,10 @@ namespace ForeverFight.Interactable.Abilities
 
         protected void OnDisable()
         {
-            FloorGrid.Instance.OnMoveConfirmed -= GetHoveredOverGridPointsCount;
+            if (MovementPlanner.Instance != null)
+            {
+                MovementPlanner.Instance.OnMoveConfirmed -= AccumulateMomentumFromDistance;
+            }
             PlayerTurnManager.Instance.OnTurnEnd -= UpdateAbilityDuration;
             AbilitySelectionUiManager.Instance.OnSpawnButtonUi -= InstantiateStatusEffectUiOnButton;
             AbilitySelectionUiManager.Instance.OnReadyToBeFormatted -= SendStatusEffectDataToBeFormatted;
@@ -133,21 +138,25 @@ namespace ForeverFight.Interactable.Abilities
             }
         }
 
-        public void GetHoveredOverGridPointsCount(int value)
+        // storedMomentum should never go down, only up. Old rule: +1 per grid square
+        // moved (path count - 1); 1 square = 1 world unit, so the faithful conversion
+        // is one momentum per full unitsPerMomentum of distance traveled.
+        public void AccumulateMomentumFromDistance(float pathDistance)
         {
-            //storedMomentum should never go down, only up. There is a change odd values will be passed into this method because ConfirmMove() is called many times in many places
-            //If any value is less than 1 set it to one, worst case scenerio stored momentum will not be affected
-            if (value < 1)
+            if (!StatusActive)
             {
-                value = 1;
+                return;
             }
 
-            if (StatusActive)
+            int gained = Mathf.FloorToInt(pathDistance / unitsPerMomentum);
+            if (gained <= 0)
             {
-                storedMomentum += value - 1;
-                onMoveConfirmed?.Invoke();
-                ClientSend.SendStoredMomentumValue(storedMomentum);
+                return;
             }
+
+            storedMomentum += gained;
+            onMoveConfirmed?.Invoke();
+            ClientSend.SendStoredMomentumValue(storedMomentum);
         }
 
 

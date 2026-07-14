@@ -5,6 +5,7 @@ using ForeverFight.Ui;
 using ForeverFight.GameMechanics;
 using ForeverFight.GameMechanics.Movement;
 using ForeverFight.FlowControl;
+using ForeverFight.HelperScripts;
 using System;
 using ForeverFight.Interactable.Characters;
 
@@ -16,6 +17,14 @@ namespace ForeverFight.Interactable.Abilities
         private OffBalance offBalanceREF = null;
         [SerializeField]
         private Ire ireREF = null;
+        // Distance bands replacing the old grid path-count switch (counts 2/3/4 with
+        // 1-unit cells = distances 1/2/3); midpoints preserve the old feel.
+        [SerializeField]
+        private float directHitRange = 1.5f;
+        [SerializeField]
+        private float midRange = 2.5f;
+        [SerializeField]
+        private float farRange = 3.5f;
 
 
         private GameObject originalRadius = null;
@@ -78,33 +87,31 @@ namespace ForeverFight.Interactable.Abilities
 
         private void AbilityAfterEffects()
         {
-            var pathFromUsToEnemy = FloorGrid.Instance.ProceduralGridManipulationREF.ReturnProceduralPath();
-            if (pathFromUsToEnemy != null && pathFromUsToEnemy.Count > 0)
-            {
-                switch (pathFromUsToEnemy.Count)
-                {
-                    case 2:
-                        DamageManager.Instance.DealDamage(AbilityDamage);
-                        offBalanceREF.CastAbility();
-                        break;
-                    case 3:
-                        FloorGrid.Instance.ProceduralGridManipulationREF.PullEnemy(1);
-                        if (ireREF.StatusActive)
-                        {
-                            DamageManager.Instance.DealDamage(AbilityDamage);
-                            offBalanceREF.CastAbility();
-                        }
-                        break;
-                    case 4:
-                        FloorGrid.Instance.ProceduralGridManipulationREF.PullEnemy(2);
-                        DamageManager.Instance.DealDamage(AbilityDamage);
-                        offBalanceREF.CastAbility();
-                        break;
+            float distanceToEnemy = ForcedDisplacement.Instance.DistanceBetweenPlayers();
 
-                    default:
-                        Debug.LogError("Abnormal count of Path in Ground Pound");
-                        break;
+            if (distanceToEnemy <= directHitRange)
+            {
+                DamageManager.Instance.DealDamage(AbilityDamage);
+                offBalanceREF.CastAbility();
+            }
+            else if (distanceToEnemy <= midRange)
+            {
+                ForcedDisplacement.Instance.PullEnemyToMeleeRange();
+                if (ireREF.StatusActive)
+                {
+                    DamageManager.Instance.DealDamage(AbilityDamage);
+                    offBalanceREF.CastAbility();
                 }
+            }
+            else if (distanceToEnemy <= farRange)
+            {
+                ForcedDisplacement.Instance.PullEnemyToMeleeRange();
+                DamageManager.Instance.DealDamage(AbilityDamage);
+                offBalanceREF.CastAbility();
+            }
+            else
+            {
+                Debug.LogError("Ground Pound fired outside its expected range");
             }
         }
 

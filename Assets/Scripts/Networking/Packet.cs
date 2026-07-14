@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 
 /// <summary>Sent from client to server.</summary>
 public enum ServerPackets
@@ -21,8 +22,8 @@ public enum ServerPackets
     serverSendWinStatus = 14,
     toggleCountdownTimer = 15,
     serverSendAnimationTrigger = 16,
-    sendSegmentedMovementData = 17,
-    sendSegmentedRotationData = 18,
+    sendMovementPath = 17,       // Renamed from sendSegmentedMovementData; payload is now a full waypoint list
+    // sendSegmentedRotationData = 18, -- RETIRED (facing derives from waypoints); number reserved
     sendNetworkedMethodIndex = 19,
     initalMatchDetails = 20,
 }
@@ -44,8 +45,8 @@ public enum ClientPackets
     hasWonTheMatch = 12,
     toggleTimerCountdown = 13,
     clientSendAnimationTrigger = 14,
-    sendSegmentedMovementData = 15,
-    sendSegmentedRotationData = 16,
+    sendMovementPath = 15,       // Renamed from sendSegmentedMovementData; payload is now a full waypoint list
+    // sendSegmentedRotationData = 16, -- RETIRED (facing derives from waypoints); number reserved
     sendNetworkedMethodIndex = 17,
 }
 
@@ -189,6 +190,14 @@ public class Packet : IDisposable
     {
         Write(_value.Length); // Add the length of the string to the packet
         buffer.AddRange(Encoding.ASCII.GetBytes(_value)); // Add the string itself
+    }
+    /// <summary>Adds a Vector3 to the packet as three floats (x, y, z).</summary>
+    /// <param name="_value">The Vector3 to add.</param>
+    public void Write(Vector3 _value)
+    {
+        Write(_value.x);
+        Write(_value.y);
+        Write(_value.z);
     }
     #endregion
 
@@ -339,6 +348,13 @@ public class Packet : IDisposable
         {
             throw new Exception("Could not read value of type 'bool'!");
         }
+    }
+
+    /// <summary>Reads a Vector3 (three floats: x, y, z) from the packet.</summary>
+    /// <param name="_moveReadPos">Whether or not to move the buffer's read position.</param>
+    public Vector3 ReadVector3(bool _moveReadPos = true)
+    {
+        return new Vector3(ReadFloat(_moveReadPos), ReadFloat(_moveReadPos), ReadFloat(_moveReadPos));
     }
 
     /// <summary>Reads a string from the packet.</summary>

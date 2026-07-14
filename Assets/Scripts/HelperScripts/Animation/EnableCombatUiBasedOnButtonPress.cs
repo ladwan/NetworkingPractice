@@ -9,7 +9,6 @@ namespace ForeverFight.HelperScripts.Animation
 {
     public class EnableCombatUiBasedOnButtonPress : MonoBehaviour
     {
-        [SerializeField] private GameObject dragMoverREF = null;
         [SerializeField] private GameObject movementUiREF = null;
         [SerializeField] private GameObject attackUiREF = null;
 
@@ -25,7 +24,8 @@ namespace ForeverFight.HelperScripts.Animation
 
         private void ActivateMovementUi()
         {
-            dragMoverREF.SetActive(true);
+            // The free movement system needs no drag token to enable - the character's
+            // drag collider is always present and the planner gates on UI state.
             movementUiREF.SetActive(true);
         }
 

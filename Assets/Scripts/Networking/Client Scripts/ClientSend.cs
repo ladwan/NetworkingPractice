@@ -61,33 +61,24 @@ public class ClientSend : MonoBehaviour
         }
     }
 
-    public static void SendSegmentedMovementData(int x, int y, int count, bool hasRotations, bool completed) // Pass this a vector 3's x and z
+    // Sends a full confirmed move as one packet: waypoint count, total path distance,
+    // AP spent, then each waypoint as three floats. waypoints[0] is the mover's start
+    // position so the receiver can snap-and-replay drift-free. No rotations are sent -
+    // facing is derived from waypoint directions identically on both clients.
+    // NOTE: unlike the legacy senders, the packet ID is written ONCE (ctor only);
+    // the server relays this payload verbatim without parsing it.
+    public static void SendMovementPath(List<Vector3> waypoints, float totalPathDistance, int apSpent)
     {
-        using (Packet _packet = new Packet((int)ClientPackets.sendSegmentedMovementData))
+        using (Packet _packet = new Packet((int)ClientPackets.sendMovementPath))
         {
-            _packet.Write((int)ClientPackets.sendSegmentedMovementData);
+            _packet.Write(waypoints.Count);
+            _packet.Write(totalPathDistance);
+            _packet.Write(apSpent);
 
-            _packet.Write(x);
-            _packet.Write(y);
-            _packet.Write(count);
-            _packet.Write(hasRotations);
-            _packet.Write(completed);
-
-            SendTcpData(_packet);
-        }
-    }
-
-    public static void SendSegmentedRotationData(float x, float y, float z, float w, int count)
-    {
-        using (Packet _packet = new Packet((int)ClientPackets.sendSegmentedRotationData))
-        {
-            _packet.Write((int)ClientPackets.sendSegmentedRotationData);
-
-            _packet.Write(x);
-            _packet.Write(y);
-            _packet.Write(z);
-            _packet.Write(w);
-            _packet.Write(count);
+            for (int i = 0; i < waypoints.Count; i++)
+            {
+                _packet.Write(waypoints[i]);
+            }
 
             SendTcpData(_packet);
         }
@@ -157,28 +148,25 @@ public class ClientSend : MonoBehaviour
         }
     }
 
-    public static void UpdatePlayerCurrentPostition(int x, int y, int hoveredOverGPsCount) // Pass this a vector 2's x and y
+    // World-space position snap (was integer grid coords + a dead third field).
+    // Packet ID written once; server relays verbatim.
+    public static void UpdatePlayerPosition(Vector3 position)
     {
         using (Packet _packet = new Packet((int)ClientPackets.updatePlayerCurrentPosition))
         {
-            _packet.Write((int)ClientPackets.updatePlayerCurrentPosition);
-
-            _packet.Write(x);
-            _packet.Write(y);
-            _packet.Write(hoveredOverGPsCount);
+            _packet.Write(position);
 
             SendTcpData(_packet);
         }
     }
 
-    public static void OverrideOppositePlayersPostition(int x, int y) // Pass this a vector 2's x and y
+    // Forced move (pull / knockback) landing position for the opponent, world-space.
+    // Packet ID written once; server relays verbatim.
+    public static void OverrideOpponentPosition(Vector3 position)
     {
         using (Packet _packet = new Packet((int)ClientPackets.overrideOppositePlayersPos))
         {
-            _packet.Write((int)ClientPackets.overrideOppositePlayersPos);
-
-            _packet.Write(x);
-            _packet.Write(y);
+            _packet.Write(position);
 
             SendTcpData(_packet);
         }

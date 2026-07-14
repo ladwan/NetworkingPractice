@@ -38,7 +38,7 @@ namespace ForeverFight.Networking
 
         public static Countdown countdownTimerScript = null;
 
-        public static int squaresMovedThisInstanceOfMovement = 0; //This is to keep track of how many sq's a player has just moved, in one instance of movement. It should be reset with every new instance of movement and is NOT cumulative for the turn.
+        public static float distanceMovedThisInstance = 0f; //World-units moved in the player's latest instance of movement. Reset with every new instance of movement; NOT cumulative for the turn.
 
 
         public static IEnumerator WaitForCharacterAnimationReferences(Action<CharacterAnimationReferences> callback)
@@ -176,7 +176,7 @@ namespace ForeverFight.Networking
 
             countdownTimerScript = null;
 
-            squaresMovedThisInstanceOfMovement = 0;
+            distanceMovedThisInstance = 0f;
 
             nullCheckResetGeneration++;
             NullCheckTimeoutTasks.Clear();

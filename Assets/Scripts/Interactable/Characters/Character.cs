@@ -31,7 +31,11 @@ namespace ForeverFight.Interactable.Characters
         [SerializeField] private GameObject threeSqRadius = null;
         [SerializeField] private GameObject fourSqRadius = null;
         [SerializeField] private GameObject fiveSqRadius = null;
-        [SerializeField] private List<MovementAnimationCurves> movementAnimCurves = null;
+        [SerializeField] private List<MovementAnimationCurves> movementAnimCurves = null; // TODO: dead since the grid refactor, remove with prefab cleanup
+        // Speed multiplier over normalized path progress (0..1) for free movement.
+        [SerializeField]
+        private AnimationCurve runSpeedCurve = new AnimationCurve(
+            new Keyframe(0f, 0.5f), new Keyframe(0.2f, 1f), new Keyframe(0.8f, 1f), new Keyframe(1f, 0.5f));
         private int movementIndex = 0;
 
 
@@ -82,6 +86,8 @@ namespace ForeverFight.Interactable.Characters
         public GameObject FiveSqRadius { get => fiveSqRadius; set => fiveSqRadius = value; }
 
         public int MovementIndex { get => movementIndex; set => movementIndex = value; }
+
+        public AnimationCurve RunSpeedCurve => runSpeedCurve;
 
         public List<MovementAnimationCurves> MovementAnimCurves  => movementAnimCurves;
 

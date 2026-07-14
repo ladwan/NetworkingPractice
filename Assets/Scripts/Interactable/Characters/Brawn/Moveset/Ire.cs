@@ -22,6 +22,11 @@ namespace ForeverFight.Interactable.Abilities
         [SerializeField]
         private GameObject increasedGroundPoundRadius = null;
         [SerializeField] private IreVFXManager ireVFXManagerREF = null;
+        // Old rule fired the small anim when fewer than 4 path points (start included)
+        // were moved, i.e. under 3 grid squares = under 3 world units.
+        [SerializeField] private float smallMoveThreshold = 3.0f;
+        // Replaces the old MovementIndex anim-curve-set swap with a straight speed boost.
+        [SerializeField] private float ireMoveSpeedMultiplier = 1.3f;
 
 
         protected Ire()
@@ -49,7 +54,7 @@ namespace ForeverFight.Interactable.Abilities
 
         protected void OnEnable()
         {
-            FloorGrid.Instance.OnMoveConfirmed += SmallIreMovement;
+            MovementPlanner.Instance.OnMoveConfirmed += SmallIreMovement;
             PlayerTurnManager.Instance.OnTurnEnd += UpdateAbilityDuration;
             AbilitySelectionUiManager.Instance.OnSpawnButtonUi += InstantiateStatusEffectUiOnButton;
             AbilitySelectionUiManager.Instance.OnReadyToBeFormatted += SendStatusEffectDataToBeFormatted;
@@ -58,7 +63,10 @@ namespace ForeverFight.Interactable.Abilities
 
         protected void OnDisable()
         {
-            FloorGrid.Instance.OnMoveConfirmed -= SmallIreMovement;
+            if (MovementPlanner.Instance != null)
+            {
+                MovementPlanner.Instance.OnMoveConfirmed -= SmallIreMovement;
+            }
             PlayerTurnManager.Instance.OnTurnEnd -= UpdateAbilityDuration;
             AbilitySelectionUiManager.Instance.OnSpawnButtonUi -= InstantiateStatusEffectUiOnButton;
             AbilitySelectionUiManager.Instance.OnReadyToBeFormatted -= SendStatusEffectDataToBeFormatted;
@@ -73,7 +81,7 @@ namespace ForeverFight.Interactable.Abilities
 
             StatusActive = true;
             //ireVFXManagerREF.BeginCoroutine(this);
-            OwningCharacter.MovementIndex = 1;
+            MovementExecutor.Instance.SpeedMultiplier = ireMoveSpeedMultiplier;
             AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(2, false, CurrentStatusEffectType); // Pass a 2 because you want the third index of the list because this is the third ability
             AbilityFunctionality();
             ClientSend.SendStatusEffectData(StatusEffect.StatusEffectType.Ire, CurrentAbilityDuration, 0, false);
@@ -142,16 +150,16 @@ namespace ForeverFight.Interactable.Abilities
                 groundPoundREF.SetAbilityRadius(groundPoundREF.OriginalRadius);
                 groundPoundREF.AbilityDamage = 10;
                 haymakerREF.AbilityDamage = 15;
-                OwningCharacter.MovementIndex = 0;
+                MovementExecutor.Instance.SpeedMultiplier = 1f;
                 var shake = new CameraShakeParameters();
                 ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(animREF, "Ire Idle to Idle", shake);
             }
         }
 
-        private void SmallIreMovement(int sqs)
+        private void SmallIreMovement(float pathDistance)
         {
             if (!StatusActive) return;
-            if (sqs >= 4) return;
+            if (pathDistance >= smallMoveThreshold) return;
 
             ToggleTimerAndUi.Instance.SetTriggerWithoutListeningForAnimEnd(animREF, "Small", shakeParameters[0]);
             //ExecuteMethodAfterDelay.Instance.BeginDelay(1.5f,ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating);
