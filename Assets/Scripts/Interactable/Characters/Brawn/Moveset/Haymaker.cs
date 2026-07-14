@@ -6,6 +6,7 @@ using ForeverFight.GameMechanics;
 using ForeverFight.GameMechanics.Movement;
 using ForeverFight.Networking;
 using ForeverFight.FlowControl;
+using ForeverFight.HelperScripts;
 using ForeverFight.Interactable.Characters;
 
 namespace ForeverFight.Interactable.Abilities
@@ -16,6 +17,9 @@ namespace ForeverFight.Interactable.Abilities
         private OffBalance offBalanceREF = null;
         [SerializeField]
         private Ire ireREF = null;
+        // Old knockback was 3 grid cells; 1 cell = 1 world unit.
+        [SerializeField]
+        private float knockbackDistance = 3.0f;
         private GameObject originalRadius = null;
 
 
@@ -32,12 +36,15 @@ namespace ForeverFight.Interactable.Abilities
 
         protected void OnEnable()
         {
-            FloorGrid.Instance.ProceduralGridManipulationREF.EnemyHitAWallAction += EnemyHitWall;
+            ForcedDisplacement.Instance.EnemyHitAWallAction += EnemyHitWall;
         }
 
         protected void OnDisable()
         {
-            FloorGrid.Instance.ProceduralGridManipulationREF.EnemyHitAWallAction -= EnemyHitWall;
+            if (ForcedDisplacement.Instance != null)
+            {
+                ForcedDisplacement.Instance.EnemyHitAWallAction -= EnemyHitWall;
+            }
         }
 
         protected void Awake()
@@ -75,7 +82,7 @@ namespace ForeverFight.Interactable.Abilities
 
             if (ireREF.StatusActive)
             {
-                FloorGrid.Instance.ProceduralGridManipulationREF.KnockbackEnemy(3);
+                ForcedDisplacement.Instance.KnockbackEnemy(knockbackDistance);
             }
 
             DamageManager.Instance.DealDamage(AbilityDamage);

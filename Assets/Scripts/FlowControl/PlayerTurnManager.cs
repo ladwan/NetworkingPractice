@@ -8,6 +8,7 @@ using ForeverFight.GameMechanics.Timers;
 using ForeverFight.GameMechanics.Movement;
 using ForeverFight.GameMechanics.DiceRoll;
 using ForeverFight.Interactable.Characters;
+using ForeverFight.Interactable.PlayerInputInteractions;
 using TMPro;
 
 namespace ForeverFight.FlowControl
@@ -22,8 +23,6 @@ namespace ForeverFight.FlowControl
         private Countdown playerTimer = null;
         [SerializeField]
         private TMP_Text playerTimerSubtext = null;
-        [SerializeField]
-        private DragMovement dragMovementREF = null;
         [SerializeField]
         private Action onTurnEnd = null;
         private Action<bool> isLocalPlayersTurnAction = null;
@@ -133,16 +132,14 @@ namespace ForeverFight.FlowControl
                 if (timeRanOut)
                 {
                     ActionPointsManager.Instance.PlayerTurnHasEnded = true;
-                    ActionPointsManager.Instance.MoveWasCanceled();
-                    FloorGrid.Instance.EmptyGridPointList();
-                    dragMovementREF.UpdateDragMoverPosition();
-                    dragMovementREF.ResetDragMover();
+                    ActionPointsManager.Instance.MoveWasCanceled(); // Also refunds + clears the movement plan
+                    BasePlayerInputInteraction.Instance.ForceEndDrag();
                 }
                 else
                 {
                     ActionPointsManager.Instance.PlayerTurnHasEnded = true;
                     ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.MainApLists, 0);
-                    FloorGrid.Instance.EmptyGridPointList();
+                    MovementPlanner.Instance.CancelPlan();
                 }
 
                 if (LocalStoredNetworkData.localPlayerSelectAbilityToCast)

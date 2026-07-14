@@ -69,32 +69,25 @@ public class ClientHandle : MonoBehaviour
         CharacterSelect.Instance.CountdownTimer.Time = 4;
     }
 
-    public static void RecieveSegmentedMovementData(Packet _packet)
+    public static void ReceiveMovementPath(Packet _packet)
     {
-        int _x = _packet.ReadInt();
-        int _y = _packet.ReadInt();
         int _count = _packet.ReadInt();
-        bool _hasRotations = _packet.ReadBool();
-        bool _completed = _packet.ReadBool();
+        float _totalPathDistance = _packet.ReadFloat();
+        int _apSpent = _packet.ReadInt();
 
-        FloorGrid.Instance.ConstructVector3ListFromNetworkData((new Vector3(_x, 0, _y)), _count, _hasRotations, _completed);
+        if (_count <= 0 || _count > MovementNetworkBridge.MaxWaypointsPerMove)
+        {
+            Debug.LogError($"Rejected movement path with waypointCount={_count}");
+            return;
+        }
 
-        //make the list of lists in a place it will be created once
-        //use method call and conditional logic to write data
-    }
+        var _waypoints = new List<Vector3>(_count);
+        for (int i = 0; i < _count; i++)
+        {
+            _waypoints.Add(_packet.ReadVector3());
+        }
 
-    public static void RecieveSegmentedRotationData(Packet _packet)
-    {
-        float _x = _packet.ReadFloat();
-        float _y = _packet.ReadFloat();
-        float _z = _packet.ReadFloat();
-        float _w = _packet.ReadFloat();
-        int _count = _packet.ReadInt();
-
-        FloorGrid.Instance.ConstructQuaternionListFromNetworkData((new Quaternion(_x, _y, _z, _w)), _count);
-
-        //make the list of lists in a place it will be created once
-        //use method call and conditional logic to write data
+        MovementNetworkBridge.Instance.ReplayRemoteMove(_waypoints, _totalPathDistance, _apSpent);
     }
 
     // This is going to be recived by BOTH players anytime it runs
@@ -166,20 +159,16 @@ public class ClientHandle : MonoBehaviour
 
     public static void RecieveUpdatedPlayerPosition(Packet _packet)
     {
-        int x = _packet.ReadInt();
-        int y = _packet.ReadInt();
-        int hoveredOverGPsCount = _packet.ReadInt();
+        Vector3 position = _packet.ReadVector3();
 
-        FloorGrid.Instance.UpdateOpponentPosition(new Vector2(x, y));
+        PlayerSpawnManager.Instance.UpdateOpponentPosition(position);
     }
 
     public static void RecieveOverrodePosition(Packet _packet)
     {
-        int x = _packet.ReadInt();
-        int y = _packet.ReadInt();
-        Vector2 gridPointVector2 = new Vector2(x, y);
+        Vector3 position = _packet.ReadVector3();
 
-        FloorGrid.Instance.ProceduralGridManipulationREF.IsVector2AValidGridPoint(gridPointVector2);
+        ForcedDisplacement.Instance.ApplyForcedMoveToLocalPlayer(position);
     }
 
     public static void RecieveWinStatus(Packet _packet)

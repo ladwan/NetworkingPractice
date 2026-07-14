@@ -1,0 +1,694 @@
+================================================================================
+MOVEMENT SYSTEM REFACTOR — GRID → FREE CLICK-AND-DRAG (BG3-STYLE)
+Self-contained execution plan. An agent with access to this repo (and the
+server repo at /Users/ladwan/Desktop/GameServer) can execute this without
+re-scanning the codebase; every load-bearing fact discovered during scoping
+is recorded below with file paths and line references (line numbers are as
+of commit fe5b860, branch scoping-movement-system-refactor).
+================================================================================
+
+## 0. GOAL AND FIXED DECISIONS (user-confirmed)
+
+Delete the 10x10 grid movement system entirely. Replace with free click-and-
+drag: player clicks their character, drags anywhere; an ANIMATED guide line
+renders the NavMesh path (bends around obstacles) from the character to the
+drag point; AP unlocks distance in buckets; the line hard-stops where AP runs
+out and ignores further drag. Movement stays networked over the existing
+custom TCP relay server.
+
+Fixed decisions:
+- NavMesh pathing (Unity com.unity.ai.navigation 1.1.5, ALREADY in
+  Packages/manifest.json). Opponent = carving NavMeshObstacle.
+- AP buckets: cost = ceil(pathLength / UnitsPerAp); UnitsPerAp is a
+  serialized/configurable constant, DEFAULT 1.1f. Rationale: arena is still
+  ~10 world units across; crossing it should cost ~9 AP (max AP = 9). This
+  keeps 1 unit ≈ 1 old grid cell ≈ 1 AP, so all ability-distance conversions
+  below are balance-faithful as-is.
+- Single drag = one move action. Explicit Confirm button flow stays.
+- Movement-only scope: grid-coupled abilities get minimal distance shims.
+- Speedster passive: configurable extra distance/turn, default 3 * UnitsPerAp
+  (equivalent of old "3 free squares" / "worth 3 AP").
+- Rotations are NOT sent over the wire anymore; both clients derive facing
+  from waypoint deltas identically.
+- Engineering constraints: classes < 400 lines (split if larger); clean
+  namespaces (ForeverFight.GameMechanics.Movement etc.); PREFER CODE-DRIVEN
+  WIRING over Unity-editor steps — runtime NavMesh bake, runtime-added
+  components/colliders/LineRenderer, direct scene-YAML edits only where a
+  scene change is unavoidable. Maximize what can be verified without a human
+  in the editor.
+
+## 1. CURRENT SYSTEM — VERIFIED FACTS
+
+### 1.1 Movement core (all to be deleted/re-homed)
+- Assets/Scripts/GameMechanics/Movement/FloorGrid.cs (693 lines, singleton
+  `Instance`, namespace ForeverFight.GameMechanics.Movement). Fuses THREE
+  roles — all must be re-homed:
+  (a) Grid/path planning: `Dictionary<Vector2, GridPoint> gridDictionary`
+      (:18) built in Start() (:121-170) — 10x10 nested loop instantiating a
+      `gridPoint` template at integer offsets; `hoveredOverGridPoints`
+      List<GridPoint> (:20) is the planned path (INCLUDES the starting cell);
+      TryHighlighting (:209) appends a cell if AP remains (checks
+      `ActionPointsManager.Instance.CurrentApReferenceListsREF
+      .UpdateValueOfRelevantAp(0) > 0` at :224) and calls
+      `BlinkCurrentListReference()`; AddGridPointToListBool (:277) truncates
+      on backtrack and refunds AP via `UpdateAP(ref, 1)` +
+      `UpdateBlinkingAP(ref)` (:295-303); GridPointOccupiedByOpponent (:339)
+      blocks the opponent's cell.
+  (b) Spawn/position management: Start() switch on ClientInfo.playerNumber
+      assigns player1Spawn/player2Spawn/localPlayerSpawn; UpdateOpponentPosition
+      (:202); OverridePlayerPosition (:240) — teleports via cell tag.
+  (c) Execution + network ingest: ConfirmMove (:249) → MovementSetup (:368)
+      → MovementPreWork (:475) → recursive SegmentMovementInstance (:510)
+      producing Tuple<List<List<Vector3>>, List<Quaternion>> (straight
+      segments + rotations; chars never translate while rotating); LerpMovement
+      coroutine (:394-472); actual translation in Update() (:674-692):
+      time += MoveSpeed * .0066f * MoveSpeedHelper, Vector3.Lerp per cell hop.
+      Network: PrepareMovementDataToBeSentOverNetwork (:624) sends ONE PACKET
+      PER GRID POINT via ClientSend.SendSegmentedMovementData((int)x,(int)z,
+      count, hasRotations, completed); PrepareRotationDataToBeSentOverNetwork
+      (:643); receive side ConstructVector3ListFromNetworkData (:564),
+      ConstructQuaternionListFromNetworkData (:606),
+      ConstructTupleFromNetworkData (:651, gates on networkedMovementDataSent
+      == 2) → LerpMovement on the remote spawn.
+      Events: `OnMoveConfirmed` (Action<int>, receives
+      hoveredOverGridPoints.Count INCLUDING start cell), `OnMoveCompleted`,
+      `HoveredOverGridPointsUpdated`.
+- Assets/Scripts/GameMechanics/Movement/GridPoint.cs (108 lines):
+  FindConnections (:56) 4-neighbor adjacency; OnMouseEnterCustom (:87) is the
+  drag-path builder; highlight + connectionAura child GameObjects.
+- Assets/Scripts/GameMechanics/Movement/DragMovement.cs (104 lines): draggable
+  pawn; IsThisGridPointConnected (:71); events OnDragMoverPosUpdated,
+  OnDragEnded; ResetDragMover (:87) also calls
+  lerpCameraREF.ReturnObjectBackToOriginalPos().
+- Assets/Scripts/GameMechanics/Movement/CurveMoveSpeed.cs: picks
+  currentCharacter.MovementAnimCurves[MovementIndex].movementCurves[
+  segment.Count - 1] (curve indexed by SEGMENT CELL COUNT, :47-50); Update
+  (:57) evaluates curve → writes Character.MoveSpeed and Animator float
+  "CharSpeed" (:62-63).
+- Assets/Scripts/GameMechanics/Movement/AugmentedMovementManager.cs:
+  DetermineIfMovementIsAugmented() (:59) — wired to the Confirm Button via
+  scene UnityEvent; sets LocalStoredNetworkData.squaresMovedThisInstanceOfMovement
+  from ActionPointsManager ApLightsToBeBlinked.Count (:62); if
+  augmentedMovementLogicREF == null → FloorGrid.Instance.ConfirmMove() (:66)
+  else IAugmentedMovement.BeginMovement() (:72).
+- Assets/Scripts/GameMechanics/Movement/IAugmentedMovement.cs: one method,
+  BeginMovement(). Keep interface as-is.
+
+### 1.2 Input layer
+- Assets/Scripts/Interactable/Player Input Interactions/BasePlayerInputInteraction.cs
+  (136 lines, singleton): Update→HandleInput (:43-96) touch+mouse; press
+  raycasts layer "Drag Movement" (:104); hold raycasts layer "Grid" (:117);
+  release fires OnTouchEnd. Camera from local character's
+  CharacterAnimationReferences.CharacterCamera.
+- DragInteractable.cs / GridInteractable.cs (same folder): BaseInteractable
+  subclasses; DragInteractable.OnClicked → dragMovementREF.UpdateDragMover()
+  + model swap; GridInteractable.OnClicked → gridPointREF.OnMouseEnterCustom().
+- BaseInteractable.cs / IInteractable.cs: the Clicked()/OnClicked contract —
+  KEEP, new MoveHandleInteractable extends BaseInteractable.
+- ProjectSettings/TagManager.asset: layer 6 = "Grid", layer 7 = "Drag Movement".
+
+### 1.3 AP system (REUSE, do not rewrite)
+- Assets/Scripts/Networking/LocalStoredNetworkData.cs: static blackboard.
+  `localPlayerCurrentAP = 3` (:35), `opponentsCurrentAP` (:37),
+  `squaresMovedThisInstanceOfMovement` int (:41), reset in Reset() (~:155-185,
+  AP→3 at ~:174, squares→0 at ~:179). isPlayer1Turn (:17). Also holds
+  localPlayerCharacter/opponentCharacter refs used to pick MoveSpeed.
+- Assets/Scripts/UI/ApReferenceLists.cs (161 lines):
+  UpdateValueOfRelevantAp(int addend) (:113) is the ONLY mutation point —
+  clamps LocalStoredNetworkData.localPlayerCurrentAP to [0,9] (main) or
+  SpeedsterREF.FasterPassive.PassiveAp (speedster pool). addend 0 == read.
+  Blink() coroutine (:87), StopBlink (:107).
+- Assets/Scripts/UI/ActionPointsManager.cs (214 lines, singleton, maxAP=9):
+  BlinkCurrentListReference() → ApMovementBlink (:146): UpdateValueOfRelevantAp(-1)
+  + adds light to ApLightsToBeBlinked + starts blink. MoveWasConfirmed (:117)
+  commits. MoveWasCanceled (:124) → ResetApUsage refunds all pending AND
+  calls FloorGrid.Instance.EmptyGridPointList() (:131) — MUST REDIRECT.
+  Routing main-vs-speedster pool via CurrentApReferenceListsREF (set by last
+  UpdateAP call) — FloorGrid.TryHighlighting relied on this; preserve by
+  using the same calls. Overdrive coloring ColorAp lives inside UpdateAP —
+  untouched.
+- ConfirmButtonEventListener.cs (Assets/, :25): confirm button interactable
+  requires planned cell count > 1 — becomes "pending AP cost > 0".
+
+### 1.4 Turn flow / UI states
+- Assets/Scripts/FlowControl/PlayerTurnManager.cs: singleton;
+  IsLocalPlayersTurn (:35); StartTurn (:84); EndTurn(bool timeRanOut) (:112)
+  currently calls FloorGrid.Instance.EmptyGridPointList() (:137/:145) and
+  uses a `dragMovementREF` field — both must go; fires OnTurnStart/OnTurnEnd;
+  calls ClientSend.EndTurn() (:157). Overdrive bonus AP (:101-106, :173-198).
+- Assets/Scripts/UI/CombatUiStatesManager.cs: CombatUiState {unselected,
+  main, movement, combat} (:11-17); SetCombatUiState(int) (:50).
+- ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating() brackets
+  movement execution (pauses timer/UI) — called at MovementSetup start and
+  LerpMovement tail today; replicate in the new confirm/execute flow.
+
+### 1.5 Networking (custom TCP, Tom Weiland style — NO Unity netcode pkg)
+- Assets/Scripts/Networking/Client Scripts/Client.cs: dataBufferSize=4096
+  (:11) is ONLY the OS socket buffer hint; receive loop reassembles
+  length-prefixed frames of ANY size — large single packets are safe.
+  packetHandlers dictionary in InitializeClientData (:249-272); dispatch
+  reads ONE leading int ID (:235-236).
+- Assets/Scripts/Networking/Packet.cs: ServerPackets/ClientPackets enums
+  (:6-50). Has Write/Read for byte/bytes/short/int/long/float/bool/string;
+  NO Vector3 helpers; NO `using UnityEngine;`.
+  QUIRK: every ClientSend method (except WelcomeReceived) writes the packet
+  ID TWICE (Packet ctor + explicit Write). The server consumes the duplicate
+  in its handlers. NEW/REWRITTEN packets write it ONCE; their server relay
+  must NOT read a leading extra int. Untouched packets keep the quirk.
+- Assets/Scripts/Networking/Client Scripts/ClientSend.cs:
+  SendSegmentedMovementData(int x,int y,int count,bool hasRotations,bool
+  completed) (:64-78, pkt ClientPackets.sendSegmentedMovementData=15);
+  SendSegmentedRotationData(float x,y,z,w,int count) (:80-94, pkt 16);
+  UpdatePlayerCurrentPostition(int x,int y,int hoveredOverGPsCount)
+  (:160-172, pkt 2 — third field is dead, always 0, receiver discards);
+  OverrideOppositePlayersPostition(int x,int y) (:174-185, pkt 11).
+- Assets/Scripts/Networking/Client Scripts/ClientHandle.cs:
+  RecieveSegmentedMovementData (:72-84) → FloorGrid.ConstructVector3List...;
+  RecieveSegmentedRotationData (:86-98); RecieveUpdatedPlayerPosition
+  (:167-174) → FloorGrid.UpdateOpponentPosition; RecieveOverrodePosition
+  (:176-183) → ProceduralGridManipulation.IsVector2AValidGridPoint;
+  ReceiveStartTurnSignal (:107-117).
+- Turn model: strictly alternating; acting client computes + animates + sends;
+  server relays; opponent replays verbatim. No prediction, no server
+  validation (client-trusted — keep; note server validation as future work).
+- No version handshake exists (Welcome/WelcomeReceived carry id+username only).
+- ServerConfig.GetServerIP() defaults 127.0.0.1; lobby has server-IP input
+  (SaveServerIp.cs) — local loopback testing supported.
+
+### 1.6 Dedicated server (SOURCE LOCATION: /Users/ladwan/Desktop/GameServer/GameServerCore/)
+NOT in this repo (Assets/ServerLogic/GameServer/ holds only csproj+pdb).
+Files: Client.cs, Constants.cs, GameLogic.cs, Match.cs, Packet.cs, Program.cs,
+Server.cs, ServerHandle.cs, ServerSend.cs, ThreadManager.cs.
+- Movement relay lives in Match.cs: dispatch switch (:110-114);
+  HandleSegmentedMovementData (:199) reads int x,int y,int count,bool,bool →
+  ServerSend.SendSegmentedMovementData(opponent.id,...) (:213);
+  HandleSegmentedRotationData (:216). GetOpponent(fromClientId) resolves the
+  relay target. Server holds NO movement/grid state (pure relay).
+- ServerSend.cs: SendSegmentedMovementData (:105), SendSegmentedRotationData
+  (:121), SendUpdatedPlayerPosition(int,int,int) (:191),
+  SendOverrodePosition(int,int) (:203).
+- Server Packet.cs enums mirror the client's: ServerPackets
+  sendUpdatedPlayerPosition=2, sendSegmentedMovementData=17,
+  sendSegmentedRotationData=18; ClientPackets updatePlayerCurrentPosition=2,
+  sendSegmentedMovementData=15, sendSegmentedRotationData=16. Override-pos
+  server pkt id = 13 (serverSendOverrodePos).
+- Deploys to foreverfight.nogoodgames.io:32887. dataBufferSize=4096 (hint only).
+
+### 1.7 Grid consumers that break (shim targets)
+- Assets/Scripts/HelperScripts/ProceduralGridManipulation.cs (160 lines):
+  PullEnemy(int)/KnockbackEnemy(int)/Knockback(dir,n) step along cells; wall
+  = stepping off gridDictionary; fires enemyHitAWallAction LOCALLY on the
+  attacker BEFORE sending ClientSend.OverrideOppositePlayersPostition.
+  ReturnProceduralPath()/GenerateProceduralPath (:73) — straight-line cell
+  walk between the two players. IsVector2AValidGridPoint (:48).  DELETE →
+  replaced by ForcedDisplacement.
+- Assets/Scripts/HelperScripts/GetRandomGridPoint.cs: random cells,
+  Random.Range(0,10) bounds. DELETE → RandomNavPointProvider.
+- Brawn: Assets/Scripts/Interactable/Characters/Brawn/Moveset/
+  - GroundPound.cs: AbilityAfterEffects (:79) switches on
+    ReturnProceduralPath().Count — count 2 (adjacent, d=1): damage+OffBalance;
+    count 3 (d=2): PullEnemy(1), damage+OffBalance ONLY if Ire active;
+    count 4 (d=3): PullEnemy(2), damage+OffBalance. Default branch logs error.
+  - Haymaker.cs: HandleAbilityResponses (:71) → KnockbackEnemy(3) (:78);
+    subscribes EnemyHitWall (:99) to ...ProceduralGridManipulationREF
+    .EnemyHitAWallAction in OnEnable/OnDisable.
+  - Ire.cs: SmallIreMovement(int sqs) on FloorGrid.OnMoveConfirmed — early
+    return if sqs >= 4 (i.e. moved 3+ cells → faithful distance threshold
+    3.0f); sets OwningCharacter.MovementIndex = 1 (:76) / 0 (:145) to swap
+    anim-curve sets — becomes MovementExecutor.SpeedMultiplier seam.
+- Speedster: Assets/Scripts/Interactable/Characters/The Speedster/
+  - Speedster.cs: subscribes FloorGrid.Instance.OnMoveConfirmed +=
+    MoveWasConfirmed (:33); handler body is effectively empty — DELETE the
+    subscription.
+  - Moveset/Momentum.cs: GetHoveredOverGridPointsCount(int value) (:136) on
+    OnMoveConfirmed (:54): storedMomentum += value - 1 (cells moved; guard
+    value<1→1); then ClientSend.SendStoredMomentumValue(storedMomentum).
+    MomentumDisplayReferences subscribes Momentum's own parameterless Action
+    — untouched.
+  - Moveset/FasterPassive.cs: passiveAp/maxPassiveAp = 3 (:33-34); registered
+    as SpeedsterPassiveApLists (:104); ResetPassiveAp on OnTurnEnd (:203-206);
+    ChangeColorOfHighlight (:181) + passiveHightlighMaterial/original... +
+    DragMoverREF.OnDragMoverPosUpdated subscription + isChangeColorSubscribed
+    = grid-highlight machinery to DELETE. PassiveAbilityDescription text
+    mentions "3 extra squares" — update.
+  - Moveset/Haste.cs: SetMaxPassiveApPool(6) (:136); the
+    AugmentedMovementManager.ToggleAugmentMovement(moveToRandomGPsREF) call
+    is COMMENTED OUT (:138, :175) — the dash is dormant.
+  - MoveToRandomGPs.cs (implements IAugmentedMovement): dormant dash; gates
+    on LocalStoredNetworkData.squaresMovedThisInstanceOfMovement < 10 (:38);
+    stuffs random GPs into HoveredOverGridPoints and calls ConfirmMove
+    repeatedly. DO NOT REDESIGN: keep compiling with minimal edits, tag
+    // TODO: rework as NavMesh dash post-refactor.
+  - QuickPunch.cs: damage += momentumREF.Product — untouched.
+- Assets/Scripts/HelperScripts/PlayerLookAtManager.cs: subscribes
+  FloorGrid.Instance.OnMoveCompleted — re-subscribe to new event.
+- Assets/Scripts/HelperScripts/LerpPlayerCameraWhenMoving.cs: subscribes
+  DragMovement.OnDragMoverPosUpdated; lerps char camera toward DragMover;
+  ReturnObjectBackToOriginalPos() (scene-wired 2x) — repoint to guide-line
+  endpoint; keep ReturnObjectBackToOriginalPos public API.
+- Assets/Scripts/Interactable/Characters/Character.cs: baseMoveSpeed/
+  moveSpeed/moveSpeedHelper (:21-23); MovementAnimCurves list (:34-45);
+  MovementIndex (:35); oneSqRadius..fiveSqRadius GameObjects (:29-33) —
+  range-indicator VISUALS, keep as-is. CastAbility switch (:119). Character
+  does NOT execute movement.
+- Assets/Scripts/HelperScripts/Vector3ToVector2.cs — KEEP (used elsewhere).
+
+### 1.8 Scene wiring (Assets/Scenes/CombatScene.unity — the ONLY scene with
+grid objects; Assets/!Test/Test.unity also references DragInteractable)
+Script GUIDs in the scene: FloorGrid 67be9922af5f4da40a6b8431c33e9635,
+GridPoint b184b87ac9f1e6b4193d15a6e9916fe8, DragMovement
+bae70eeccd7e07b4eb9e731b774772de, GridInteractable
+a94ec485eaacfea4dbf6f19e4ad53a8e, DragInteractable
+9275849f9bd693947b5360a373a36840, ProceduralGridManipulation
+66c0a64d7fab452419c3561426461764.
+Hand-wired UnityEvents (search m_MethodName in the scene YAML):
+- DetermineIfMovementIsAugmented — Confirm Button (Movement Ui). KEEP.
+- MoveWasCanceled — Back Button (Movement Ui). KEEP.
+- AddStartingGpHighlight — movement-UI-state entry. REMOVE (method deleted).
+- ResetDragMover — turn-end cleanup event. REMOVE (method deleted).
+- ReturnObjectBackToOriginalPos — x2. KEEP.
+- EndTurn — x3. KEEP.
+Grid scene objects to remove: "Floor Grid", "Grid Point Reference",
+"Drag Mover", "CurveMoveSpeed Manager". The grid-point template is an
+in-scene object (no prefab asset). NOTE: two "Plane" objects exist — the
+walkable floor is the one the grid sat on; verify by position/scale when
+editing.
+
+## 2. TARGET ARCHITECTURE
+
+All new gameplay classes in Assets/Scripts/GameMechanics/Movement/ under
+namespace ForeverFight.GameMechanics.Movement unless noted. Singleton
+`public static X Instance` set in Awake (project convention). Keep each file
+< 400 lines. RUNTIME WIRING: a single bootstrap MonoBehaviour is the only
+component that must exist in the scene; it constructs/attaches everything
+else in Awake.
+
+### 2.1 MovementSystemBootstrap : MonoBehaviour
+The ONE component added to CombatScene (via scene YAML edit, see §6).
+Serialized refs copied from old FloorGrid object where needed:
+player1Spawn, player2Spawn, displaySelectedCharREF (DisplaySelectedChar),
+floorPlane (the walkable Plane), lerpCamera (LerpPlayerCameraWhenMoving).
+Awake():
+- AddComponent all of: PlayerSpawnManager, MovementPlanner, MovementExecutor,
+  ApDistanceBank, MovementNetworkBridge, MovementGuideLine (child GO),
+  ForcedDisplacement — passing refs via initialization methods, NOT inspector.
+- Build the guide line GO + LineRenderer + endpoint marker + TMP label in code.
+- Add capsule collider (r=0.5, h=2, layer "Drag Movement") +
+  MoveHandleInteractable to both spawns in code.
+- Add NavMeshObstacle (carve=true, carveOnlyStationary=true, radius 0.5,
+  disabled) to both spawns; PlayerSpawnManager enables the OPPONENT's.
+- Runtime NavMesh: AddComponent<NavMeshSurface>() on floorPlane
+  (collectObjects = Children or Volume covering arena),
+  surface.BuildNavMesh() at Awake — NO editor bake, nothing to commit.
+- Set floorPlane layer to "Ground" in code (gameObject.layer =
+  LayerMask.NameToLayer("Ground")) — avoids depending on the YAML layer edit
+  for the plane itself (TagManager still needs the layer NAME defined, §6).
+
+### 2.2 MovementPlanner (owns the planned move)
+API: bool BeginDrag(); void UpdateDrag(Vector3 groundPoint); void EndDrag();
+void CancelPlan(); IReadOnlyList<Vector3> PlannedWaypoints; float
+PlannedPathLength; bool IsDragging; bool HasPlan.
+Events: Action<float,int> OnPlanUpdated; Action OnPlanCleared;
+Action<float> OnMoveConfirmed; Action OnMoveCompleted (relayed from executor).
+UpdateDrag pipeline (throttled: recompute only if target moved > 0.15u AND
+>= 0.05s since last compute; reuse ONE NavMeshPath instance allocated in
+Awake — no per-frame GC):
+  NavMesh.SamplePosition(point, out hit, 2.0f, AllAreas) — on failure keep
+  last valid plan → NavMesh.CalculatePath(charPos, hit.position, AllAreas,
+  reusablePath) — accept PathPartial → NavPathUtility.TruncateAtDistance(
+  corners, ApDistanceBank.MaxPlannableDistance(), buffer) →
+  NavPathUtility.PullBackFromPoint(buffer, opponentPos, 0.75f) →
+  NavPathUtility.FlattenY(buffer, 0f) → store → apBank.SyncPendingCost(
+  apBank.CostForDistance(len)) → OnPlanUpdated(len, cost).
+BeginDrag returns false when RemainingAp+pending == 0 or not local turn or
+CombatUiState != movement. EndDrag with PlannedPathLength < DeadZone(0.35f)
+auto-cancels (RefundAll + OnPlanCleared) — no AP charge for a misclick.
+Plan persists after drag release until Confirm or Cancel (today's idiom).
+
+### 2.3 MovementExecutor
+Play(GameObject spawnToMove, Character character, IReadOnlyList<Vector3>
+waypoints, Action onComplete). Coroutine: scalar traveled += currentSpeed*dt,
+distance→point cursor over the polyline (no per-segment coroutines).
+Rotation: smooth turn-while-walking, Quaternion.RotateTowards toward flat
+segment direction, turnSpeedDeg = 540; snap end position to waypoints[^1]
+and facing to final segment direction (bit-identical endings on both
+clients). Speed: duration = pathLen / character.BaseMoveSpeed (reinterpreted
+as units/sec, suggest default 4 — update prefab values if wildly off),
+min 0.4s; currentSpeed = BaseMoveSpeed * runSpeedCurve.Evaluate(t01) *
+SpeedMultiplier (public float SpeedMultiplier = 1 — Ire's seam). Animator:
+SetFloat("CharSpeed", currentSpeed / BaseMoveSpeed) per frame (same
+normalized range old curves fed). bool IsPlaying guards confirm spam.
+NO NavMesh queries at execution time (replay determinism).
+
+### 2.4 MovementGuideLine
+Child GO built by bootstrap. LineRenderer: useWorldSpace=true, width 0.2,
+numCornerVertices=numCapVertices=4, textureMode=Tile, positions at y=0.05.
+Corners densified every ~0.5u (cap ~90 pts). Material: new asset
+Assets/Materials/MovementGuideLine.mat, URP/Unlit transparent, chevron/dash
+texture; scroll in Update: material.mainTextureOffset -= new
+Vector2(1.5f*dt, 0) on the INSTANCE (renderer.material). Endpoint marker =
+flat ring quad + world-space TMP label "{len:0.0}m • {cost} AP", camera-
+facing in LateUpdate; marker tinted amber when len == MaxPlannableDistance()
+(epsilon) else white. Subscribes OnPlanUpdated/OnPlanCleared; hidden on
+confirm. Exposes Transform EndpointTransform (camera follow target).
+If no suitable texture asset exists, generate a small chevron Texture2D in
+code at runtime (SetPixels) — zero new binary assets needed.
+
+### 2.5 ApDistanceBank
+Serialized: UnitsPerAp = 1.1f; DeadZone = 0.35f.
+int CostForDistance(float d) => d < DeadZone ? 0 : Mathf.Max(1,
+  Mathf.CeilToInt(d / UnitsPerAp));
+int RemainingAp() => ActionPointsManager.Instance.CurrentApReferenceListsREF
+  != null ? ...CurrentApReferenceListsREF.UpdateValueOfRelevantAp(0)
+  : ActionPointsManager.Instance.MainApLists.UpdateValueOfRelevantAp(0);
+float MaxPlannableDistance() => (RemainingAp() + pendingCost) * UnitsPerAp;
+void SyncPendingCost(int newCost):
+  while (pendingCost < newCost) { apm.BlinkCurrentListReference(); pendingCost++; }
+  while (pendingCost > newCost) { apm.UpdateAP(apm.CurrentApReferenceListsREF, 1);
+    apm.UpdateBlinkingAP(apm.CurrentApReferenceListsREF); pendingCost--; }
+void Commit() { apm.MoveWasConfirmed(apm.CurrentApReferenceListsREF); pendingCost = 0; }
+void RefundAll() { if (pendingCost > 0) apm.ResetApUsage(apm.CurrentApReferenceListsREF); pendingCost = 0; }
+(Exact same call pairs FloorGrid used → speedster pool routing via
+CurrentApReferenceListsREF keeps working untouched. Check actual method
+accessibility/signatures on ActionPointsManager when implementing; make
+members public if they were private-with-UnityEvent.)
+Speedster passive: FasterPassive keeps passiveAp=3 as 3 BUCKETS (3 *
+UnitsPerAp units, consumed before main pool via existing speedster routing).
+Add serialized field so it's configurable; update ability description text.
+
+### 2.6 PlayerSpawnManager
+Re-homes FloorGrid's non-movement half: spawns, ClientInfo.playerNumber
+switch (copy the exact Start() logic incl. PreparePlayers /
+displaySelectedCharREF.SpawnPlayer calls), LocalPlayerSpawn/OpponentSpawn
+props, UpdateOpponentPosition(Vector3), OverrideLocalPlayerPosition(Vector3),
+enables opponent's NavMeshObstacle after spawn assignment.
+
+### 2.7 MovementNetworkBridge
+public const int MaxWaypointsPerMove = 256.
+ConfirmLocalMove(): guard executor.IsPlaying; snapshot waypoints (waypoint[0]
+= mover start pos — planner already includes it via path corner[0]);
+ToggleTimerAndUi bracket; ClientSend.SendMovementPath(waypoints, pathLen,
+apCost) BEFORE starting local playback (TCP ordering: path always precedes a
+subsequent endTurn); apBank.Commit(); planner.OnMoveConfirmed(pathLen); hide
+line; executor.Play(local spawn, local char, waypoints, onComplete: () => {
+ClientSend.UpdatePlayerPosition(finalPos); ToggleTimerAndUi re-enable;
+planner.OnMoveCompleted; clear plan; }).
+ReplayRemoteMove(List<Vector3> wps, float dist, int apSpent): snap opponent
+to wps[0] (drift erase), executor.Play(OpponentSpawn, opponent char, wps).
+ReceiveOpponentPosition(Vector3) → PlayerSpawnManager.UpdateOpponentPosition.
+
+### 2.8 NavPathUtility (static, same namespace)
+SampleGround(Ray, out Vector3): Physics.Raycast vs LayerMask "Ground"
+(1000f); fallback new Plane(Vector3.up, Vector3.zero).Raycast so drags past
+the floor edge still resolve; then NavMesh.SamplePosition clamp (2.0f).
+float PathLength(IList<Vector3>).
+float TruncateAtDistance(Vector3[] corners, float maxDist, List<Vector3>
+result): walk segments accumulating length; when accumulated+seg >= maxDist
+emit interpolated cutoff point and stop; returns actual planned length.
+void PullBackFromPoint(List<Vector3> path, Vector3 blocker, float radius):
+while endpoint within radius of blocker, walk endpoint back along final
+segment, dropping consumed corners.
+void FlattenY(List<Vector3>, float y = 0f). (Drop if arena gains elevation.)
+
+### 2.9 ForcedDisplacement (Assets/Scripts/HelperScripts/, namespace
+ForeverFight.HelperScripts) — replaces ProceduralGridManipulation
+Serialized: minimumSpacing = 1.0f, navSampleRadius = 1.0f.
+public Action EnemyHitAWallAction (Haymaker re-subscribes here).
+float DistanceBetweenPlayers() — XZ distance between spawns.
+void PullEnemy(float distance) / PullEnemyToMeleeRange(): pull opponent
+straight toward local player, clamp final spacing >= minimumSpacing; plain
+SamplePosition clamp (pull can never hit a wall — matches old semantics);
+send ClientSend.OverrideOpponentPosition(finalPos).
+void KnockbackEnemy(float distance): push directly away;
+NavMesh.Raycast(enemyPos, target, out hit, AllAreas) — if blocked clamp to
+hit.position AND invoke EnemyHitAWallAction (attacker-local, BEFORE the
+send — preserves Haymaker/OffBalance semantics; wall == NavMesh edge ==
+old grid edge); send OverrideOpponentPosition(finalPos).
+void ApplyForcedMoveToLocalPlayer(Vector3 dest): SamplePosition clamp,
+PlayerSpawnManager.OverrideLocalPlayerPosition, echo
+ClientSend.UpdatePlayerPosition(finalPos) (preserves old echo behavior).
+
+### 2.10 RandomNavPointProvider (HelperScripts) — replaces GetRandomGridPoint
+List<Vector3> GetRandomPoints(int n): Random.Range over arena bounds
+(serialized Rect/Bounds, default the old 10x10 footprint), SamplePosition-
+validated. Only consumer: dormant MoveToRandomGPs.
+
+### 2.11 MoveHandleInteractable (Player Input Interactions/, namespace
+matching siblings) : BaseInteractable
+OnClicked → guards (PlayerTurnManager.Instance.IsLocalPlayersTurn, CombatUi
+state == movement, this spawn == LocalPlayerSpawn) → MovementPlanner
+.BeginDrag(). OnUnclicked → MovementPlanner.EndDrag().
+
+## 3. WIRE FORMAT + CLIENT NETCODE CHANGES
+
+sendMovementPath — REUSE ids: ClientPackets 15 / ServerPackets 17 (rename
+enum members from sendSegmentedMovementData; NEVER renumber). RETIRE ids
+16/18 (sendSegmentedRotationData) — comment out to reserve numbers.
+Payload (ID written ONCE, no duplicate):
+  int   packetId
+  int   waypointCount        (N, includes start position as waypoint[0])
+  float totalPathDistance
+  int   apSpent
+  N x (float x, float y, float z)
+Size 16+12N bytes; cap N <= 256 (collinear-simplify first if ever above;
+NavMesh corner paths are typically < 20). Receiver rejects count <=0 or
+>256 with Debug.LogError and drops.
+
+Packet.cs (client): add `using UnityEngine;` +
+  public void Write(Vector3 v) { Write(v.x); Write(v.y); Write(v.z); }
+  public Vector3 ReadVector3(bool m=true) => new Vector3(ReadFloat(m),
+    ReadFloat(m), ReadFloat(m));
+ClientSend.cs: DELETE SendSegmentedMovementData/SendSegmentedRotationData.
+ADD SendMovementPath(List<Vector3> wps, float totalDist, int apSpent) —
+writes count, dist, apSpent, then each Vector3. REWRITE
+UpdatePlayerCurrentPostition → UpdatePlayerPosition(Vector3) (pkt 2, single
+ID write, drop dead third field) and OverrideOppositePlayersPostition →
+OverrideOpponentPosition(Vector3) (pkt 11, single ID write).
+ClientHandle.cs: DELETE the two segmented receivers. ADD
+ReceiveMovementPath(Packet): read count/dist/apSpent, validate, build list,
+→ MovementNetworkBridge.Instance.ReplayRemoteMove(...). REWRITE
+RecieveUpdatedPlayerPosition → ReadVector3 → bridge.ReceiveOpponentPosition;
+RecieveOverrodePosition → ReadVector3 →
+ForcedDisplacement.Instance.ApplyForcedMoveToLocalPlayer.
+Client.cs InitializeClientData: swap handler entries (17 →
+ReceiveMovementPath; remove 18; 2 and 13 handlers stay mapped to the
+rewritten methods).
+
+## 4. SERVER CHANGES (/Users/ladwan/Desktop/GameServer/GameServerCore/)
+
+Make the relay payload-agnostic for the three movement packets so future
+payload changes need zero server edits:
+1. Packet.cs: add public byte[] ReadRemainingBytes() =>
+   ReadBytes(UnreadLength());  (no UnityEngine needed server-side).
+2. ServerSend.cs: add RelayRaw(int toClient, int serverPacketId, byte[]
+   payload) { new Packet(serverPacketId); packet.Write(payload); SendTcpData; }
+   DELETE SendSegmentedMovementData/RotationData; convert
+   SendUpdatedPlayerPosition/SendOverrodePosition call sites to RelayRaw.
+3. Match.cs: replace HandleSegmentedMovementData/HandleSegmentedRotationData
+   with one RelayToOpponent(fromClientId, Packet, int serverPacketId) that
+   does GetOpponent + ServerSend.RelayRaw(opponent.id, id,
+   packet.ReadRemainingBytes()). Dispatch switch: case 15 →
+   RelayToOpponent(..., (int)ServerPackets.sendMovementPath /*17*/); REMOVE
+   case 16; route pkt 2 → relay to ServerPackets 2 and pkt 11 → ServerPackets
+   13 the same way. CRITICAL: these handlers must NOT read a leading
+   duplicate int (new client packets write the ID once). Untouched packets
+   keep their duplicate-ID reads.
+4. Server Packet.cs enums: rename members to match client (numbers frozen).
+5. RECOMMENDED: protocol version gate — client Constants gains
+   ProtocolVersion = 2, written in ClientSend.WelcomeReceived; server
+   ServerHandle.WelcomeReceived reads it, logs + disconnects on mismatch.
+6. Rebuild; deploy lockstep with client build. Clean cutover, no dual-
+   protocol (1v1 hobby scale). Loopback test first (server runs locally;
+   client ServerConfig defaults 127.0.0.1).
+
+## 5. CONSUMER MODIFICATIONS (client)
+
+- BasePlayerInputInteraction.cs: hold-raycast now
+  NavPathUtility.SampleGround-style: Physics.Raycast LayerMask "Ground",
+  Plane fallback → MovementPlanner.Instance.UpdateDrag(point). Press path
+  unchanged (hits MoveHandleInteractable on "Drag Movement" layer). Track
+  planner.IsDragging instead of dragMovementREF.ValidDrag; DELETE
+  dragMovementREF field. ADD public void ForceEndDrag() (clears touch state
+  without confirming) for turn expiry.
+- ActionPointsManager.MoveWasCanceled (:124): replace
+  FloorGrid.Instance.EmptyGridPointList() with
+  MovementPlanner.Instance.CancelPlan().
+- AugmentedMovementManager.DetermineIfMovementIsAugmented (:59): set
+  LocalStoredNetworkData.distanceMovedThisInstance =
+  MovementPlanner.Instance.PlannedPathLength; non-augmented branch →
+  MovementNetworkBridge.Instance.ConfirmLocalMove().
+- PlayerTurnManager.EndTurn: drop EmptyGridPointList + dragMovementREF uses;
+  call MovementPlanner.Instance.CancelPlan() +
+  BasePlayerInputInteraction.Instance.ForceEndDrag(). Also guard
+  MovementPlanner.UpdateDrag on IsLocalPlayersTurn (end-turn packet landing
+  mid-frame).
+- ConfirmButtonEventListener.cs: subscribe MovementPlanner.OnPlanUpdated;
+  interactable = cost > 0 (replaces count > 1).
+- LerpPlayerCameraWhenMoving.cs: drop DragMover subscription; follow
+  MovementGuideLine.EndpointTransform via a follow coroutine started on
+  OnPlanUpdated; keep ReturnObjectBackToOriginalPos() public (scene-wired).
+- LocalStoredNetworkData.cs: squaresMovedThisInstanceOfMovement (int) →
+  distanceMovedThisInstance (float); update reset site (~:179) and all
+  references (AugmentedMovementManager, MoveToRandomGPs).
+- Character.cs: add [SerializeField] AnimationCurve runSpeedCurve (default
+  EaseInOut(0,1,1,1)-ish); BaseMoveSpeed reinterpreted units/sec.
+  MovementAnimCurves/MovementIndex/MoveSpeedHelper become dead — leave
+  fields, delete consumers, // TODO remove later.
+- Momentum.cs: handler becomes OnMoveConfirmedShim(float distance):
+  if (!StatusActive) return; int gained = Mathf.FloorToInt(distance /
+  unitsPerMomentum /*serialized, 1.0f*/); if (gained <= 0) return;
+  storedMomentum += gained; onMoveConfirmed?.Invoke();
+  ClientSend.SendStoredMomentumValue(storedMomentum);
+- Ire.cs: SmallIreMovement(float distance), early-return if distance >=
+  smallMoveThreshold (serialized 3.0f). MovementIndex swap →
+  MovementExecutor.Instance.SpeedMultiplier (set ~1.3 on activate, 1 on
+  cleanup — value configurable; old behavior swapped to curve set 1).
+- Speedster.cs: delete the OnMoveConfirmed subscription + handler.
+- FasterPassive.cs: delete highlight-recolor machinery; keep pool logic;
+  passive pool stays 3 (buckets), add serialized extraDistancePerTurn note;
+  update description string.
+- GroundPound.cs AbilityAfterEffects — distance bands (serialized:
+  directHitRange=1.5f, midRange=2.5f, farRange=3.5f):
+  d = ForcedDisplacement.Instance.DistanceBetweenPlayers();
+  d<=direct: damage+OffBalance; d<=mid: PullEnemyToMeleeRange, damage+
+  OffBalance only if Ire active; d<=far: PullEnemyToMeleeRange + damage+
+  OffBalance; else Debug.LogError (matches old default).
+- Haymaker.cs: KnockbackEnemy(3f) via ForcedDisplacement;
+  EnemyHitAWallAction subscription moved to ForcedDisplacement.Instance.
+- MoveToRandomGPs.cs: minimal compile fixes only (RandomNavPointProvider,
+  distanceMovedThisInstance < 10f, executor.Play instead of grid confirms);
+  keep dormant; // TODO rework.
+- PlayerLookAtManager.cs: OnMoveCompleted re-subscription →
+  MovementPlanner.Instance.OnMoveCompleted.
+
+## 6. FILE DELETIONS + SCENE/SETTINGS EDITS
+
+Delete (with .meta): FloorGrid.cs, GridPoint.cs, DragMovement.cs,
+GridInteractable.cs, DragInteractable.cs, ProceduralGridManipulation.cs,
+GetRandomGridPoint.cs, CurveMoveSpeed.cs.
+
+ProjectSettings/TagManager.asset (YAML edit): rename layer index 6 "Grid" →
+"Ground". Layer 7 "Drag Movement" unchanged.
+
+Assets/Scenes/CombatScene.unity (YAML edits — do textually, carefully;
+Unity scene YAML is line-oriented, each object block starts with
+"--- !u!<class> &<fileID>"):
+1. Remove the GameObjects (and their component blocks) for: Floor Grid,
+   Grid Point Reference (+ its GridPoint/GridInteractable children/
+   components), Drag Mover (+DragMovement/DragInteractable), CurveMoveSpeed
+   Manager, and the ProceduralGridManipulation component/holder. Identify
+   blocks via the script GUIDs listed in §1.8. Also remove their entries
+   from any parent m_Children lists and check for scene references TO these
+   fileIDs (inspector refs on PlayerTurnManager.dragMovementREF etc. — those
+   fields are being deleted from code anyway; stale m_... refs to removed
+   fileIDs in remaining components must be cleared to fileID: 0).
+2. Remove UnityEvent listener entries whose m_MethodName is
+   AddStartingGpHighlight or ResetDragMover (delete the whole m_Calls item).
+3. Add one new GameObject "Movement System" with the MovementSystemBootstrap
+   component: create Assets/Scripts/GameMechanics/Movement/
+   MovementSystemBootstrap.cs.meta with a fresh GUID (uuidgen, lowercase,
+   no dashes) and reference it: m_Script: {fileID: 11500000, guid: <guid>,
+   type: 3}. Serialized refs (player1Spawn/player2Spawn/
+   displaySelectedCharREF/floorPlane/lerpCamera) — copy target fileIDs from
+   the old Floor Grid component block before deleting it.
+4. Assets/!Test/Test.unity references DragInteractable — either delete the
+   component block or delete the whole test scene object; !Test is a
+   sandbox folder.
+All other new components are added at runtime by the bootstrap — no further
+scene edits.
+
+.meta files: every new .cs needs a .meta (fileFormatVersion: 2 / guid: ... /
+MonoImporter block, copy shape from an existing script .meta). Generate
+GUIDs with `uuidgen | tr -d '-' | tr 'A-F' 'a-f'`.
+
+## 7. IMPLEMENTATION ORDER (each step compiles)
+
+1. New code, no deletions: NavPathUtility, ApDistanceBank, MovementPlanner,
+   MovementExecutor, MovementGuideLine, PlayerSpawnManager,
+   MovementNetworkBridge, ForcedDisplacement, RandomNavPointProvider,
+   MoveHandleInteractable, MovementSystemBootstrap (+ .metas).
+2. Netcode: Packet.cs Vector3 helpers + enum renames/retirements;
+   ClientSend/ClientHandle rewrites; Client.InitializeClientData.
+3. Consumer modifications (§5) — this is the step that unhooks FloorGrid.
+4. Delete grid files (§6) — code must still compile.
+5. Scene + TagManager YAML edits (§6).
+6. Server changes (§4) in /Users/ladwan/Desktop/GameServer; build with
+   dotnet/msbuild if available.
+7. Verification (§8).
+
+## 8. VERIFICATION
+
+- Compile check WITHOUT opening the editor UI:
+  Unity batchmode if available (find installs under
+  /Applications/Unity*/**/Unity.app/Contents/MacOS/Unity or via
+  /Applications/Unity\ Hub.app):
+  Unity -batchmode -nographics -quit -projectPath <repo>
+  -logFile /tmp/unity_compile.log ; grep for "error CS" in the log. If no
+  Unity CLI is available, fall back to syntax-level review + csc dry checks
+  where feasible, and report that editor compile is pending.
+- Server: dotnet build / msbuild the GameServer csproj (it targets
+  .NET Framework 4.7.2 but obj/ shows net10.0 artifacts too — build
+  whichever target the current sln uses).
+- Scene YAML sanity: after edits, confirm no remaining occurrences of the
+  six grid script GUIDs (§1.8) in any .unity file, and no m_MethodName:
+  AddStartingGpHighlight / ResetDragMover.
+- Grep gates: zero references to FloorGrid|GridPoint|DragMovement|
+  ProceduralGridManipulation|GetRandomGridPoint|CurveMoveSpeed|
+  squaresMovedThisInstanceOfMovement outside this plan file.
+- Runtime (human or agent-driven when editor available): loopback matrix —
+  two clients + local server: move replay parity (log waypoint lists both
+  sides, must match), AP lights blink per bucket while dragging, shrink-drag
+  refunds, cancel refunds all, line hard-stops at RemainingAp*UnitsPerAp,
+  full-arena drag ≈ 9 AP, zero-distance release charges nothing, turn-timer
+  expiry mid-drag refunds + force-ends, GroundPound at ~1/~2/~3u with and
+  without Ire, Haymaker knockback into arena edge fires wall action +
+  clamps, Momentum numbers match pre-refactor for equal distances, Speedster
+  passive consumed before main pool, disconnect mid-replay.
+
+## 9. RISKS / TUNING KNOBS (all serialized fields)
+
+UnitsPerAp 1.1 | DeadZone 0.35 | GroundPound 1.5/2.5/3.5 | Ire threshold 3.0
+| knockback 3.0 | minimumSpacing 1.0 | unitsPerMomentum 1.0 | opponent
+pull-back 0.75 | Speedster passive 3 buckets | Ire SpeedMultiplier 1.3.
+All defaults are grid-faithful (1 cell = 1 unit); need playtest sign-off.
+Animator "CharSpeed" ranges: old curves may not peak at 1.0 — check Brawn/
+Speedster blend trees when runtime testing. Blink-list interleaving of
+movement pending-cost with ability costs was already fragile — unchanged.
+Haste dash threshold semantics deferred (dormant). Server deploy must be
+lockstep with client build; version gate recommended. ActionPointsManager
+method accessibility may need widening (verify when implementing).
+================================================================================
+## 10. AS-BUILT ADDENDUM (implementation completed 2026-07-13)
+
+All seven steps executed and verified. Deviations from the plan above:
+- Walkable area: the visual floor Plane is ~31x18 units (larger than the
+  playable area), so instead of baking it, MovementSystemBootstrap creates a
+  hidden 10x10 "Walkable Arena" plane primitive at arenaCenter (4.5, 0, 4.5)
+  = the old grid footprint, bakes NavMesh from it at runtime, disables its
+  renderer and keeps its collider for "Ground" raycasts. The bootstrap has an
+  arenaCenter field instead of floorPlane.
+- EnableCombatUiBasedOnButtonPress.cs also referenced the Drag Mover
+  (SetActive on movement-UI open) - dragMoverREF field + call removed.
+- Server dispatch detail: Client.cs reads the ctor ID; the DUPLICATE id was
+  consumed by ServerHandle.ServerReadFromClient before Match.HandlePacket.
+  The three duplicate-free packets are therefore routed in Server.cs's
+  packetHandlers to new ServerHandle.RelayMovementPath / RelayPlayerPosition
+  / RelayOverridePosition (via RelayDuplicateFreePacket -> Match.GetOpponent
+  -> ServerSend.RelayRaw). Match.cs cases 15/16/2/11 and their four parsed
+  handlers were deleted.
+- Speedster.cs: dead MoveWasConfirmed subscription deleted outright.
+- Ire's MovementIndex swap became MovementExecutor.SpeedMultiplier (1.3,
+  serialized ireMoveSpeedMultiplier).
+- Confirm button's scene onClick had a SetActive call on the deleted Drag
+  Mover GameObject - removed along with the AddStartingGpHighlight /
+  ResetDragMover event items; 64 YAML blocks deleted, Movement System GO
+  added (fileIDs 1919191001/2/3, bootstrap script guid
+  19f81e9500e640518cd6f7674a88e979).
+Verification results: Unity 2022.3.40f1 batchmode compile = 0 errors;
+headless CombatScene load = 0 missing scripts, bootstrap refs resolve
+(Player 1/2 Spawn Points, Player Holder, Game Mechanics Manager), layers
+Ground=6 / Drag Movement=7; server compiles (validated via net8.0 since the
+local SDK lacks net10; deploy build unchanged); grep gates all clean.
+Remaining human steps: runtime loopback playtest (two clients + local
+server), balance sign-off on the serialized constants (section 9), rebuild +
+deploy the net10 server in lockstep with the client build.

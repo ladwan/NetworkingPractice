@@ -11,17 +11,27 @@ public class ConfirmButtonEventListener : MonoBehaviour
 
     private void Start()
     {
-        FloorGrid.Instance.HoveredOverGridPointsUpdated += Listen;
+        MovementPlanner.Instance.OnPlanUpdated += Listen;
+        MovementPlanner.Instance.OnPlanCleared += Disable;
     }
 
     private void OnDestroy()
     {
-        FloorGrid.Instance.HoveredOverGridPointsUpdated -= Listen;
+        if (MovementPlanner.Instance != null)
+        {
+            MovementPlanner.Instance.OnPlanUpdated -= Listen;
+            MovementPlanner.Instance.OnPlanCleared -= Disable;
+        }
     }
 
 
-    private void Listen(int value)
+    private void Listen(float pathLength, int apCost)
     {
-        confirmButton.interactable = value > 1;
+        confirmButton.interactable = apCost > 0;
+    }
+
+    private void Disable()
+    {
+        confirmButton.interactable = false;
     }
 }

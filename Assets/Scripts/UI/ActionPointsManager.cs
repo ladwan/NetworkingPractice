@@ -128,7 +128,7 @@ namespace ForeverFight.Ui
                 ResetApUsage(currentApReferenceListsREF);
             }
 
-            FloorGrid.Instance.EmptyGridPointList();
+            MovementPlanner.Instance.CancelPlan();
         }
 
         public bool YouHaveEnoughAp(int value)

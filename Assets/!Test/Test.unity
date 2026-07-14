@@ -8323,7 +8323,6 @@ GameObject:
   - component: {fileID: 1339515983}
   - component: {fileID: 1339515982}
   - component: {fileID: 1339515987}
-  - component: {fileID: 1339515988}
   m_Layer: 6
   m_Name: Cube
   m_TagString: Untagged
@@ -8452,18 +8451,6 @@ MonoBehaviour:
   - serializedVersion: 2
     m_Bits: 128
   cam: {fileID: 1671681826}
---- !u!114 &1339515988
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1339515981}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9275849f9bd693947b5360a373a36840, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1341802584
 GameObject:
   m_ObjectHideFlags: 0

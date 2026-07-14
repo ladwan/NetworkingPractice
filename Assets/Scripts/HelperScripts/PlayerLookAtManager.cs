@@ -29,13 +29,16 @@ namespace ForeverFight.HelperScripts
                 InstantiateLookAt(player1Transform.gameObject, false);
             }
 
-            FloorGrid.Instance.OnMoveCompleted += TurnOnLookAt;
+            MovementPlanner.Instance.OnMoveCompleted += TurnOnLookAt;
             PlayerTurnManager.Instance.IsLocalPlayersTurnAction += EnableLookAtBasedOnLocalPlayerTurn;
         }
 
         private void OnDestroy()
         {
-            FloorGrid.Instance.OnMoveCompleted -= TurnOnLookAt;
+            if (MovementPlanner.Instance != null)
+            {
+                MovementPlanner.Instance.OnMoveCompleted -= TurnOnLookAt;
+            }
         }
 
         private void TurnOnLookAt()

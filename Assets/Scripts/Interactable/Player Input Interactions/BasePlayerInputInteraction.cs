@@ -10,9 +10,6 @@ namespace ForeverFight.Interactable.PlayerInputInteractions
 {
     public class BasePlayerInputInteraction : MonoBehaviour
     {
-        [SerializeField] private DragMovement dragMovementREF;
-
-
         public static BasePlayerInputInteraction Instance { get; private set; }
 
         // Events
@@ -24,7 +21,7 @@ namespace ForeverFight.Interactable.PlayerInputInteractions
         private int activeTouchId = -1;
 
         private LayerMask dragCollisionLayer;
-        private LayerMask gridCollisionLayer;
+        private LayerMask groundCollisionLayer;
         private Camera playerInputCameraREF = null;
 
 
@@ -32,7 +29,7 @@ namespace ForeverFight.Interactable.PlayerInputInteractions
         {
             Instance = this;
             dragCollisionLayer = LayerMask.GetMask("Drag Movement");
-            gridCollisionLayer = LayerMask.GetMask("Grid");
+            groundCollisionLayer = LayerMask.GetMask("Ground");
         }
 
         protected void Start()
@@ -61,7 +58,7 @@ namespace ForeverFight.Interactable.PlayerInputInteractions
 
                     case TouchPhase.Moved:
                     case TouchPhase.Stationary:
-                        if (isTouching && dragMovementREF.ValidDrag)
+                        if (isTouching && MovementPlanner.Instance.IsDragging)
                         {
                             HandleTouchHold(touch.position);
                         }
@@ -84,7 +81,7 @@ namespace ForeverFight.Interactable.PlayerInputInteractions
                 {
                     HandleTouchStart(Input.mousePosition);
                 }
-                else if (Input.GetMouseButton(0) && isTouching && dragMovementREF.ValidDrag)
+                else if (Input.GetMouseButton(0) && isTouching && MovementPlanner.Instance.IsDragging)
                 {
                     HandleTouchHold(Input.mousePosition);
                 }
@@ -109,21 +106,28 @@ namespace ForeverFight.Interactable.PlayerInputInteractions
 
         }
 
-        //Right now this is ONLY looking for gridPoints,maybe in the future we will update it to be more generic
+        // While a movement drag is held, samples the ground under the cursor and feeds
+        // the planner (replaces the old per-grid-cell raycast).
         private void HandleTouchHold(Vector2 screenPos)
         {
             Ray ray = playerInputCameraREF.ScreenPointToRay(screenPos);
 
-            if (Physics.Raycast(ray, out RaycastHit hit, 1000f, gridCollisionLayer))
+            if (NavPathUtility.SampleGround(ray, groundCollisionLayer, out Vector3 groundPoint))
             {
-                IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
-                interactable?.Clicked();
+                MovementPlanner.Instance.UpdateDrag(groundPoint);
             }
         }
 
         private void HandleTouchEnd(Vector2 screenPos)
         {
             OnTouchEnd?.Invoke(screenPos);
+            isTouching = false;
+            activeTouchId = -1;
+        }
+
+        // Turn expiry mid-drag: clear touch state without confirming anything.
+        public void ForceEndDrag()
+        {
             isTouching = false;
             activeTouchId = -1;
         }

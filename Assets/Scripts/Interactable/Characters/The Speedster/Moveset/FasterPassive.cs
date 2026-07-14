@@ -22,20 +22,13 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
     private List<Image> passiveApBackgrounds = new List<Image>();
     [SerializeField]
     private Color passiveHightlightColor = Color.black;
-    [SerializeField]
-    private Material passiveHightlighMaterial = null;
-    [SerializeField]
-    private Material originalPassiveHightlighMaterial = null;
 
 
-
-
+    // Each passive AP is one movement bucket (ApDistanceBank.UnitsPerAp world units),
+    // consumed before the main pool - the bucket equivalent of the old "3 extra squares".
     private int passiveAp = 3;
     private int maxPassiveAp = 3;
     private Coroutine coroutineREF = null;
-    private MeshRenderer meshRendererREF = null;
-    private List<MeshRenderer> passiveHighlightedMeshRenderers = new List<MeshRenderer>();
-    private bool isChangeColorSubscribed = false;
 
 
     #region Public Properties
@@ -100,7 +93,7 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
     {
         BeginCoroutine();
         PassiveAbilityName = "Faster";
-        PassiveAbilityDescription = "You can move 3 extra squares each turn";
+        PassiveAbilityDescription = "You get 3 extra movement points each turn";
         ActionPointsManager.Instance.SpeedsterPassiveApLists = referenceLists;
         CombatUiStatesManager.Instance.OnCombatUiStateChange += ApplyPassive;
         PlayerTurnManager.Instance.OnTurnEnd += ResetPassiveAp;
@@ -119,25 +112,11 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
         {
             if (passiveAp > 0)
             {
-                if (!isChangeColorSubscribed)
-                {
-                    FloorGrid.Instance.DragMoverREF.OnDragMoverPosUpdated += ChangeColorOfHighlight;
-                    isChangeColorSubscribed = true;
-                }
-
                 ActionPointsManager.Instance.UpdateAP(referenceLists, 0);
                 UpdateApBackgrounds();
-                ChangeColorOfHighlight();
             }
             else
             {
-                if (isChangeColorSubscribed)
-                {
-                    FloorGrid.Instance.DragMoverREF.OnDragMoverPosUpdated -= ChangeColorOfHighlight;
-                    isChangeColorSubscribed = false;
-                }
-
-                ResetPropertyBlocks();
                 ActionPointsManager.Instance.UpdateAP(ActionPointsManager.Instance.MainApLists, 0);
             }
         }
@@ -177,28 +156,6 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
         ActionPointsManager.Instance.UpdateAP(referenceLists, difference);
     }
 
-
-    private void ChangeColorOfHighlight()
-    {
-        if (FloorGrid.Instance.GridDictionary.TryGetValue(FloorGrid.Instance.DragMoverREF.CurrentLocationOfDragMover, out GridPoint changeHightlightColorGp))
-        {
-            meshRendererREF = changeHightlightColorGp.Highlight.GetComponent<MeshRenderer>();
-            meshRendererREF.material = passiveHightlighMaterial;
-            passiveHighlightedMeshRenderers.Add(meshRendererREF);
-        }
-    }
-
-    private void ResetPropertyBlocks()
-    {
-        if (passiveHighlightedMeshRenderers.Count > 0)
-        {
-            foreach (MeshRenderer meshRenderer in passiveHighlightedMeshRenderers)
-            {
-                meshRenderer.material = originalPassiveHightlighMaterial;
-            }
-            passiveHighlightedMeshRenderers.Clear();
-        }
-    }
 
     private void ResetPassiveAp()
     {

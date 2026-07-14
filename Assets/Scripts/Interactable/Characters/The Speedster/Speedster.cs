@@ -27,20 +27,6 @@ namespace ForeverFight.Interactable.Characters
             Health = 100;
             RollAlotment = 5;
             AssignDefaultStance();
-
-            if (FloorGrid.Instance)
-            {
-                FloorGrid.Instance.OnMoveConfirmed += MoveWasConfirmed;
-                return;
-            }
-        }
-
-        protected void OnDisable()
-        {
-            if (FloorGrid.Instance)
-            {
-                FloorGrid.Instance.OnMoveConfirmed -= MoveWasConfirmed;
-            }
         }
 
 
@@ -58,15 +44,6 @@ namespace ForeverFight.Interactable.Characters
             else
             {
                 Debug.Log("value passed for ability number was not valid");
-            }
-        }
-
-
-        private void MoveWasConfirmed(int value)
-        {
-            if (!hasteREF.StatusActive)
-            {
-                //LocalStoredNetworkData.GetCountdownTimerScript().TellNetworkToToggleTimer(); //This should be called to turn the timer back on, timer should be shut off by Augemented Movement Manager
             }
         }
     }

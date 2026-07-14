@@ -9,8 +9,6 @@ namespace ForeverFight.HelperScripts
     public class LerpPlayerCameraWhenMoving : MonoBehaviour
     {
         [SerializeField]
-        private Transform dragMoverTransformREF = null;
-        [SerializeField]
         private float speed = 1.0f;
 
 
@@ -25,23 +23,26 @@ namespace ForeverFight.HelperScripts
 
         private void OnEnable()
         {
-            if (FloorGrid.Instance)
+            if (MovementPlanner.Instance)
             {
-                FloorGrid.Instance.DragMoverREF.OnDragMoverPosUpdated += LerpObject;
+                MovementPlanner.Instance.OnPlanUpdated += LerpObject;
             }
             else
             {
-                StartCoroutine(WaitForDragMoverRef());
+                StartCoroutine(WaitForPlannerRef());
             }
         }
 
         private void OnDisable()
         {
-            FloorGrid.Instance.DragMoverREF.OnDragMoverPosUpdated -= LerpObject;
+            if (MovementPlanner.Instance)
+            {
+                MovementPlanner.Instance.OnPlanUpdated -= LerpObject;
+            }
         }
 
 
-        public void LerpObject()
+        public void LerpObject(float pathLength, int apCost)
         {
             EndAndCleanUpCouroutine();
             sub = StartCoroutine(LerpObjToMove());
@@ -50,7 +51,10 @@ namespace ForeverFight.HelperScripts
         public void ReturnObjectBackToOriginalPos()
         {
             EndAndCleanUpCouroutine();
-            localCharacterCameraParent.localPosition = Vector3.zero;
+            if (localCharacterCameraParent != null)
+            {
+                localCharacterCameraParent.localPosition = Vector3.zero;
+            }
         }
 
 
@@ -65,15 +69,21 @@ namespace ForeverFight.HelperScripts
 
         private IEnumerator LerpObjToMove()
         {
+            var endpoint = MovementGuideLine.Instance != null ? MovementGuideLine.Instance.EndpointTransform : null;
+            if (endpoint == null || localCharacterCameraParent == null)
+            {
+                sub = null;
+                yield break;
+            }
+
             var startingPos = localCharacterCameraParent.position;
-            var tempPos = new Vector3(dragMoverTransformREF.position.x, startingPos.y, dragMoverTransformREF.position.z); //get where the dragMover is at
+            var tempPos = new Vector3(endpoint.position.x, startingPos.y, endpoint.position.z);
 
             var time = 0.0f;
 
-            while (localCharacterCameraParent.position != dragMoverTransformREF.position)
+            while (localCharacterCameraParent.position != tempPos)
             {
                 time += Time.deltaTime * speed;
-                //var percent = time / duration;
                 yield return new WaitForEndOfFrame();
                 localCharacterCameraParent.position = Vector3.Lerp(startingPos, tempPos, time);
             }
@@ -81,10 +91,10 @@ namespace ForeverFight.HelperScripts
             sub = null;
         }
 
-        private IEnumerator WaitForDragMoverRef()
+        private IEnumerator WaitForPlannerRef()
         {
-            yield return new WaitUntil(() => FloorGrid.Instance);
-            FloorGrid.Instance.DragMoverREF.OnDragMoverPosUpdated += LerpObject;
+            yield return new WaitUntil(() => MovementPlanner.Instance);
+            MovementPlanner.Instance.OnPlanUpdated += LerpObject;
         }
 
         private void SetCharacterAnimatorReferences(CharacterAnimationReferences animationReferences)
