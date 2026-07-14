@@ -17,6 +17,8 @@ namespace ForeverFight.GameMechanics.Movement
     {
         [SerializeField] private float turnSpeedDegrees = 540f;
         [SerializeField] private float minimumMoveDuration = 0.4f;
+        [Tooltip("How far ahead along the path the character looks when turning. Larger = wider, smoother arcs around corners.")]
+        [SerializeField] private float rotationLookAhead = 1.25f;
 
         private Coroutine playbackCoroutine = null;
         private bool isPlaying = false;
@@ -117,7 +119,11 @@ namespace ForeverFight.GameMechanics.Movement
 
                 transformToMove.position = Vector3.Lerp(from, to, alongSegment);
 
-                Vector3 flatDirection = to - from;
+                // Steer toward a point ahead on the path rather than the current segment:
+                // the target heading drifts continuously through corners, so a multi-corner
+                // path reads as one long arc instead of a snap at each waypoint.
+                Vector3 lookPoint = PointAlongPath(waypoints, Mathf.Min(totalLength, traveled + rotationLookAhead));
+                Vector3 flatDirection = lookPoint - transformToMove.position;
                 flatDirection.y = 0f;
                 if (flatDirection.sqrMagnitude > 0.0001f)
                 {
@@ -152,6 +158,25 @@ namespace ForeverFight.GameMechanics.Movement
             isPlaying = false;
             playbackCoroutine = null;
             onComplete?.Invoke();
+        }
+
+        private static Vector3 PointAlongPath(IReadOnlyList<Vector3> waypoints, float distance)
+        {
+            float remaining = distance;
+            for (int i = 1; i < waypoints.Count; i++)
+            {
+                float segmentLength = Vector3.Distance(waypoints[i - 1], waypoints[i]);
+                if (remaining <= segmentLength)
+                {
+                    return segmentLength > Mathf.Epsilon
+                        ? Vector3.Lerp(waypoints[i - 1], waypoints[i], remaining / segmentLength)
+                        : waypoints[i];
+                }
+
+                remaining -= segmentLength;
+            }
+
+            return waypoints[waypoints.Count - 1];
         }
     }
 }

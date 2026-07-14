@@ -1,35 +1,65 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using ForeverFight.Interactable.PlayerInputInteractions;
 
 namespace ForeverFight.GameMechanics.Movement
 {
     /// <summary>
-    /// Renders the planned move: an animated (scrolling-texture) line along the planned
-    /// waypoints, an endpoint marker and a world-space cost label ("7.3m - 2 AP").
-    /// The marker tints amber when the plan is capped at the AP distance limit.
-    /// All visuals are built in code by Initialize() - nothing is wired in the editor.
+    /// Renders the planned move as an airborne trail that animates out from the character
+    /// toward the drag point: the line's head travels along the planned waypoints at
+    /// travelSpeed, carrying the endpoint marker and the world-space cost label
+    /// ("7.3m - 2 AP") with it. The scrolling chevron texture keeps the revealed portion
+    /// animated, and the marker tints amber when the plan is capped at the AP limit.
+    /// All visuals are built in code by Awake() - nothing is wired in the editor.
     /// </summary>
     public class MovementGuideLine : MonoBehaviour
     {
+        [Header("Trail Shape")]
         [SerializeField] private float lineWidth = 0.2f;
-        [SerializeField] private float lineHeight = 0.05f;
-        [SerializeField] private float scrollSpeed = 1.5f;
+        [Tooltip("Height above the ground the trail floats at.")]
+        [SerializeField] private float airHeight = 1.2f;
         [SerializeField] private float densifyStep = 0.5f;
+
+        [Header("Animation")]
+        [Tooltip("How fast the trail head lerps from the character to the drag point, in units/sec.")]
+        [SerializeField] private float travelSpeed = 10f;
+        [Tooltip("Scroll speed of the chevron texture along the revealed trail.")]
+        [SerializeField] private float scrollSpeed = 1.5f;
+        [Tooltip("Marker scale pulse amount (0 = no pulse).")]
+        [SerializeField] private float markerPulseAmount = 0.12f;
+        [SerializeField] private float markerPulseSpeed = 4f;
+
+        [Header("Colors")]
         [SerializeField] private Color lineColor = new Color(0.3f, 0.85f, 1f, 0.9f);
         [SerializeField] private Color cappedColor = new Color(1f, 0.7f, 0.15f, 0.95f);
+
+        [Header("Endpoint Re-Grab")]
+        [Tooltip("Radius of the click target on a released plan's endpoint.")]
+        [SerializeField] private float endpointGrabRadius = 0.8f;
 
         private LineRenderer lineRenderer = null;
         private Material lineMaterialInstance = null;
         private GameObject endpointMarker = null;
         private Renderer endpointRenderer = null;
         private TextMeshPro costLabel = null;
+        private Transform plannedEndpointAnchor = null;
+        private GameObject endpointGrabHandle = null;
+        private Vector3 markerBaseScale = Vector3.one;
+        private string texturePropertyName = "_MainTex";
+        private string colorPropertyName = "_Color";
+        private float scrollOffset = 0f;
         private readonly List<Vector3> densifiedPoints = new List<Vector3>();
+        private readonly List<float> cumulativeDistances = new List<float>();
+        private readonly List<Vector3> revealedPoints = new List<Vector3>();
+        private float revealDistance = 0f;
+        private float totalTrailLength = 0f;
         private bool visible = false;
 
         public static MovementGuideLine Instance { get; private set; }
 
-        public Transform EndpointTransform => endpointMarker != null ? endpointMarker.transform : null;
+        /// <summary>The final planned destination (not the animated head) - used by the camera lerp.</summary>
+        public Transform EndpointTransform => plannedEndpointAnchor;
 
 
         private void Awake()
@@ -76,18 +106,57 @@ namespace ForeverFight.GameMechanics.Movement
 
         private void Update()
         {
-            if (visible && lineMaterialInstance != null)
+            if (!visible)
             {
-                lineMaterialInstance.mainTextureOffset -= new Vector2(scrollSpeed * Time.deltaTime, 0f);
+                return;
+            }
+
+            revealDistance = Mathf.MoveTowards(revealDistance, totalTrailLength, travelSpeed * Time.deltaTime);
+            RebuildRevealedTrail();
+
+            if (lineMaterialInstance != null)
+            {
+                scrollOffset = Mathf.Repeat(scrollOffset - scrollSpeed * Time.deltaTime, 1f);
+                lineMaterialInstance.SetTextureOffset(texturePropertyName, new Vector2(scrollOffset, 0f));
+            }
+
+            if (markerPulseAmount > 0f)
+            {
+                float pulse = 1f + Mathf.Sin(Time.time * markerPulseSpeed) * markerPulseAmount;
+                endpointMarker.transform.localScale = markerBaseScale * pulse;
             }
         }
 
         private void LateUpdate()
         {
-            if (visible && costLabel != null && Camera.main != null)
+            if (!visible)
             {
-                costLabel.transform.forward = Camera.main.transform.forward;
+                return;
             }
+
+            Camera cam = null;
+            if (BasePlayerInputInteraction.Instance != null)
+            {
+                cam = BasePlayerInputInteraction.Instance.PlayerInputCamera;
+            }
+            if (cam == null)
+            {
+                cam = Camera.main;
+            }
+            if (cam == null)
+            {
+                return;
+            }
+
+            // Bird's-eye view: lay the marker (and its child cost label) flat facing
+            // straight up, yawed so the text reads upright on the player's screen.
+            Vector3 screenUp = Vector3.ProjectOnPlane(cam.transform.up, Vector3.up);
+            if (screenUp.sqrMagnitude < 0.001f)
+            {
+                screenUp = Vector3.ProjectOnPlane(-cam.transform.forward, Vector3.up);
+            }
+
+            endpointMarker.transform.rotation = Quaternion.LookRotation(Vector3.down, screenUp.normalized);
         }
 
 
@@ -100,26 +169,31 @@ namespace ForeverFight.GameMechanics.Movement
                 return;
             }
 
+            bool startingFresh = !visible;
             visible = true;
             lineRenderer.enabled = true;
             endpointMarker.SetActive(true);
 
             Densify(planner.PlannedWaypoints);
-            lineRenderer.positionCount = densifiedPoints.Count;
-            for (int i = 0; i < densifiedPoints.Count; i++)
-            {
-                lineRenderer.SetPosition(i, densifiedPoints[i] + Vector3.up * lineHeight);
-            }
 
-            Vector3 endpoint = planner.PlannedWaypoints[planner.PlannedWaypoints.Count - 1];
-            endpointMarker.transform.position = endpoint + Vector3.up * lineHeight;
+            if (startingFresh)
+            {
+                revealDistance = 0f; // Animate out from the character on a brand-new plan.
+            }
+            revealDistance = Mathf.Min(revealDistance, totalTrailLength);
 
             bool capped = pathLength >= ApDistanceBank.Instance.MaxPlannableDistance() - 0.01f;
             Color color = capped ? cappedColor : lineColor;
-            endpointRenderer.material.color = color;
-            lineMaterialInstance.color = color;
+            endpointRenderer.material.SetColor(colorPropertyName, color);
+            lineMaterialInstance.SetColor(colorPropertyName, color);
 
             costLabel.text = $"{pathLength:0.0}m  -  {apCost} AP";
+
+            var waypoints = planner.PlannedWaypoints;
+            plannedEndpointAnchor.position = waypoints[waypoints.Count - 1];
+            endpointGrabHandle.SetActive(true);
+
+            RebuildRevealedTrail();
         }
 
         private void HandleMoveConfirmed(float pathDistance)
@@ -130,6 +204,7 @@ namespace ForeverFight.GameMechanics.Movement
         private void Hide()
         {
             visible = false;
+            revealDistance = 0f;
             if (lineRenderer != null)
             {
                 lineRenderer.enabled = false;
@@ -138,11 +213,62 @@ namespace ForeverFight.GameMechanics.Movement
             {
                 endpointMarker.SetActive(false);
             }
+            if (endpointGrabHandle != null)
+            {
+                endpointGrabHandle.SetActive(false);
+            }
         }
 
+        /// <summary>
+        /// Writes the portion of the trail between the character and the traveling head
+        /// (revealDistance along the path) into the LineRenderer, and parks the marker
+        /// at the head so the whole effect lerps toward the drag point.
+        /// </summary>
+        private void RebuildRevealedTrail()
+        {
+            if (densifiedPoints.Count < 2)
+            {
+                return;
+            }
+
+            revealedPoints.Clear();
+            revealedPoints.Add(densifiedPoints[0]);
+
+            Vector3 head = densifiedPoints[densifiedPoints.Count - 1];
+            for (int i = 1; i < densifiedPoints.Count; i++)
+            {
+                if (cumulativeDistances[i] <= revealDistance)
+                {
+                    revealedPoints.Add(densifiedPoints[i]);
+                    continue;
+                }
+
+                // Head lands partway along this segment - interpolate the exact point.
+                float segmentLength = cumulativeDistances[i] - cumulativeDistances[i - 1];
+                float t = segmentLength > 0.0001f
+                    ? (revealDistance - cumulativeDistances[i - 1]) / segmentLength
+                    : 1f;
+                head = Vector3.Lerp(densifiedPoints[i - 1], densifiedPoints[i], t);
+                revealedPoints.Add(head);
+                break;
+            }
+
+            lineRenderer.positionCount = revealedPoints.Count;
+            for (int i = 0; i < revealedPoints.Count; i++)
+            {
+                lineRenderer.SetPosition(i, revealedPoints[i]);
+            }
+
+            endpointMarker.transform.position = head;
+        }
+
+        /// <summary>Subdivides the waypoints, lifts them to airHeight and caches cumulative distances.</summary>
         private void Densify(IReadOnlyList<Vector3> waypoints)
         {
             densifiedPoints.Clear();
+            cumulativeDistances.Clear();
+
+            Vector3 lift = Vector3.up * airHeight;
             for (int i = 1; i < waypoints.Count; i++)
             {
                 Vector3 from = waypoints[i - 1];
@@ -152,13 +278,21 @@ namespace ForeverFight.GameMechanics.Movement
 
                 for (int s = 0; s < steps; s++)
                 {
-                    densifiedPoints.Add(Vector3.Lerp(from, to, (float)s / steps));
+                    densifiedPoints.Add(Vector3.Lerp(from, to, (float)s / steps) + lift);
                 }
             }
 
             if (waypoints.Count > 0)
             {
-                densifiedPoints.Add(waypoints[waypoints.Count - 1]);
+                densifiedPoints.Add(waypoints[waypoints.Count - 1] + lift);
+            }
+
+            totalTrailLength = 0f;
+            cumulativeDistances.Add(0f);
+            for (int i = 1; i < densifiedPoints.Count; i++)
+            {
+                totalTrailLength += Vector3.Distance(densifiedPoints[i - 1], densifiedPoints[i]);
+                cumulativeDistances.Add(totalTrailLength);
             }
         }
 
@@ -173,6 +307,7 @@ namespace ForeverFight.GameMechanics.Movement
             lineRenderer.textureMode = LineTextureMode.Tile;
             lineRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             lineRenderer.receiveShadows = false;
+            lineRenderer.alignment = LineAlignment.View; // Ribbon faces the camera since it floats in the air.
 
             lineMaterialInstance = CreateLineMaterial();
             lineRenderer.material = lineMaterialInstance;
@@ -181,16 +316,34 @@ namespace ForeverFight.GameMechanics.Movement
             endpointMarker.name = "Endpoint Marker";
             endpointMarker.transform.SetParent(transform, false);
             endpointMarker.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
-            endpointMarker.transform.rotation = Quaternion.Euler(90f, 0f, 0f); // Flat on the floor.
+            markerBaseScale = endpointMarker.transform.localScale;
             Destroy(endpointMarker.GetComponent<Collider>());
             endpointRenderer = endpointMarker.GetComponent<Renderer>();
             endpointRenderer.material = CreateLineMaterial();
             endpointRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 
+            plannedEndpointAnchor = new GameObject("Planned Endpoint").transform;
+            plannedEndpointAnchor.SetParent(transform, false);
+
+            // Click target so a released plan's endpoint can be grabbed to resume the drag.
+            endpointGrabHandle = new GameObject("Endpoint Grab Handle");
+            endpointGrabHandle.transform.SetParent(plannedEndpointAnchor, false);
+            int dragLayer = LayerMask.NameToLayer("Drag Movement");
+            if (dragLayer >= 0)
+            {
+                endpointGrabHandle.layer = dragLayer;
+            }
+            var grabCollider = endpointGrabHandle.AddComponent<SphereCollider>();
+            grabCollider.isTrigger = true;
+            grabCollider.radius = endpointGrabRadius;
+            endpointGrabHandle.AddComponent<MoveEndpointInteractable>();
+            endpointGrabHandle.SetActive(false);
+
             var labelObject = new GameObject("Cost Label");
             labelObject.transform.SetParent(endpointMarker.transform, false);
-            labelObject.transform.localPosition = new Vector3(0f, 0f, -1.2f); // Above the marker (quad is rotated).
-            labelObject.transform.localRotation = Quaternion.Euler(-90f, 0f, 0f);
+            // Local +Y = screen-up (past the marker), local -Z = world-up (slight lift so the
+            // flat label never z-fights the marker or the trail ribbon).
+            labelObject.transform.localPosition = new Vector3(0f, 0.9f, -0.05f);
             costLabel = labelObject.AddComponent<TextMeshPro>();
             costLabel.fontSize = 3f;
             costLabel.alignment = TextAlignmentOptions.Center;
@@ -199,15 +352,35 @@ namespace ForeverFight.GameMechanics.Movement
 
         private Material CreateLineMaterial()
         {
-            // Sprites/Default renders LineRenderers with texture + vertex color in built-in
-            // and URP alike; no asset dependency needed.
-            var shader = Shader.Find("Sprites/Default");
-            var material = new Material(shader)
+            // URP's Unlit shader respects texture tiling/offset, which the scrolling
+            // chevron animation depends on. Sprites/Default ignores _MainTex_ST, so a
+            // scrolled offset renders static there - only used as a last-resort fallback.
+            Material material;
+            var urpShader = Shader.Find("Universal Render Pipeline/Unlit");
+            if (urpShader != null)
             {
-                mainTexture = CreateChevronTexture(),
-                color = lineColor
-            };
-            material.mainTexture.wrapMode = TextureWrapMode.Repeat;
+                material = new Material(urpShader);
+                texturePropertyName = "_BaseMap";
+                colorPropertyName = "_BaseColor";
+                material.SetFloat("_Surface", 1f); // Transparent
+                material.SetFloat("_Blend", 0f);   // Alpha blend
+                material.SetOverrideTag("RenderType", "Transparent");
+                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                material.SetInt("_ZWrite", 0);
+                material.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
+                material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+            }
+            else
+            {
+                material = new Material(Shader.Find("Sprites/Default"));
+            }
+
+            var texture = CreateChevronTexture();
+            texture.wrapMode = TextureWrapMode.Repeat;
+            material.SetTexture(texturePropertyName, texture);
+            material.SetColor(colorPropertyName, lineColor);
             return material;
         }
 

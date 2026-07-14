@@ -5,9 +5,10 @@ namespace ForeverFight.GameMechanics.Movement
 {
     /// <summary>
     /// Bridges path distance to the existing AP-light UI. Each AP unlocks a bucket of
-    /// UnitsPerAp world-units of movement. Reuses the exact blink / refund / commit call
-    /// pairs the grid system used on ActionPointsManager, so the Speedster passive pool
-    /// routing (via CurrentApReferenceListsREF) keeps working untouched.
+    /// UnitsPerAp world-units of movement. The Speedster's passive AP is not a separate
+    /// budget: the plannable pool is passive + main combined. Passive AP is always spent
+    /// first (and refunded last on backtrack), while each pool keeps its own distinct
+    /// light bar - blinks land on whichever bar the AP actually came from.
     /// </summary>
     public class ApDistanceBank : MonoBehaviour
     {
@@ -16,7 +17,8 @@ namespace ForeverFight.GameMechanics.Movement
         // Drags shorter than this are treated as a misclick and cost nothing.
         [SerializeField] private float deadZone = 0.35f;
 
-        private int pendingCost = 0;
+        private int pendingPassiveCost = 0;
+        private int pendingMainCost = 0;
 
         public static ApDistanceBank Instance { get; private set; }
 
@@ -24,7 +26,7 @@ namespace ForeverFight.GameMechanics.Movement
 
         public float DeadZone => deadZone;
 
-        public int PendingCost => pendingCost;
+        public int PendingCost => pendingPassiveCost + pendingMainCost;
 
 
         private void Awake()
@@ -52,70 +54,122 @@ namespace ForeverFight.GameMechanics.Movement
 
         public int RemainingAp()
         {
-            var apManager = ActionPointsManager.Instance;
-            var currentList = apManager.CurrentApReferenceListsREF != null
-                ? apManager.CurrentApReferenceListsREF
-                : apManager.MainApLists;
-
-            return currentList.UpdateValueOfRelevantAp(0);
+            return MainRemaining() + PassiveRemaining();
         }
 
         public bool CanPlan()
         {
-            return RemainingAp() + pendingCost > 0;
+            return RemainingAp() + PendingCost > 0;
         }
 
         public float MaxPlannableDistance()
         {
-            return (RemainingAp() + pendingCost) * unitsPerAp;
+            return (RemainingAp() + PendingCost) * unitsPerAp;
         }
 
         /// <summary>
-        /// Blinks or refunds AP lights until the pending spend matches newCost.
-        /// Spending uses BlinkCurrentListReference (deduct + blink), shrinking uses the
-        /// UpdateAP(+1) / UpdateBlinkingAP pair — identical to the old backtrack refund.
+        /// Blinks or refunds AP lights until the pending spend matches newCost. Spending
+        /// drains the passive bar first, then main; shrinking refunds in reverse (main
+        /// back first, passive last) so the passive is always the first AP consumed.
         /// </summary>
         public void SyncPendingCost(int newCost)
         {
             var apManager = ActionPointsManager.Instance;
 
-            while (pendingCost < newCost)
+            while (PendingCost < newCost)
             {
-                if (RemainingAp() <= 0)
+                if (PassiveRemaining() > 0)
+                {
+                    apManager.ApMovementBlink(PassiveApLists);
+                    pendingPassiveCost++;
+                }
+                else if (MainRemaining() > 0)
+                {
+                    apManager.ApMovementBlink(apManager.MainApLists);
+                    pendingMainCost++;
+                }
+                else
                 {
                     break;
                 }
-
-                apManager.BlinkCurrentListReference();
-                pendingCost++;
             }
 
-            while (pendingCost > newCost)
+            while (PendingCost > newCost)
             {
-                apManager.UpdateAP(apManager.CurrentApReferenceListsREF, 1);
-                apManager.UpdateBlinkingAP(apManager.CurrentApReferenceListsREF);
-                pendingCost--;
+                if (pendingMainCost > 0)
+                {
+                    apManager.UpdateAP(apManager.MainApLists, 1);
+                    apManager.UpdateBlinkingAP(apManager.MainApLists);
+                    pendingMainCost--;
+                }
+                else if (pendingPassiveCost > 0)
+                {
+                    apManager.UpdateAP(PassiveApLists, 1);
+                    apManager.UpdateBlinkingAP(PassiveApLists);
+                    pendingPassiveCost--;
+                }
+                else
+                {
+                    break;
+                }
             }
         }
 
         public void Commit()
         {
             var apManager = ActionPointsManager.Instance;
-            if (apManager.CurrentApReferenceListsREF != null)
+
+            if (pendingPassiveCost > 0 && PassiveApLists != null)
             {
-                apManager.MoveWasConfirmed(apManager.CurrentApReferenceListsREF);
+                apManager.MoveWasConfirmed(PassiveApLists);
             }
-            pendingCost = 0;
+            if (pendingMainCost > 0)
+            {
+                apManager.MoveWasConfirmed(apManager.MainApLists);
+            }
+
+            pendingPassiveCost = 0;
+            pendingMainCost = 0;
         }
 
         public void RefundAll()
         {
             var apManager = ActionPointsManager.Instance;
-            if (pendingCost > 0 && apManager.CurrentApReferenceListsREF != null)
+
+            if (pendingMainCost > 0)
             {
-                apManager.ResetApUsage(apManager.CurrentApReferenceListsREF);
+                apManager.ResetApUsage(apManager.MainApLists);
             }
-            pendingCost = 0;
+            if (pendingPassiveCost > 0 && PassiveApLists != null)
+            {
+                apManager.ResetApUsage(PassiveApLists);
+            }
+
+            pendingPassiveCost = 0;
+            pendingMainCost = 0;
+        }
+
+
+        // The passive pool only exists while the local character's movement passive is
+        // registered (e.g. the Speedster's FasterPassive registers itself when active).
+        private ApReferenceLists PassiveApLists
+        {
+            get
+            {
+                var provider = ActionPointsManager.Instance.MovementPassiveApProvider;
+                return provider != null ? provider.PassiveApLists : null;
+            }
+        }
+
+        private int PassiveRemaining()
+        {
+            var passiveLists = PassiveApLists;
+            return passiveLists != null ? passiveLists.UpdateValueOfRelevantAp(0) : 0;
+        }
+
+        private int MainRemaining()
+        {
+            return ActionPointsManager.Instance.MainApLists.UpdateValueOfRelevantAp(0);
         }
     }
 }

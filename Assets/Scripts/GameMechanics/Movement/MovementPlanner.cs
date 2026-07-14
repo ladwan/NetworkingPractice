@@ -92,6 +92,21 @@ namespace ForeverFight.GameMechanics.Movement
             return true;
         }
 
+        /// <summary>
+        /// Re-grabs a released plan from its endpoint marker so the drag continues where it
+        /// left off. The existing plan stays displayed until the pointer moves, then re-plans
+        /// through the normal UpdateDrag path with the full (remaining + pending) AP budget.
+        /// </summary>
+        public bool ResumeDrag()
+        {
+            if (!HasPlan)
+            {
+                return false;
+            }
+
+            return BeginDrag();
+        }
+
         /// <summary>Called every held frame by the input layer with a sampled ground point.</summary>
         public void UpdateDrag(Vector3 groundPoint)
         {
