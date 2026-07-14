@@ -17,8 +17,6 @@ namespace ForeverFight.Ui
         [SerializeField]
         private ApReferenceLists mainApLists = null;
         [SerializeField]
-        private ApReferenceLists speedsterPassiveApLists = null;
-        [SerializeField]
         private int currentAp = 0;
         [SerializeField]
         private bool playerTurnHasEnded = false;
@@ -42,7 +40,11 @@ namespace ForeverFight.Ui
 
         public ApReferenceLists CurrentApReferenceListsREF { get => currentApReferenceListsREF; set => currentApReferenceListsREF = value; }
 
-        public ApReferenceLists SpeedsterPassiveApLists { get => speedsterPassiveApLists; set => speedsterPassiveApLists = value; }
+        /// <summary>
+        /// The active movement-only passive AP pool, if the local character has one
+        /// (registered by the passive itself, e.g. the Speedster's FasterPassive).
+        /// </summary>
+        public IMovementPassiveAp MovementPassiveApProvider { get; set; }
 
 
         protected void Awake()
@@ -178,10 +180,10 @@ namespace ForeverFight.Ui
                     ApMovementBlink(MainApLists);
                     break;
 
-                case ApReferenceLists.apDisplayTypes.speedster:
-                    if (SpeedsterPassiveApLists)
+                case ApReferenceLists.apDisplayTypes.movementPassive:
+                    if (MovementPassiveApProvider != null && MovementPassiveApProvider.PassiveApLists != null)
                     {
-                        ApMovementBlink(SpeedsterPassiveApLists);
+                        ApMovementBlink(MovementPassiveApProvider.PassiveApLists);
                     }
                     break;
             }
@@ -190,7 +192,7 @@ namespace ForeverFight.Ui
 
         private void DetermineIfUpdatedApShouldBeShown(ApReferenceLists referenceLists, int addend)
         {
-            if (referenceLists.currentApDisplayType != ApReferenceLists.apDisplayTypes.speedster)
+            if (referenceLists.currentApDisplayType != ApReferenceLists.apDisplayTypes.movementPassive)
             {
                 referenceLists.ShowAp(referenceLists.UpdateValueOfRelevantAp(addend)); //First UpdateValueOfRelevantAp() will return the sum of our current Ap and the added // Then ShowAp() will display aplights equal to that sum
             }

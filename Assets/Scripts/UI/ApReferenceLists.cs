@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ForeverFight.Ui;
 using ForeverFight.Networking;
-using ForeverFight.Interactable.Characters;
+using ForeverFight.GameMechanics.Movement;
 using UnityEngine.UI;
 
 public class ApReferenceLists : MonoBehaviour
@@ -21,13 +21,12 @@ public class ApReferenceLists : MonoBehaviour
     {
         unselected,
         main,
-        speedster,
+        movementPassive, // Serialized as index 2 (was "speedster") - any character's movement-only passive pool.
     };
 
     private bool blinkCoroutineIsRunning = false;
     private int referenceListsApValueToUpdate = 0;
     private List<GameObject> apLightsToBeBlinked = new List<GameObject>();
-    private Speedster speedsterREF = null;
 
 
     public List<GameObject> ApLights => apLights;
@@ -42,30 +41,9 @@ public class ApReferenceLists : MonoBehaviour
 
     public apDisplayTypes CurrentApDisplayType => currentApDisplayType;
 
-    public Speedster SpeedsterREF
-    {
-        get
-        {
-            if (speedsterREF)
-            {
-                return speedsterREF;
-            }
-            else
-            {
-                var tempCharacter = (Speedster)LocalStoredNetworkData.GetLocalCharacter();
-                if (tempCharacter)
-                {
-                    speedsterREF = tempCharacter;
-                    return speedsterREF;
-                }
-                else
-                {
-                    Debug.Log("Speedster ref came back as NULL!");
-                    return null;
-                }
-            }
-        }
-    }
+    private static IMovementPassiveAp PassiveApProvider => ActionPointsManager.Instance != null
+        ? ActionPointsManager.Instance.MovementPassiveApProvider
+        : null;
 
 
     public void ShowAp(int currentApValue)
@@ -118,10 +96,17 @@ public class ApReferenceLists : MonoBehaviour
             return LocalStoredNetworkData.localPlayerCurrentAP;
         }
 
-        if (currentApDisplayType == apDisplayTypes.speedster)
+        if (currentApDisplayType == apDisplayTypes.movementPassive)
         {
-            SpeedsterREF.FasterPassive.PassiveAp = Mathf.Clamp(SpeedsterREF.FasterPassive.PassiveAp + addend, 0, SpeedsterREF.FasterPassive.MaxPassiveAp);
-            return SpeedsterREF.FasterPassive.PassiveAp;
+            var provider = PassiveApProvider;
+            if (provider == null)
+            {
+                Debug.LogError("Movement passive AP list updated but no IMovementPassiveAp provider is registered");
+                return 0;
+            }
+
+            provider.PassiveAp = Mathf.Clamp(provider.PassiveAp + addend, 0, provider.MaxPassiveAp);
+            return provider.PassiveAp;
         }
 
         Debug.LogError("Value to update was abnormal");
@@ -136,10 +121,17 @@ public class ApReferenceLists : MonoBehaviour
             return LocalStoredNetworkData.localPlayerCurrentAP;
         }
 
-        if (currentApDisplayType == apDisplayTypes.speedster)
+        if (currentApDisplayType == apDisplayTypes.movementPassive)
         {
-            SpeedsterREF.FasterPassive.PassiveAp = Mathf.Clamp(value, 0, SpeedsterREF.FasterPassive.MaxPassiveAp);
-            return SpeedsterREF.FasterPassive.PassiveAp;
+            var provider = PassiveApProvider;
+            if (provider == null)
+            {
+                Debug.LogError("Movement passive AP list updated but no IMovementPassiveAp provider is registered");
+                return 0;
+            }
+
+            provider.PassiveAp = Mathf.Clamp(value, 0, provider.MaxPassiveAp);
+            return provider.PassiveAp;
         }
 
         Debug.LogError("Value to update was abnormal");

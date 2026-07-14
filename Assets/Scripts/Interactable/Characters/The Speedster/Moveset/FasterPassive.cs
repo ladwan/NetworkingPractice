@@ -10,7 +10,7 @@ using ForeverFight.Interactable.Abilities;
 using ForeverFight.GameMechanics.Movement;
 using ForeverFight.Interactable.Characters;
 
-public class FasterPassive : MonoBehaviour, IPassiveAbility
+public class FasterPassive : MonoBehaviour, IPassiveAbility, IMovementPassiveAp
 {
     [SerializeField]
     private ApReferenceLists referenceLists = null;
@@ -86,6 +86,9 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
 
     public int MaxPassiveAp { get => maxPassiveAp; set => maxPassiveAp = value; }
 
+    /// <summary>The distinct light bar this pool renders on (IMovementPassiveAp).</summary>
+    public ApReferenceLists PassiveApLists => referenceLists;
+
     #endregion
 
 
@@ -94,7 +97,6 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
         BeginCoroutine();
         PassiveAbilityName = "Faster";
         PassiveAbilityDescription = "You get 3 extra movement points each turn";
-        ActionPointsManager.Instance.SpeedsterPassiveApLists = referenceLists;
         CombatUiStatesManager.Instance.OnCombatUiStateChange += ApplyPassive;
         PlayerTurnManager.Instance.OnTurnEnd += ResetPassiveAp;
     }
@@ -103,6 +105,12 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
     {
         CombatUiStatesManager.Instance.OnCombatUiStateChange -= ApplyPassive;
         PlayerTurnManager.Instance.OnTurnEnd -= ResetPassiveAp;
+
+        if (ActionPointsManager.Instance != null
+            && ReferenceEquals(ActionPointsManager.Instance.MovementPassiveApProvider, this))
+        {
+            ActionPointsManager.Instance.MovementPassiveApProvider = null;
+        }
     }
 
 
@@ -185,6 +193,10 @@ public class FasterPassive : MonoBehaviour, IPassiveAbility
         if (tempChar.CharIdentity != Character.Identity.Speedster)
         {
             this.enabled = false;
+            yield break;
         }
+
+        // Only the confirmed owner registers as the movement passive AP provider.
+        ActionPointsManager.Instance.MovementPassiveApProvider = this;
     }
 }

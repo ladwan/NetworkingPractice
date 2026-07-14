@@ -12,6 +12,9 @@ namespace ForeverFight.Interactable.PlayerInputInteractions
     {
         public static BasePlayerInputInteraction Instance { get; private set; }
 
+        /// <summary>The gameplay camera input raycasts come from (bird's-eye view camera).</summary>
+        public Camera PlayerInputCamera => playerInputCameraREF;
+
         // Events
         public event System.Action<Vector2> OnTouchEnd;
 

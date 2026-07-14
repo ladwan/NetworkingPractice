@@ -25,7 +25,7 @@ namespace ForeverFight.HelperScripts
         {
             if (MovementPlanner.Instance)
             {
-                MovementPlanner.Instance.OnPlanUpdated += LerpObject;
+                SubscribeToPlanner();
             }
             else
             {
@@ -38,7 +38,17 @@ namespace ForeverFight.HelperScripts
             if (MovementPlanner.Instance)
             {
                 MovementPlanner.Instance.OnPlanUpdated -= LerpObject;
+                MovementPlanner.Instance.OnPlanCleared -= ReturnObjectBackToOriginalPos;
             }
+        }
+
+        // OnPlanCleared fires on every cancel path (back button, turn expiry, misclick),
+        // so the camera always snaps home when a plan dies. The old scene-wired
+        // ReturnObjectBackToOriginalPos UnityEvents point at deleted objects and no-op.
+        private void SubscribeToPlanner()
+        {
+            MovementPlanner.Instance.OnPlanUpdated += LerpObject;
+            MovementPlanner.Instance.OnPlanCleared += ReturnObjectBackToOriginalPos;
         }
 
 
@@ -94,7 +104,7 @@ namespace ForeverFight.HelperScripts
         private IEnumerator WaitForPlannerRef()
         {
             yield return new WaitUntil(() => MovementPlanner.Instance);
-            MovementPlanner.Instance.OnPlanUpdated += LerpObject;
+            SubscribeToPlanner();
         }
 
         private void SetCharacterAnimatorReferences(CharacterAnimationReferences animationReferences)
