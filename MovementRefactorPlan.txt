@@ -692,3 +692,54 @@ local SDK lacks net10; deploy build unchanged); grep gates all clean.
 Remaining human steps: runtime loopback playtest (two clients + local
 server), balance sign-off on the serialized constants (section 9), rebuild +
 deploy the net10 server in lockstep with the client build.
+
+================================================================================
+## 11. LOCOMOTION & ANIMATION SYNC (planned 2026-07-14)
+
+Problem: translation works but animation broke. The old pairing (CurveMoveSpeed
++ per-segment lerp) ran two clocks: translation integrated speed*deltaTime while
+the anim curve ran its own timer -> frame drops drifted them apart (desync on
+weak devices). The interim executor writes CharSpeed ~= 1 constant, so the
+distance-based gait variation (walk short / run far) vanished with the deleted
+MovementAnimCurves.
+
+Design: ONE immutable plan, evaluated by absolute time.
+- At confirm, build MovePlaybackPlan from (waypoints, pathLength, the mover's
+  ActiveLocomotionProfile): bake distance-over-time s(t) with a FIXED sample
+  count from a trapezoid velocity profile (accelDistance ramp up, cruise,
+  decelDistance brake to ~0; short moves squash to a triangle).
+- Every frame: t = elapsed/duration; position = PointAlongPath(s(t)*L);
+  CharSpeed = peakGait * (v(t)/cruise). Position and animation are two reads of
+  the same function at the same t - they cannot desync. Hitches/low fps only
+  change sampling density, never the motion. Deceleration is authored into the
+  plan (the plan knows the endpoint before frame 1), so stops are gradual by
+  construction: the blend tree slides back down the gaits as v(t) ramps out.
+- Blend trees stay (1D on CharSpeed, existing thresholds: Brawn 0/5 + 0/10,
+  Speedster 0/5/20/21/22 + separate Hasted tree). Profiles output values in the
+  trees' existing scales -> zero animator editing. Locomotion state entry/exit
+  stays on the existing CharSpeed contract (write each frame, 0 at end).
+- Root motion rejected (fights exact NavMesh endpoints + replay determinism);
+  discrete crossfades rejected (steppy multi-gait ramps).
+
+Per-character data: [Serializable] LocomotionProfile on Character (code
+defaults, inspector-tunable on prefabs, no new assets):
+  cruiseSpeedByDistance (units->m/s), gaitByDistance (units->CharSpeed peak),
+  accelDistance, decelDistance.
+- Character base: generic walk profile (Elemental inherits -> "base movement").
+- Brawn: default walk everywhere; Ire = profile OVERRIDE (run gait 10, faster
+  cruise) via Character.SetLocomotionProfileOverride - replaces the global
+  MovementExecutor.SpeedMultiplier (which wrongly also sped up remote replays).
+- Speedster: own normal profile (steep distance->gait ramp to sprint) + a
+  second hasted profile (Haste changes idle, not run - separate profile gives
+  independent tuning; animator graph already routes Hasted states).
+
+Networking: the mover's client evaluates its profile at pathLength into 4
+scalars (cruiseSpeed, accelDistance, decelDistance, peakGait) appended to the
+sendMovementPath packet (server relays verbatim - no server change). Both
+clients bake the plan from identical inputs -> identical playback; remote never
+needs to know buff state (Ire/Haste can expire mid-flight without desync).
+Latency shifts WHEN the replay starts, never what it looks like.
+
+Order: LocomotionProfile+MovePlaybackPlan -> Character wiring -> executor
+rewrite -> packet fields -> Ire/Haste profile swaps. Playtest knobs are all
+serialized; calibrate gait values against blend thresholds in play mode.

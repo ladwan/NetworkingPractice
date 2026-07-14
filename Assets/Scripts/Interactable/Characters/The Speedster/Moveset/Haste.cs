@@ -136,6 +136,14 @@ namespace ForeverFight.Interactable.Abilities
                 fasterPassiveREF.SetMaxPassiveApPool(6);
                 quickPunchREF.SetAbilityRadius(increasedQuickPunchRadius);
                 //AugmentedMovementManager.Instance.ToggleAugmentMovement(moveToRandomGPsREF);
+
+                // Hasted moves pace/animate from the dedicated hasted profile. The
+                // override only matters on this client - the derived pacing rides the
+                // move packet to the opponent.
+                if (LocalStoredNetworkData.GetLocalCharacter() is Interactable.Characters.Speedster speedster)
+                {
+                    speedster.SetLocomotionProfileOverride(speedster.HastedLocomotionProfile);
+                }
             }
         }
 
@@ -172,6 +180,11 @@ namespace ForeverFight.Interactable.Abilities
                     StatusActive = false;
                     fasterPassiveREF.SetMaxPassiveApPool(3);
                     quickPunchREF.SetAbilityRadius(quickPunchREF.OriginalRadius);
+
+                    if (LocalStoredNetworkData.GetLocalCharacter() is Interactable.Characters.Speedster speedster)
+                    {
+                        speedster.ClearLocomotionProfileOverride();
+                    }
                     //AugmentedMovementManager.Instance.ToggleAugmentMovement();
                     CameraShakeParameters parameters = new CameraShakeParameters();
                     ToggleParticles(true);

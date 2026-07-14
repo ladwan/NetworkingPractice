@@ -4,6 +4,7 @@ using UnityEngine;
 using ForeverFight.Ui.CharacterSelection;
 using ForeverFight.Interactable.Abilities;
 using ForeverFight.Networking;
+using ForeverFight.GameMechanics.Movement;
 
 public class ClientSend : MonoBehaviour
 {
@@ -62,18 +63,25 @@ public class ClientSend : MonoBehaviour
     }
 
     // Sends a full confirmed move as one packet: waypoint count, total path distance,
-    // AP spent, then each waypoint as three floats. waypoints[0] is the mover's start
-    // position so the receiver can snap-and-replay drift-free. No rotations are sent -
-    // facing is derived from waypoint directions identically on both clients.
+    // AP spent, the four LocomotionParams pacing floats, then each waypoint as three
+    // floats. waypoints[0] is the mover's start position so the receiver can
+    // snap-and-replay drift-free. The pacing floats let the receiver bake the exact
+    // same MovePlaybackPlan without knowing the mover's buff state (Ire/Haste).
+    // No rotations are sent - facing is derived from waypoint directions identically
+    // on both clients.
     // NOTE: unlike the legacy senders, the packet ID is written ONCE (ctor only);
     // the server relays this payload verbatim without parsing it.
-    public static void SendMovementPath(List<Vector3> waypoints, float totalPathDistance, int apSpent)
+    public static void SendMovementPath(List<Vector3> waypoints, float totalPathDistance, int apSpent, LocomotionParams locomotion)
     {
         using (Packet _packet = new Packet((int)ClientPackets.sendMovementPath))
         {
             _packet.Write(waypoints.Count);
             _packet.Write(totalPathDistance);
             _packet.Write(apSpent);
+            _packet.Write(locomotion.CruiseSpeed);
+            _packet.Write(locomotion.AccelDistance);
+            _packet.Write(locomotion.DecelDistance);
+            _packet.Write(locomotion.PeakGait);
 
             for (int i = 0; i < waypoints.Count; i++)
             {

@@ -8,6 +8,7 @@ using ForeverFight.FlowControl;
 using ForeverFight.Interactable.Characters;
 using ForeverFight.GameMechanics.Movement;
 using ForeverFight.HelperScripts;
+using ForeverFight.Networking;
 
 namespace ForeverFight.Interactable.Abilities
 {
@@ -25,8 +26,6 @@ namespace ForeverFight.Interactable.Abilities
         // Old rule fired the small anim when fewer than 4 path points (start included)
         // were moved, i.e. under 3 grid squares = under 3 world units.
         [SerializeField] private float smallMoveThreshold = 3.0f;
-        // Replaces the old MovementIndex anim-curve-set swap with a straight speed boost.
-        [SerializeField] private float ireMoveSpeedMultiplier = 1.3f;
 
 
         protected Ire()
@@ -81,7 +80,13 @@ namespace ForeverFight.Interactable.Abilities
 
             StatusActive = true;
             //ireVFXManagerREF.BeginCoroutine(this);
-            MovementExecutor.Instance.SpeedMultiplier = ireMoveSpeedMultiplier;
+
+            // Ire: Brawn runs instead of walking. The override only matters on this
+            // client - the derived pacing rides the move packet to the opponent.
+            if (LocalStoredNetworkData.GetLocalCharacter() is Brawn brawn)
+            {
+                brawn.SetLocomotionProfileOverride(brawn.IreLocomotionProfile);
+            }
             AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(2, false, CurrentStatusEffectType); // Pass a 2 because you want the third index of the list because this is the third ability
             AbilityFunctionality();
             ClientSend.SendStatusEffectData(StatusEffect.StatusEffectType.Ire, CurrentAbilityDuration, 0, false);
@@ -150,7 +155,11 @@ namespace ForeverFight.Interactable.Abilities
                 groundPoundREF.SetAbilityRadius(groundPoundREF.OriginalRadius);
                 groundPoundREF.AbilityDamage = 10;
                 haymakerREF.AbilityDamage = 15;
-                MovementExecutor.Instance.SpeedMultiplier = 1f;
+
+                if (LocalStoredNetworkData.GetLocalCharacter() is Brawn brawn)
+                {
+                    brawn.ClearLocomotionProfileOverride();
+                }
                 var shake = new CameraShakeParameters();
                 ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(animREF, "Ire Idle to Idle", shake);
             }

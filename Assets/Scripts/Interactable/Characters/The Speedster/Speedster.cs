@@ -14,9 +14,18 @@ namespace ForeverFight.Interactable.Characters
         private FasterPassive fasterPassive = null;
         [SerializeField]
         private Haste hasteREF = null;
+        // Speedster's speed AND gait scale hard with move distance (walk -> sprint).
+        [SerializeField]
+        private LocomotionProfile speedsterLocomotionProfile = LocomotionProfile.CreateSpeedster();
+        // Haste changes his idle (Hasted blend tree) but not his run - a separate
+        // profile so the hasted feel is tunable independently. Applied by Haste.cs.
+        [SerializeField]
+        private LocomotionProfile hastedLocomotionProfile = LocomotionProfile.CreateSpeedsterHasted();
 
 
         public FasterPassive FasterPassive { get => fasterPassive; set => fasterPassive = value; }
+
+        public LocomotionProfile HastedLocomotionProfile => hastedLocomotionProfile;
 
 
         //momentum is lost if immobilized or if player does not use it before 2 turns
@@ -27,6 +36,7 @@ namespace ForeverFight.Interactable.Characters
             Health = 100;
             RollAlotment = 5;
             AssignDefaultStance();
+            SetBaseLocomotionProfile(speedsterLocomotionProfile);
         }
 
 
