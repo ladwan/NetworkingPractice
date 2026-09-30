@@ -84,13 +84,7 @@ public class ClientHandle : MonoBehaviour
         int _count = _packet.ReadInt();
         float _totalPathDistance = _packet.ReadFloat();
         int _apSpent = _packet.ReadInt();
-        var _locomotion = new LocomotionParams
-        {
-            CruiseSpeed = _packet.ReadFloat(),
-            AccelDistance = _packet.ReadFloat(),
-            DecelDistance = _packet.ReadFloat(),
-            PeakGait = _packet.ReadFloat(),
-        };
+        int _movementIndex = _packet.ReadInt();
 
         if (_count <= 0 || _count > MovementNetworkBridge.MaxWaypointsPerMove)
         {
@@ -104,7 +98,7 @@ public class ClientHandle : MonoBehaviour
             _waypoints.Add(_packet.ReadVector3());
         }
 
-        MovementNetworkBridge.Instance.ReplayRemoteMove(_waypoints, _totalPathDistance, _apSpent, _locomotion);
+        MovementNetworkBridge.Instance.ReplayRemoteMove(_waypoints, _totalPathDistance, _apSpent, _movementIndex);
     }
 
     // This is going to be recived by BOTH players anytime it runs

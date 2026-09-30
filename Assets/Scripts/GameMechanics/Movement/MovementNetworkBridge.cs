@@ -56,23 +56,23 @@ namespace ForeverFight.GameMechanics.Movement
             float pathDistance = planner.PlannedPathLength;
             int apSpent = ApDistanceBank.Instance.PendingCost;
 
-            // Derive the pacing once from the mover's active profile (buffs included)
-            // and use the same params locally and on the wire - identical playback.
+            // Read the movement state once (0 = base, 1 = Ire, ...) and use it locally and on the wire,
+            // so both clients play the move with the same curve.
             var localCharacter = LocalStoredNetworkData.GetLocalCharacter();
-            var locomotion = localCharacter.ActiveLocomotionProfile.ParamsForDistance(pathDistance);
+            int movementIndex = localCharacter.MovementIndex;
 
             ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating();
 
             // Send before local playback: TCP ordering guarantees the opponent has the
             // full move before any subsequent endTurn from this client.
-            ClientSend.SendMovementPath(waypoints, pathDistance, apSpent, locomotion);
+            ClientSend.SendMovementPath(waypoints, pathDistance, apSpent, movementIndex);
 
             ApDistanceBank.Instance.Commit();
             planner.NotifyMoveConfirmed(pathDistance);
 
             var localSpawn = PlayerSpawnManager.Instance.LocalPlayerSpawn;
 
-            executor.Play(localSpawn, localCharacter, waypoints, locomotion, () =>
+            executor.Play(localSpawn, localCharacter, waypoints, movementIndex, () =>
             {
                 Vector3 finalPosition = waypoints[waypoints.Count - 1];
                 ClientSend.UpdatePlayerPosition(finalPosition); // Cheap drift insurance.
@@ -83,7 +83,7 @@ namespace ForeverFight.GameMechanics.Movement
         }
 
         /// <summary>Called by ClientHandle with a validated waypoint list from the opponent.</summary>
-        public void ReplayRemoteMove(List<Vector3> waypoints, float totalPathDistance, int apSpent, LocomotionParams locomotion)
+        public void ReplayRemoteMove(List<Vector3> waypoints, float totalPathDistance, int apSpent, int movementIndex)
         {
             if (waypoints == null || waypoints.Count < 2)
             {
@@ -97,7 +97,7 @@ namespace ForeverFight.GameMechanics.Movement
             var opponentSpawn = PlayerSpawnManager.Instance.OpponentSpawn;
             var opponentCharacter = LocalStoredNetworkData.GetOpponentCharacter();
 
-            MovementExecutor.Instance.Play(opponentSpawn, opponentCharacter, waypoints, locomotion, () =>
+            MovementExecutor.Instance.Play(opponentSpawn, opponentCharacter, waypoints, movementIndex, () =>
             {
                 MovementPlanner.Instance.NotifyMoveCompleted();
             });

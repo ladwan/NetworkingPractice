@@ -60,7 +60,8 @@ public static class Protocol
     // Bump this whenever a packet's ID or contents change.
     // The client and server compare it when they connect and refuse to play together if it doesn't match,
     // so an out of date build fails loudly instead of quietly reading packets wrong.
-    public const int Version = 1;
+    // 2: the movement path packet sends a movement state index instead of four pacing floats.
+    public const int Version = 2;
 
     // Packets the server doesn't need to understand, it just forwards them to the opponent untouched.
     // Left side is the ID the client sends, right side is the ID the opponent receives it as.

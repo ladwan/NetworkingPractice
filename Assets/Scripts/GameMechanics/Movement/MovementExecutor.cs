@@ -8,20 +8,28 @@ namespace ForeverFight.GameMechanics.Movement
 {
     /// <summary>
     /// Walks a player spawn along a waypoint polyline by evaluating an immutable
-    /// MovePlaybackPlan at absolute elapsed time: position, velocity and the CharSpeed
-    /// blend value are all reads of the same baked function at the same t, so
-    /// translation and animation cannot desync on frame drops or slow devices - a
-    /// hitch just samples the identical motion later. The plan's trapezoid velocity
-    /// shape gives the ramp-up launch and the gradual, anticipatory stop.
+    /// MovePlaybackPlan at absolute elapsed time: position and the CharSpeed blend value
+    /// both come from the same movement curve at the same t, so translation and
+    /// animation cannot desync on frame drops or slow devices - a hitch just samples
+    /// the identical motion later.
     /// Runs no NavMesh queries at execution time, so a serialized waypoint list plus
-    /// the four LocomotionParams floats replays identically on the remote client.
+    /// the mover's movement state index replays identically on the remote client.
     /// </summary>
     public class MovementExecutor : MonoBehaviour
     {
         [SerializeField] private float turnSpeedDegrees = 540f;
-        [SerializeField] private float minimumMoveDuration = 0.4f;
         [Tooltip("How far ahead along the path the character looks when turning. Larger = wider, smoother arcs around corners.")]
         [SerializeField] private float rotationLookAhead = 1.25f;
+        // The old grid moved v * 0.0066 of a cell per frame at ~60 fps, where v is the curve value.
+        // That works out to about 0.4 cells a second per point of curve value (1 cell ~= 1 world unit),
+        // so a walk value of 5 moves at 2 units a second, just like before.
+        [Tooltip("World units per second for each point of movement curve value.")]
+        [SerializeField] private float unitsPerSecondPerCurveValue = 0.4f;
+
+        // Used only when a character has no movement curves set up, so a move still plays
+        // instead of failing. Same shape as the old 1 cell walk curve.
+        private static readonly AnimationCurve fallbackCurve = new AnimationCurve(
+            new Keyframe(0f, 0f), new Keyframe(0.5f, 5f), new Keyframe(1f, 0f));
 
         private Coroutine playbackCoroutine = null;
         private bool isPlaying = false;
@@ -53,22 +61,21 @@ namespace ForeverFight.GameMechanics.Movement
         }
 
         /// <summary>
-        /// Plays a move paced by the character's own ActiveLocomotionProfile
+        /// Plays a move using the character's current movement state
         /// (local abilities like the Speedster dash use this directly).
         /// </summary>
         public void Play(GameObject spawnToMove, Character character, IReadOnlyList<Vector3> waypoints, Action onComplete)
         {
-            var profile = character != null ? character.ActiveLocomotionProfile : LocomotionProfile.CreateDefaultWalk();
-            float pathLength = PathLength(waypoints);
-            Play(spawnToMove, character, waypoints, profile.ParamsForDistance(pathLength), onComplete);
+            int movementIndex = character != null ? character.MovementIndex : 0;
+            Play(spawnToMove, character, waypoints, movementIndex, onComplete);
         }
 
         /// <summary>
-        /// Plays a move paced by explicit LocomotionParams - the networked path. The
-        /// mover's client derives the params once and sends them with the waypoints,
-        /// so both clients bake and replay the exact same plan.
+        /// Plays a move using an explicit movement state - the networked path. The mover
+        /// sends its movement state with the waypoints, so the remote client picks the
+        /// same curve even though it doesn't know whether Ire is active.
         /// </summary>
-        public void Play(GameObject spawnToMove, Character character, IReadOnlyList<Vector3> waypoints, LocomotionParams locomotion, Action onComplete)
+        public void Play(GameObject spawnToMove, Character character, IReadOnlyList<Vector3> waypoints, int movementIndex, Action onComplete)
         {
             if (isPlaying)
             {
@@ -82,7 +89,15 @@ namespace ForeverFight.GameMechanics.Movement
                 return;
             }
 
-            var plan = new MovePlaybackPlan(waypoints, PathLength(waypoints), locomotion, minimumMoveDuration);
+            float pathLength = PathLength(waypoints);
+            AnimationCurve movementCurve = character != null ? character.GetMovementCurve(movementIndex, pathLength) : null;
+            if (movementCurve == null || movementCurve.keys.Length == 0)
+            {
+                Debug.LogWarning("~~ No movement curve found, using the fallback walk curve");
+                movementCurve = fallbackCurve;
+            }
+
+            var plan = new MovePlaybackPlan(waypoints, pathLength, movementCurve, unitsPerSecondPerCurveValue);
             isPlaying = true;
             playbackCoroutine = StartCoroutine(PlayPlan(spawnToMove, character, plan, onComplete));
         }
@@ -122,7 +137,7 @@ namespace ForeverFight.GameMechanics.Movement
 
                 if (animator != null)
                 {
-                    animator.SetFloat("CharSpeed", plan.GaitAt(t01));
+                    animator.SetFloat("CharSpeed", plan.BlendValueAt(t01));
                 }
 
                 yield return null;
