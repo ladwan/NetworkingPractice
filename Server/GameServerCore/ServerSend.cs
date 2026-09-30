@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace GameServer
 {
@@ -55,6 +55,7 @@ namespace GameServer
             {
                 _packet.Write(_msg);
                 _packet.Write(_toClient);
+                _packet.Write(Protocol.Version);
 
                 SendTcpData(_toClient, _packet);
             }
@@ -71,27 +72,6 @@ namespace GameServer
             }
         }
 
-        public static void ServerSendSelectionPacket(int _toClient, int _panelIndex, int _playerIndex, string _otherPlayersName)
-        {
-            using (Packet _packet = new Packet((int)ServerPackets.sendSelectionPacket))
-            {
-                _packet.Write(_panelIndex);
-                _packet.Write(_playerIndex);
-                _packet.Write(_otherPlayersName);
-
-                SendTcpData(_toClient, _packet);
-            }
-        }
-
-        public static void RelayReadyUp(int _toClient, int _signalInt)
-        {
-            using (Packet _packet = new Packet((int)ServerPackets.relayReadyUp))
-            {
-                _packet.Write(_signalInt);
-                SendTcpData(_toClient, _packet);
-            }
-        }
-
         public static void SyncTimers(int matchId, int _currentTime)
         {
             using (Packet _packet = new Packet((int)ServerPackets.syncTimers))
@@ -99,36 +79,6 @@ namespace GameServer
                 _packet.Write(_currentTime);
 
                 SendTcpDataToAllMatchPlayers(matchId, _packet);
-            }
-        }
-
-        public static void SendSegmentedMovementData(int _toClient, int x, int y, int count, bool hasRotations, bool completed)
-        {
-            using (Packet _packet = new Packet((int)ServerPackets.sendSegmentedMovementData))
-            {
-                Console.WriteLine($"~~[MATCH] Made it to Send Movement");
-                _packet.Write(x);
-                _packet.Write(y);
-                _packet.Write(count);
-                _packet.Write(hasRotations);
-                _packet.Write(completed);
-
-                SendTcpData(_toClient, _packet);
-                Console.WriteLine($"~~[MATCH] Finished Sending Movement");
-            }
-        }
-
-        public static void SendSegmentedRotationData(int _toClient, float x, float y, float z, float w, int count)
-        {
-            using (Packet _packet = new Packet((int)ServerPackets.sendSegmentedRotationData))
-            {
-                _packet.Write(x);
-                _packet.Write(y);
-                _packet.Write(z);
-                _packet.Write(w);
-                _packet.Write(count);
-
-                SendTcpData(_toClient, _packet);
             }
         }
 
@@ -143,100 +93,14 @@ namespace GameServer
             }
         }
 
-        public static void StartTurn(int _toClient, int _signalInt)
+        // Replaces the old one-sender-per-packet methods (RelayReadyUp, StartTurn, SendDamageToOpponent, etc).
+        // Those each re-read and re-wrote the packet's contents, so any change on the client had to be copied here too.
+        // This sends the bytes exactly as the client wrote them, only swapping in the ID the opponent listens for.
+        public static void RelayRaw(int _toClient, ServerPackets _packetId, byte[] _payload)
         {
-            using (Packet _packet = new Packet((int)ServerPackets.startTurn))
+            using (Packet _packet = new Packet((int)_packetId))
             {
-                _packet.Write(_signalInt);
-
-                SendTcpData(_toClient, _packet);
-            }
-        }
-
-        public static void ServerSendAnimationTrigger(int _toClient, string trigger, float duration, float magnitude)
-        {
-            using (Packet _packet = new Packet((int)ServerPackets.serverSendAnimationTrigger))
-            {
-                _packet.Write(trigger);
-                _packet.Write(duration);
-                _packet.Write(magnitude);
-
-                SendTcpData(_toClient, _packet);
-            }
-        }
-
-        public static void SendDamageToOpponent(int _toClient, int _damageInt)
-        {
-            using (Packet _packet = new Packet((int)ServerPackets.sendDamageToOpponent))
-            {
-                _packet.Write(_damageInt);
-
-                SendTcpData(_toClient, _packet);
-            }
-        }
-
-        public static void ServerSendStatusEffectData(int _toClient, int _statusEffectIdentifier, int _duration, int _ownership, bool _endThisStatusEffect)
-        {
-            using (Packet _packet = new Packet((int)ServerPackets.serverSendStatusEffectData))
-            {
-                _packet.Write(_statusEffectIdentifier);
-                _packet.Write(_duration);
-                _packet.Write(_ownership);
-                _packet.Write(_endThisStatusEffect);
-
-                SendTcpData(_toClient, _packet);
-            }
-        }
-
-        public static void SendUpdatedPlayerPosition(int _toClient, int x, int y, int hoveredOverGPsCount)
-        {
-            using (Packet _packet = new Packet((int)ServerPackets.sendUpdatedPlayerPosition))
-            {
-                _packet.Write(x);
-                _packet.Write(y);
-                _packet.Write(hoveredOverGPsCount);
-
-                SendTcpData(_toClient, _packet);
-            }
-        }
-
-        public static void SendOverrodePosition(int _toClient, int x, int y)
-        {
-            using (Packet _packet = new Packet((int)ServerPackets.serverSendOverrodePos))
-            {
-                _packet.Write(x);
-                _packet.Write(y);
-
-                SendTcpData(_toClient, _packet);
-            }
-        }
-
-        public static void SendWinStatus(int _toClient, bool winStatus)
-        {
-            using (Packet _packet = new Packet((int)ServerPackets.serverSendWinStatus))
-            {
-                _packet.Write(winStatus);
-
-                SendTcpData(_toClient, _packet);
-            }
-        }
-
-        public static void SendNetworkedMethodIndex(int _toClient, int abilityIndex, int methodIndex)
-        {
-            using (Packet _packet = new Packet((int)ServerPackets.sendNetworkedMethodIndex))
-            {
-                _packet.Write(abilityIndex);
-                _packet.Write(methodIndex);
-
-                SendTcpData(_toClient, _packet);
-            }
-        }
-
-        public static void ServerSendStoredMomentumValue(int _toClient, int _storedMomentum)
-        {
-            using (Packet _packet = new Packet((int)ServerPackets.serverSendStoredMomentumValue))
-            {
-                _packet.Write(_storedMomentum);
+                _packet.Write(_payload);
 
                 SendTcpData(_toClient, _packet);
             }

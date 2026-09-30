@@ -13,6 +13,8 @@ public class ClientSend : MonoBehaviour
         Client.localClientInstance.tcp.SendData(_packet);
     }
 
+    // Every packet writes its ID exactly once, through the Packet constructor. Don't write it again inside the packet,
+    // the server hands the ID to its handlers and forwards everything after it to the opponent untouched.
     #region Packets
     public static void WelcomeReceived()
     {
@@ -20,6 +22,7 @@ public class ClientSend : MonoBehaviour
         {
             _packet.Write(Client.localClientInstance.localClientId);
             _packet.Write(UiManager.Instance.UsernameInput.text);
+            _packet.Write(Protocol.Version);
 
             SendTcpData(_packet);
         }
@@ -29,8 +32,6 @@ public class ClientSend : MonoBehaviour
     {
         using (Packet _packet = new Packet((int)ClientPackets.sendSelectionData))
         {
-            _packet.Write((int)ClientPackets.sendSelectionData);
-
             _packet.Write(_panelIndex);
             _packet.Write(_playerIndex);
             _packet.Write(_selectedCharName);
@@ -43,8 +44,6 @@ public class ClientSend : MonoBehaviour
     {
         using (Packet _packet = new Packet((int)ClientPackets.sendReadyUp))
         {
-            _packet.Write((int)ClientPackets.sendReadyUp);
-
             int signalInt = 1;
             _packet.Write(signalInt);
             SendTcpData(_packet);
@@ -55,8 +54,6 @@ public class ClientSend : MonoBehaviour
     {
         using (Packet _packet = new Packet((int)ClientPackets.enterSyncTimerQueue))
         {
-            _packet.Write((int)ClientPackets.enterSyncTimerQueue);
-
             _packet.Write(CharacterSelect.Instance.CountdownTimer.Time);
             SendTcpData(_packet);
         }
@@ -69,8 +66,6 @@ public class ClientSend : MonoBehaviour
     // same MovePlaybackPlan without knowing the mover's buff state (Ire/Haste).
     // No rotations are sent - facing is derived from waypoint directions identically
     // on both clients.
-    // NOTE: unlike the legacy senders, the packet ID is written ONCE (ctor only);
-    // the server relays this payload verbatim without parsing it.
     public static void SendMovementPath(List<Vector3> waypoints, float totalPathDistance, int apSpent, LocomotionParams locomotion)
     {
         using (Packet _packet = new Packet((int)ClientPackets.sendMovementPath))
@@ -97,8 +92,6 @@ public class ClientSend : MonoBehaviour
     {
         using (Packet _packet = new Packet((int)ClientPackets.toggleTimerCountdown))
         {
-            _packet.Write((int)ClientPackets.toggleTimerCountdown);
-
             int signalInt = 1;
             _packet.Write(signalInt);
             SendTcpData(_packet);
@@ -109,8 +102,6 @@ public class ClientSend : MonoBehaviour
     {
         using (Packet _packet = new Packet((int)ClientPackets.endTurn))
         {
-            _packet.Write((int)ClientPackets.endTurn);
-
             int signalInt = 1;
             _packet.Write(signalInt);
             SendTcpData(_packet);
@@ -121,8 +112,6 @@ public class ClientSend : MonoBehaviour
     {
         using (Packet _packet = new Packet((int)ClientPackets.clientSendAnimationTrigger))
         {
-            _packet.Write((int)ClientPackets.clientSendAnimationTrigger);
-
             _packet.Write(trigger);
             _packet.Write(duration);
             _packet.Write(magnitude);
@@ -134,8 +123,6 @@ public class ClientSend : MonoBehaviour
     {
         using (Packet _packet = new Packet((int)ClientPackets.requestToDamageOpponentsHealth))
         {
-            _packet.Write((int)ClientPackets.requestToDamageOpponentsHealth);
-
             _packet.Write(damage);
             SendTcpData(_packet);
         }
@@ -145,8 +132,6 @@ public class ClientSend : MonoBehaviour
     {
         using (Packet _packet = new Packet((int)ClientPackets.clientSendStatusEffectData))
         {
-            _packet.Write((int)ClientPackets.clientSendStatusEffectData);
-
             _packet.Write(((int)statusEffectIdentifier));
             _packet.Write(duration);
             _packet.Write(ownership);
@@ -157,7 +142,6 @@ public class ClientSend : MonoBehaviour
     }
 
     // World-space position snap (was integer grid coords + a dead third field).
-    // Packet ID written once; server relays verbatim.
     public static void UpdatePlayerPosition(Vector3 position)
     {
         using (Packet _packet = new Packet((int)ClientPackets.updatePlayerCurrentPosition))
@@ -169,7 +153,6 @@ public class ClientSend : MonoBehaviour
     }
 
     // Forced move (pull / knockback) landing position for the opponent, world-space.
-    // Packet ID written once; server relays verbatim.
     public static void OverrideOpponentPosition(Vector3 position)
     {
         using (Packet _packet = new Packet((int)ClientPackets.overrideOppositePlayersPos))
@@ -184,8 +167,6 @@ public class ClientSend : MonoBehaviour
     {
         using (Packet _packet = new Packet((int)ClientPackets.hasWonTheMatch))
         {
-            _packet.Write((int)ClientPackets.hasWonTheMatch);
-
             _packet.Write(hasWonTheMatch);
             SendTcpData(_packet);
         }
@@ -195,8 +176,6 @@ public class ClientSend : MonoBehaviour
     {
         using (Packet _packet = new Packet((int)ClientPackets.sendNetworkedMethodIndex))
         {
-            _packet.Write((int)ClientPackets.sendNetworkedMethodIndex);
-
             _packet.Write(abilityIndex);
             _packet.Write(methodIndex);
 
@@ -208,8 +187,6 @@ public class ClientSend : MonoBehaviour
     {
         using (Packet _packet = new Packet((int)ClientPackets.sendStoredMomentumValue))
         {
-            _packet.Write((int)ClientPackets.sendStoredMomentumValue);
-
             _packet.Write(storedMomentum);
             SendTcpData(_packet);
         }

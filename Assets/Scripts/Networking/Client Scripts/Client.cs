@@ -233,7 +233,15 @@ public class Client : MonoBehaviour
                     using (Packet packet = new Packet(body))
                     {
                         int id = packet.ReadInt();
-                        packetHandlers[id](packet);
+
+                        // An ID we don't know means the server is on a different build, skip it instead of throwing
+                        if (!packetHandlers.TryGetValue(id, out PacketHandler handler))
+                        {
+                            Debug.LogWarning($"Unknown packet ID {id} from the server, skipping it!");
+                            return;
+                        }
+
+                        handler(packet);
                     }
                 });
 

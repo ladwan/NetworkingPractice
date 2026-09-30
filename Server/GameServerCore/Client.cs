@@ -188,7 +188,15 @@ namespace GameServer
                     using (Packet packet = new Packet(body))
                     {
                         int _packetId = packet.ReadInt();
-                        Server.packetHandlers[_packetId](id, packet);
+
+                        // An ID we don't know means the client is on a different build, drop it instead of crashing the server
+                        if (!Server.packetHandlers.TryGetValue(_packetId, out Server.PacketHandler _handler))
+                        {
+                            Console.WriteLine($"~~~[SERVER] Unknown packet ID {_packetId} from client {id}, dropping it !");
+                            return;
+                        }
+
+                        _handler(id, _packetId, packet);
                     }
                 });
 
