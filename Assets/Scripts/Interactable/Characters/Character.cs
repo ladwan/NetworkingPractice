@@ -32,15 +32,13 @@ namespace ForeverFight.Interactable.Characters
         [SerializeField] private GameObject threeSqRadius = null;
         [SerializeField] private GameObject fourSqRadius = null;
         [SerializeField] private GameObject fiveSqRadius = null;
-        [SerializeField] private List<MovementAnimationCurves> movementAnimCurves = null; // TODO: dead since the grid refactor, remove with prefab cleanup
-        // TODO: dead since MovePlaybackPlan - pacing now comes from LocomotionProfile.
+        // One set of curves per movement state (0 = base, 1 = Ire, ...), picked with MovementIndex.
+        // Each curve drives both the CharSpeed blend value and how fast the character moves.
+        [SerializeField] private List<MovementAnimationCurves> movementAnimCurves = null;
+        // TODO: dead since MovePlaybackPlan - pacing comes from movementAnimCurves.
         [SerializeField]
         private AnimationCurve runSpeedCurve = new AnimationCurve(
             new Keyframe(0f, 0.5f), new Keyframe(0.2f, 1f), new Keyframe(0.8f, 1f), new Keyframe(1f, 0.5f));
-        // How this character paces + animates moves by distance. Subclasses replace the
-        // default in OnEnable (Speedster); buffs override at runtime (Ire, Haste).
-        [SerializeField] private LocomotionProfile locomotionProfile = LocomotionProfile.CreateDefaultWalk();
-        private LocomotionProfile locomotionProfileOverride = null;
         private int movementIndex = 0;
 
 
@@ -94,18 +92,35 @@ namespace ForeverFight.Interactable.Characters
 
         public AnimationCurve RunSpeedCurve => runSpeedCurve;
 
-        /// <summary>The profile the next move is planned with: buff override if one is active, else the base.</summary>
-        public LocomotionProfile ActiveLocomotionProfile => locomotionProfileOverride ?? locomotionProfile;
-
-        /// <summary>Buff seam (Ire, Haste): swaps how this character paces + animates moves while active.</summary>
-        public void SetLocomotionProfileOverride(LocomotionProfile profile) => locomotionProfileOverride = profile;
-
-        public void ClearLocomotionProfileOverride() => locomotionProfileOverride = null;
-
-        /// <summary>For subclasses that ship their own base profile (e.g. Speedster's distance-scaled gaits).</summary>
-        protected void SetBaseLocomotionProfile(LocomotionProfile profile) => locomotionProfile = profile;
-
         public List<MovementAnimationCurves> MovementAnimCurves  => movementAnimCurves;
+
+        /// <summary>Picks the movement curve for a move of this length, the same way the old grid did.</summary>
+        // The old grid used element 0 for a 1 cell move, element 1 for 2 cells, and so on.
+        // NavMesh paths aren't whole cells, so the length is rounded (1 world unit ~= 1 old grid cell),
+        // and anything longer than the last curve uses the last curve.
+        // An unknown movement state falls back to the base curves instead of erroring mid move.
+        public AnimationCurve GetMovementCurve(int stateIndex, float pathLength)
+        {
+            if (movementAnimCurves == null || movementAnimCurves.Count == 0)
+            {
+                return null;
+            }
+
+            if (stateIndex < 0 || stateIndex >= movementAnimCurves.Count)
+            {
+                Debug.LogWarning($"{CharacterName} has no movement curves for state {stateIndex}, using the base curves");
+                stateIndex = 0;
+            }
+
+            var curves = movementAnimCurves[stateIndex].movementCurves;
+            if (curves == null || curves.Count == 0)
+            {
+                return null;
+            }
+
+            int curveIndex = Mathf.Clamp(Mathf.RoundToInt(pathLength) - 1, 0, curves.Count - 1);
+            return curves[curveIndex];
+        }
 
         public float MoveSpeedHelper { get => moveSpeedHelper; set => moveSpeedHelper = value; }
         

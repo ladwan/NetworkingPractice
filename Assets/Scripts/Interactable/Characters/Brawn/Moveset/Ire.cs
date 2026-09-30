@@ -81,12 +81,7 @@ namespace ForeverFight.Interactable.Abilities
             StatusActive = true;
             //ireVFXManagerREF.BeginCoroutine(this);
 
-            // Ire: Brawn runs instead of walking. The override only matters on this
-            // client - the derived pacing rides the move packet to the opponent.
-            if (LocalStoredNetworkData.GetLocalCharacter() is Brawn brawn)
-            {
-                brawn.SetLocomotionProfileOverride(brawn.IreLocomotionProfile);
-            }
+            OwningCharacter.MovementIndex = 1;
             AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(2, false, CurrentStatusEffectType); // Pass a 2 because you want the third index of the list because this is the third ability
             AbilityFunctionality();
             ClientSend.SendStatusEffectData(StatusEffect.StatusEffectType.Ire, CurrentAbilityDuration, 0, false);
@@ -156,10 +151,7 @@ namespace ForeverFight.Interactable.Abilities
                 groundPoundREF.AbilityDamage = 10;
                 haymakerREF.AbilityDamage = 15;
 
-                if (LocalStoredNetworkData.GetLocalCharacter() is Brawn brawn)
-                {
-                    brawn.ClearLocomotionProfileOverride();
-                }
+                OwningCharacter.MovementIndex = 0;
                 var shake = new CameraShakeParameters();
                 ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(animREF, "Ire Idle to Idle", shake);
             }
