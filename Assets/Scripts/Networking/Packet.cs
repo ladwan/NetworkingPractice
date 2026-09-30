@@ -3,53 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-/// <summary>Sent from client to server.</summary>
-public enum ServerPackets
-{
-    welcome = 1,
-    sendUpdatedPlayerPosition = 2,
-    totalPlayers = 3,// Deprecated
-    sendSelectionPacket = 4,
-    sendUsername = 5,
-    startTurn = 6,
-    relayReadyUp = 7,
-    syncTimers = 8,
-    sendDamageToOpponent = 9,
-    serverSendStatusEffectData = 10,
-    serverSendCurrentStatusEffectDuration = 11,
-    serverSendStoredMomentumValue = 12,
-    serverSendOverrodePos = 13,
-    serverSendWinStatus = 14,
-    toggleCountdownTimer = 15,
-    serverSendAnimationTrigger = 16,
-    sendMovementPath = 17,       // Renamed from sendSegmentedMovementData; payload is now a full waypoint list
-    // sendSegmentedRotationData = 18, -- RETIRED (facing derives from waypoints); number reserved
-    sendNetworkedMethodIndex = 19,
-    initalMatchDetails = 20,
-}
-
-/// <summary>Sent from client to server.</summary>
-public enum ClientPackets
-{
-    welcomeReceived = 1,
-    updatePlayerCurrentPosition = 2,
-    sendSelectionData = 3,
-    endTurn = 4,
-    sendReadyUp = 5,
-    enterSyncTimerQueue = 6,
-    requestToDamageOpponentsHealth = 7,
-    clientSendStatusEffectData = 8,
-    sendCurrentStatusEffectDuration = 9, // Deprecated
-    sendStoredMomentumValue = 10,
-    overrideOppositePlayersPos = 11,
-    hasWonTheMatch = 12,
-    toggleTimerCountdown = 13,
-    clientSendAnimationTrigger = 14,
-    sendMovementPath = 15,       // Renamed from sendSegmentedMovementData; payload is now a full waypoint list
-    // sendSegmentedRotationData = 16, -- RETIRED (facing derives from waypoints); number reserved
-    sendNetworkedMethodIndex = 17,
-}
-
 public class Packet : IDisposable
 {
     private List<byte> buffer;

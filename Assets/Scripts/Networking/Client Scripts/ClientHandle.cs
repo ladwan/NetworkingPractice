@@ -26,6 +26,16 @@ public class ClientHandle : MonoBehaviour
         string _msg = _packet.ReadString();
         int _myId = _packet.ReadInt();
 
+        // Older servers don't send a version at all, so a missing one counts as 0 (a mismatch) instead of crashing the read
+        int _serverProtocolVersion = _packet.UnreadLength() >= sizeof(int) ? _packet.ReadInt() : 0;
+
+        if (_serverProtocolVersion != Protocol.Version)
+        {
+            Debug.LogError($"Server is on protocol version {_serverProtocolVersion} but this client is on {Protocol.Version}. Rebuild so they match, disconnecting!");
+            Client.localClientInstance.Disconnect();
+            return;
+        }
+
         Client.localClientInstance.localClientId = _myId;
         ClientInfo.totalPlayersConnected++;
         ClientSend.WelcomeReceived();

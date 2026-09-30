@@ -20,7 +20,8 @@ namespace GameServer
         public static Dictionary<int, string> usernames = new Dictionary<int, string>();
         public static int currentPlayers = 0;
         public static int trackerInt = 0;
-        public delegate void PacketHandler(int _fromClient, Packet _packet);
+        // The packet ID is handed to the handler so it never has to read it out of the packet a second time
+        public delegate void PacketHandler(int _fromClient, int _packetId, Packet _packet);
         public static Dictionary<int, PacketHandler> packetHandlers;
 
         private static TcpListener tcpListener = null; // check this if it doesnt work
@@ -69,23 +70,16 @@ namespace GameServer
             packetHandlers = new Dictionary<int, PacketHandler>()
             {
                 {(int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
-                {(int)ClientPackets.sendSelectionData, ServerHandle.ServerReadFromClient},
-                {(int)ClientPackets.sendReadyUp, ServerHandle.ServerReadFromClient},
                 {(int)ClientPackets.enterSyncTimerQueue, ServerHandle.ServerReadFromClient},
-                {(int)(ClientPackets.sendSegmentedMovementData),ServerHandle.ServerReadFromClient},
-                {(int)(ClientPackets.sendSegmentedRotationData),ServerHandle.ServerReadFromClient},
                 {(int)ClientPackets.toggleTimerCountdown, ServerHandle.ServerReadFromClient},
-                {(int)ClientPackets.endTurn, ServerHandle.ServerReadFromClient},
-                {(int)(ClientPackets.clientSendAnimationTrigger),ServerHandle.ServerReadFromClient},
-                {(int)ClientPackets.requestToDamageOpponentsHealth, ServerHandle.ServerReadFromClient},
-                {(int)ClientPackets.clientSendStatusEffectData, ServerHandle.ServerReadFromClient},
-                {(int)ClientPackets.updatePlayerCurrentPosition, ServerHandle.ServerReadFromClient },
-                {(int)ClientPackets.overrideOppositePlayersPos, ServerHandle.ServerReadFromClient},
-                {(int)ClientPackets.hasWonTheMatch, ServerHandle.ServerReadFromClient},
-                {(int)(ClientPackets.sendNetworkedMethodIndex),ServerHandle.ServerReadFromClient},
-                {(int)ClientPackets.sendStoredMomentumValue, ServerHandle.ServerReadFromClient},
-
             };
+
+            // Relayed packets all go through the same handler, so they're registered straight from Protocol's list.
+            // That way adding a packet to Protocol.RelayedPackets is all it takes for the server to accept it.
+            foreach (ClientPackets _relayedPacket in Protocol.RelayedPackets.Keys)
+            {
+                packetHandlers.Add((int)_relayedPacket, ServerHandle.ServerReadFromClient);
+            }
             Console.WriteLine("Initialized Packets..");
         }
 

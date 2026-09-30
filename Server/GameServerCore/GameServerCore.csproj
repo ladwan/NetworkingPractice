@@ -7,4 +7,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <!-- Packet IDs are shared with the Unity client. Linking the client's copy means there is only one to keep up to date. -->
+  <ItemGroup>
+    <Compile Include="..\..\Assets\Scripts\Networking\Shared\Protocol.cs" Link="Protocol.cs" />
+  </ItemGroup>
+
 </Project>

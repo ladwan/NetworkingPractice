@@ -5,53 +5,6 @@ using System.Text;
 
 namespace GameServer
 {
-    /// <summary>Sent from server to client.</summary>
-    public enum ServerPackets
-    {
-        welcome = 1,
-        sendUpdatedPlayerPosition = 2,
-        totalPlayers = 3, // Deprecated
-        sendSelectionPacket = 4,
-        sendUsername = 5,
-        startTurn = 6,
-        relayReadyUp = 7,
-        syncTimers = 8,
-        sendDamageToOpponent = 9,
-        serverSendStatusEffectData = 10,
-        serverSendCurrentStatusEffectDuration = 11,
-        serverSendStoredMomentumValue = 12,
-        serverSendOverrodePos = 13,
-        serverSendWinStatus = 14,
-        toggleCountdownTimer = 15,
-        serverSendAnimationTrigger = 16,
-        sendSegmentedMovementData = 17,
-        sendSegmentedRotationData = 18,
-        sendNetworkedMethodIndex = 19,
-        initalMatchDetails = 20,
-    }
-
-    /// <summary>Sent from client to server.</summary>
-    public enum ClientPackets
-    {
-        welcomeReceived = 1,
-        updatePlayerCurrentPosition = 2,
-        sendSelectionData = 3,
-        endTurn = 4,
-        sendReadyUp = 5,
-        enterSyncTimerQueue = 6,
-        requestToDamageOpponentsHealth = 7,
-        clientSendStatusEffectData = 8,
-        sendCurrentStatusEffectDuration = 9, // Deprecated
-        sendStoredMomentumValue = 10,
-        overrideOppositePlayersPos = 11,
-        hasWonTheMatch = 12,
-        toggleTimerCountdown = 13,
-        clientSendAnimationTrigger = 14,
-        sendSegmentedMovementData = 15,
-        sendSegmentedRotationData = 16,
-        sendNetworkedMethodIndex = 17,
-    }
-
     public class Packet : IDisposable
     {
         private List<byte> buffer;
@@ -237,6 +190,20 @@ namespace GameServer
             {
                 throw new Exception("Could not read value of type 'byte[]'!");
             }
+        }
+
+        /// <summary>Reads every byte that hasn't been read yet.</summary>
+        // Used to forward a packet to the opponent without knowing what's inside it.
+        // ReadBytes throws when there's nothing left to read, and some packets have no contents at all,
+        // so that case hands back an empty array instead.
+        public byte[] ReadRemainingBytes()
+        {
+            if (UnreadLength() <= 0)
+            {
+                return new byte[0];
+            }
+
+            return ReadBytes(UnreadLength());
         }
 
         /// <summary>Reads a short from the packet.</summary>

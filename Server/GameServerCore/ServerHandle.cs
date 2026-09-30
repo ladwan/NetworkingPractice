@@ -7,10 +7,21 @@ namespace GameServer
         private static int desyncedTimersRecived = 0;
 
 
-        public static void WelcomeReceived(int _fromClient, Packet _packet)
+        public static void WelcomeReceived(int _fromClient, int _packetId, Packet _packet)
         {
             int _clientIdCheck = _packet.ReadInt();
             string _clientUsername = _packet.ReadString();
+
+            // Older clients don't send a version at all, so a missing one counts as 0 (a mismatch) instead of crashing the read
+            int _clientProtocolVersion = _packet.UnreadLength() >= sizeof(int) ? _packet.ReadInt() : 0;
+
+            // Checked before matchmaking so a mismatched client never gets paired into a match
+            if (_clientProtocolVersion != Protocol.Version)
+            {
+                Console.WriteLine($"~~~[SERVER] {_clientUsername} (ID: {_fromClient}) is on protocol version {_clientProtocolVersion} but the server is on {Protocol.Version}, disconnecting them !");
+                Server.connectedClients[_fromClient].Disconnect();
+                return;
+            }
 
             Console.WriteLine($"{Server.connectedClients[_fromClient].myClientTcp.socket.Client.RemoteEndPoint} connected successfully and is now player {_fromClient}");
             Console.WriteLine($"Welcome {_clientUsername} ..you have no idea how long i've been waiting for you");
@@ -32,10 +43,9 @@ namespace GameServer
         }
 
 
-        public static void ServerReadFromClient(int _fromClient, Packet _packet)
+        public static void ServerReadFromClient(int _fromClient, int _packetId, Packet _packet)
         {
             Console.WriteLine($"~~~[SERVER] Server Recieved Welcome Ack from Client: {_fromClient} !");
-            int _packetId = _packet.ReadInt();
             Console.WriteLine($"~~~[SERVER] Packet ID: {_packetId} !");
 
             Client sender = Server.connectedClients[_fromClient];
