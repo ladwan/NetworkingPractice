@@ -47,6 +47,13 @@ namespace ForeverFight.Interactable.PlayerInputInteractions
 
         private void HandleInput()
         {
+            // The camera is only set once the local character's references load,
+            // so ignore input until then instead of raycasting from a null camera.
+            if (playerInputCameraREF == null)
+            {
+                return;
+            }
+
             // Touch (mobile)
             if (Input.touchCount > 0)
             {
