@@ -35,6 +35,8 @@ namespace ForeverFight.Interactable.Characters
         // One set of curves per movement state (0 = base, 1 = Ire, ...), picked with MovementIndex.
         // Each curve drives both the CharSpeed blend value and how fast the character moves.
         [SerializeField] private List<MovementAnimationCurves> movementAnimCurves = null;
+        // Moves that play their own animation (e.g. the Brawn's Ire leap) instead of plain locomotion.
+        [SerializeField] private List<SpecialMovement> specialMovements = new List<SpecialMovement>();
         // TODO: dead since MovePlaybackPlan - pacing comes from movementAnimCurves.
         [SerializeField]
         private AnimationCurve runSpeedCurve = new AnimationCurve(
@@ -49,6 +51,45 @@ namespace ForeverFight.Interactable.Characters
             private string name;
             [SerializeField]
             public List<AnimationCurve> movementCurves = null;
+        }
+
+        /// <summary>
+        /// A move that fires its own animation. Two separate parts, use either or both:
+        ///   - Wind up: the character stands still for windUpSeconds before translating.
+        ///   - Travel: how the translation plays after the wind up. MovementCurve walks/runs
+        ///     with the normal movement curves; FixedDuration covers the whole path in
+        ///     travelSeconds (e.g. a leap that lands at the end of the move).
+        /// MovementExecutor picks it from the movement state and path length, so both clients
+        /// play it the same way from the same move packet.
+        /// </summary>
+        [Serializable]
+        public class SpecialMovement
+        {
+            public enum TravelType
+            {
+                MovementCurve,
+                FixedDuration,
+            }
+
+            [SerializeField]
+            private string name;
+            [Tooltip("Movement state this applies to (0 = base, 1 = Ire, ...).")]
+            public int movementIndex = 0;
+            [Tooltip("Moves this many units or shorter use this special movement.")]
+            public float maxDistance = 3f;
+            [Tooltip("Animator trigger that starts the special animation.")]
+            public string animatorTrigger = null;
+
+            [Header("Wind Up")]
+            [Tooltip("Seconds the character stands still while the animation winds up, before it starts translating. 0 = no wind up.")]
+            public float windUpSeconds = 0.5f;
+
+            [Header("Travel")]
+            public TravelType travelType = TravelType.MovementCurve;
+            [Tooltip("FixedDuration only: seconds to cover the whole path, e.g. the leap's time in the air.")]
+            public float travelSeconds = 0.5f;
+            [Tooltip("FixedDuration only: how much of the path is covered (0..1) over the travel time (0..1).")]
+            public AnimationCurve travelProgress = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
         }
 
 
@@ -120,6 +161,24 @@ namespace ForeverFight.Interactable.Characters
 
             int curveIndex = Mathf.Clamp(Mathf.RoundToInt(pathLength) - 1, 0, curves.Count - 1);
             return curves[curveIndex];
+        }
+
+        /// <summary>The special movement for this movement state and move length, or null for a normal move.</summary>
+        // The length is rounded the same way GetMovementCurve picks a curve, so a move that plays
+        // the "3 cell" curve (2.5 up to 3.5 units) counts as 3 and still gets a max distance 3 move.
+        public SpecialMovement GetSpecialMovement(int stateIndex, float pathLength)
+        {
+            int roundedLength = Mathf.RoundToInt(pathLength);
+            for (int i = 0; i < specialMovements.Count; i++)
+            {
+                var special = specialMovements[i];
+                if (special.movementIndex == stateIndex && roundedLength <= special.maxDistance)
+                {
+                    return special;
+                }
+            }
+
+            return null;
         }
 
         public float MoveSpeedHelper { get => moveSpeedHelper; set => moveSpeedHelper = value; }

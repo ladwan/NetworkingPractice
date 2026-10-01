@@ -97,13 +97,16 @@ namespace ForeverFight.GameMechanics.Movement
                 movementCurve = fallbackCurve;
             }
 
-            var plan = new MovePlaybackPlan(waypoints, pathLength, movementCurve, unitsPerSecondPerCurveValue);
+            var specialMovement = character != null ? character.GetSpecialMovement(movementIndex, pathLength) : null;
+            var plan = specialMovement != null && specialMovement.travelType == Character.SpecialMovement.TravelType.FixedDuration
+                ? new MovePlaybackPlan(waypoints, pathLength, specialMovement.travelSeconds, specialMovement.travelProgress)
+                : new MovePlaybackPlan(waypoints, pathLength, movementCurve, unitsPerSecondPerCurveValue);
             isPlaying = true;
-            playbackCoroutine = StartCoroutine(PlayPlan(spawnToMove, character, plan, onComplete));
+            playbackCoroutine = StartCoroutine(PlayPlan(spawnToMove, character, plan, specialMovement, onComplete));
         }
 
 
-        private IEnumerator PlayPlan(GameObject spawnToMove, Character character, MovePlaybackPlan plan, Action onComplete)
+        private IEnumerator PlayPlan(GameObject spawnToMove, Character character, MovePlaybackPlan plan, Character.SpecialMovement specialMovement, Action onComplete)
         {
             Animator animator = character != null && character.CharacterAnimationReferences != null
                 ? character.CharacterAnimationReferences.CharacterAnimator
@@ -112,6 +115,16 @@ namespace ForeverFight.GameMechanics.Movement
             var transformToMove = spawnToMove.transform;
             var waypoints = plan.Waypoints;
             transformToMove.position = waypoints[0];
+
+            if (specialMovement != null)
+            {
+                FireSpecialAnimation(animator, specialMovement);
+
+                if (specialMovement.windUpSeconds > 0f)
+                {
+                    yield return PlayWindUp(transformToMove, waypoints, specialMovement.windUpSeconds);
+                }
+            }
 
             float elapsed = 0f;
             while (elapsed < plan.Duration)
@@ -160,6 +173,45 @@ namespace ForeverFight.GameMechanics.Movement
             isPlaying = false;
             playbackCoroutine = null;
             onComplete?.Invoke();
+        }
+
+        private static void FireSpecialAnimation(Animator animator, Character.SpecialMovement specialMovement)
+        {
+            if (animator == null)
+            {
+                return;
+            }
+
+            animator.SetFloat("CharSpeed", 0f);
+            if (!string.IsNullOrEmpty(specialMovement.animatorTrigger))
+            {
+                animator.SetTrigger(specialMovement.animatorTrigger);
+            }
+        }
+
+        // Some special moves wind up in place before they travel, so the character stands
+        // still, turning to face the move, for windUpSeconds. Only then does the plan start
+        // translating. Kept separate from how the move travels so any special move can use it.
+        private IEnumerator PlayWindUp(Transform transformToMove, IReadOnlyList<Vector3> waypoints, float windUpSeconds)
+        {
+            Vector3 faceDirection = waypoints[1] - waypoints[0];
+            faceDirection.y = 0f;
+
+            float elapsed = 0f;
+            while (elapsed < windUpSeconds)
+            {
+                elapsed += Time.deltaTime;
+
+                if (faceDirection.sqrMagnitude > 0.0001f)
+                {
+                    transformToMove.rotation = Quaternion.RotateTowards(
+                        transformToMove.rotation,
+                        Quaternion.LookRotation(faceDirection),
+                        turnSpeedDegrees * Time.deltaTime);
+                }
+
+                yield return null;
+            }
         }
 
         private static float PathLength(IReadOnlyList<Vector3> waypoints)
