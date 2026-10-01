@@ -21,8 +21,14 @@ namespace ForeverFight.GameMechanics.Movement
         [SerializeField] private float recomputeInterval = 0.05f;
         // Free-space equivalent of "can't stop on the opponent's square".
         [SerializeField] private float opponentClearanceRadius = 0.75f;
+        // NavMesh paths turn on hard angles; each corner is rounded into a curve this wide.
+        [Tooltip("How far back from each path corner the rounding starts, in units. 0 = sharp corners.")]
+        [SerializeField] private float cornerRadius = 0.75f;
+        [Tooltip("Points used to draw each rounded corner.")]
+        [SerializeField] private int cornerSegments = 8;
 
         private readonly List<Vector3> plannedWaypoints = new List<Vector3>();
+        private readonly List<Vector3> roundedWaypoints = new List<Vector3>();
         private NavMeshPath reusablePath = null;
         private Vector3 lastComputedTarget = Vector3.positiveInfinity;
         private float lastComputeTime = -1f;
@@ -152,6 +158,13 @@ namespace ForeverFight.GameMechanics.Movement
             }
 
             NavPathUtility.FlattenY(plannedWaypoints, 0f);
+
+            // Rounded here, before the length and AP cost, so the trail, the cost and the move
+            // the character actually plays (on both clients, it's in the packet) all use the curve.
+            NavPathUtility.RoundCorners(plannedWaypoints, cornerRadius, cornerSegments, roundedWaypoints);
+            plannedWaypoints.Clear();
+            plannedWaypoints.AddRange(roundedWaypoints);
+
             plannedPathLength = NavPathUtility.PathLength(plannedWaypoints);
 
             int cost = ApDistanceBank.Instance.CostForDistance(plannedPathLength);

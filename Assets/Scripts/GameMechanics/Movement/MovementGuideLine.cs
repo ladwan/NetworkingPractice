@@ -16,19 +16,28 @@ namespace ForeverFight.GameMechanics.Movement
     public class MovementGuideLine : MonoBehaviour
     {
         [Header("Trail Shape")]
-        [SerializeField] private float lineWidth = 0.2f;
+        [SerializeField] private float lineWidth = 0.22f;
         [Tooltip("Height above the ground the trail floats at.")]
         [SerializeField] private float airHeight = 1.2f;
         [SerializeField] private float densifyStep = 0.5f;
+        // The chevron texture tiles once per world unit and its point shifts a quarter tile over
+        // half the width, so a 0.25 unit point gives the head the same angle as the arrows.
+        [Tooltip("Length of the pointed head of the trail, in units.")]
+        [SerializeField] private float tipLength = 0.25f;
+        [Tooltip("Fraction of the trail's width, centered, that stays fully solid before the sides fade out.")]
+        [Range(0f, 1f)]
+        [SerializeField] private float solidCenterWidth = 1f / 9f;
 
         [Header("Animation")]
         [Tooltip("How fast the trail head lerps from the character to the drag point, in units/sec.")]
         [SerializeField] private float travelSpeed = 10f;
         [Tooltip("Scroll speed of the chevron texture along the revealed trail.")]
         [SerializeField] private float scrollSpeed = 1.5f;
-        [Tooltip("Marker scale pulse amount (0 = no pulse).")]
-        [SerializeField] private float markerPulseAmount = 0.12f;
-        [SerializeField] private float markerPulseSpeed = 4f;
+        [Tooltip("Endpoint marker: how many waves leave the center each second.")]
+        [SerializeField] private float markerWaveSpeed = 1.2f;
+        [Tooltip("Endpoint marker: thickness of the wave ring, as a fraction of the marker's radius.")]
+        [Range(0.01f, 0.5f)]
+        [SerializeField] private float markerRingWidth = 0.08f;
 
         [Header("Colors")]
         [Tooltip("The part of the trail paid for with passive AP (spent first).")]
@@ -50,9 +59,10 @@ namespace ForeverFight.GameMechanics.Movement
         private TextMeshPro costLabel = null;
         private Transform plannedEndpointAnchor = null;
         private GameObject endpointGrabHandle = null;
-        private Vector3 markerBaseScale = Vector3.one;
         private string texturePropertyName = "_MainTex";
         private string colorPropertyName = "_Color";
+        private string trailTexturePropertyName = "_BaseMap";
+        private string endpointColorPropertyName = "_BaseColor";
         private float scrollOffset = 0f;
         private readonly List<Vector3> densifiedPoints = new List<Vector3>();
         private readonly List<float> cumulativeDistances = new List<float>();
@@ -62,6 +72,14 @@ namespace ForeverFight.GameMechanics.Movement
         private float passiveDistance = 0f;
         private Color endColor = Color.white;
         private readonly Gradient trailGradient = new Gradient();
+        // Reused every rebuild so drawing the trail allocates nothing per frame (no GC spikes on mobile).
+        private readonly float[] gradientTimes = new float[4];
+        private readonly GradientColorKey[] gradientColorKeys = new GradientColorKey[4];
+        private readonly GradientAlphaKey[] gradientAlphaKeys = new GradientAlphaKey[4];
+        private Vector3[] positionBuffer = new Vector3[64];
+        private Material endpointMaterial = null;
+        private int shownLabelTenths = -1;
+        private int shownLabelCost = -1;
         private bool visible = false;
 
         public static MovementGuideLine Instance { get; private set; }
@@ -119,19 +137,25 @@ namespace ForeverFight.GameMechanics.Movement
                 return;
             }
 
+            // Only rebuild while the head is still animating out. Plan changes rebuild in
+            // HandlePlanUpdated, so a finished, unchanged trail costs nothing but the scroll.
+            float previousRevealDistance = revealDistance;
             revealDistance = Mathf.MoveTowards(revealDistance, totalTrailLength, travelSpeed * Time.deltaTime);
-            RebuildRevealedTrail();
+            if (revealDistance != previousRevealDistance)
+            {
+                RebuildRevealedTrail();
+            }
 
             if (lineMaterialInstance != null)
             {
                 scrollOffset = Mathf.Repeat(scrollOffset - scrollSpeed * Time.deltaTime, 1f);
-                lineMaterialInstance.SetTextureOffset(texturePropertyName, new Vector2(scrollOffset, 0f));
-            }
-
-            if (markerPulseAmount > 0f)
-            {
-                float pulse = 1f + Mathf.Sin(Time.time * markerPulseSpeed) * markerPulseAmount;
-                endpointMarker.transform.localScale = markerBaseScale * pulse;
+                lineMaterialInstance.SetTextureOffset(trailTexturePropertyName, new Vector2(scrollOffset, 0f));
+#if UNITY_EDITOR
+                lineMaterialInstance.SetFloat("_SolidCenterWidth", solidCenterWidth); // Live tuning from the Inspector, editor only.
+                lineMaterialInstance.SetFloat("_TipLength", tipLength);
+                endpointMaterial.SetFloat("_WaveSpeed", markerWaveSpeed);
+                endpointMaterial.SetFloat("_RingWidth", markerRingWidth);
+#endif
             }
         }
 
@@ -195,7 +219,14 @@ namespace ForeverFight.GameMechanics.Movement
             endColor = capped ? cappedColor : mainColor;
             passiveDistance = Mathf.Min(ApDistanceBank.Instance.PendingPassiveDistance, totalTrailLength);
 
-            costLabel.text = $"{pathLength:0.0}m  -  {apCost} AP";
+            // Only rebuild the label string (and TMP mesh) when what it shows actually changes.
+            int labelTenths = Mathf.RoundToInt(pathLength * 10f);
+            if (labelTenths != shownLabelTenths || apCost != shownLabelCost)
+            {
+                shownLabelTenths = labelTenths;
+                shownLabelCost = apCost;
+                costLabel.text = $"{pathLength:0.0}m  -  {apCost} AP";
+            }
 
             var waypoints = planner.PlannedWaypoints;
             plannedEndpointAnchor.position = waypoints[waypoints.Count - 1];
@@ -261,15 +292,19 @@ namespace ForeverFight.GameMechanics.Movement
                 break;
             }
 
-            lineRenderer.positionCount = revealedPoints.Count;
-            for (int i = 0; i < revealedPoints.Count; i++)
+            // One SetPositions call instead of one SetPosition per point.
+            if (positionBuffer.Length < revealedPoints.Count)
             {
-                lineRenderer.SetPosition(i, revealedPoints[i]);
+                positionBuffer = new Vector3[Mathf.NextPowerOfTwo(revealedPoints.Count)];
             }
+            revealedPoints.CopyTo(positionBuffer);
+            lineRenderer.positionCount = revealedPoints.Count;
+            lineRenderer.SetPositions(positionBuffer);
 
             float revealedLength = Mathf.Min(revealDistance, totalTrailLength);
             ApplyTrailGradient(revealedLength);
-            endpointRenderer.material.SetColor(colorPropertyName, ColorAtDistance(revealedLength));
+            lineMaterialInstance.SetFloat("_TrailLength", revealedLength); // The shader cuts the pointed tip from this.
+            endpointMaterial.SetColor(endpointColorPropertyName, MarkerColorAtDistance(revealedLength));
 
             endpointMarker.transform.position = head;
         }
@@ -286,23 +321,21 @@ namespace ForeverFight.GameMechanics.Movement
                 return;
             }
 
-            float blendStart = Mathf.Clamp01(passiveDistance / revealedLength);
-            float blendEnd = Mathf.Clamp01((passiveDistance + colorBlendDistance) / revealedLength);
-            float[] times = { 0f, blendStart, blendEnd, 1f };
+            gradientTimes[0] = 0f;
+            gradientTimes[1] = Mathf.Clamp01(passiveDistance / revealedLength);
+            gradientTimes[2] = Mathf.Clamp01((passiveDistance + colorBlendDistance) / revealedLength);
+            gradientTimes[3] = 1f;
 
-            var colorKeys = new GradientColorKey[times.Length];
-            var alphaKeys = new GradientAlphaKey[times.Length];
-            for (int i = 0; i < times.Length; i++)
+            for (int i = 0; i < gradientTimes.Length; i++)
             {
-                Color color = ColorAtDistance(times[i] * revealedLength);
-                colorKeys[i] = new GradientColorKey(color, times[i]);
-                alphaKeys[i] = new GradientAlphaKey(color.a, times[i]);
+                Color color = ColorAtDistance(gradientTimes[i] * revealedLength);
+                gradientColorKeys[i] = new GradientColorKey(color, gradientTimes[i]);
+                gradientAlphaKeys[i] = new GradientAlphaKey(color.a, gradientTimes[i]);
             }
 
-            trailGradient.SetKeys(colorKeys, alphaKeys);
+            trailGradient.SetKeys(gradientColorKeys, gradientAlphaKeys);
             lineRenderer.colorGradient = trailGradient;
         }
-
         private Color ColorAtDistance(float distance)
         {
             if (passiveDistance <= 0f)
@@ -312,6 +345,19 @@ namespace ForeverFight.GameMechanics.Movement
 
             float t = Mathf.InverseLerp(passiveDistance, passiveDistance + colorBlendDistance, distance);
             return Color.Lerp(passiveColor, endColor, t);
+        }
+
+        // The endpoint wave only shows which AP type pays for the end of the move: blue for
+        // passive, green for normal. Unlike the trail it skips the capped warning color.
+        private Color MarkerColorAtDistance(float distance)
+        {
+            if (passiveDistance <= 0f)
+            {
+                return mainColor;
+            }
+
+            float t = Mathf.InverseLerp(passiveDistance, passiveDistance + colorBlendDistance, distance);
+            return Color.Lerp(passiveColor, mainColor, t);
         }
 
         /// <summary>Subdivides the waypoints, lifts them to airHeight and caches cumulative distances.</summary>
@@ -352,28 +398,25 @@ namespace ForeverFight.GameMechanics.Movement
         {
             lineRenderer = gameObject.AddComponent<LineRenderer>();
             lineRenderer.useWorldSpace = true;
-            lineRenderer.startWidth = lineWidth;
-            lineRenderer.endWidth = lineWidth;
+            lineRenderer.widthMultiplier = lineWidth;
             lineRenderer.numCornerVertices = 4;
-            lineRenderer.numCapVertices = 4;
+            lineRenderer.numCapVertices = 0; // No rounded caps: the trail shader cuts the head into a point instead.
             lineRenderer.textureMode = LineTextureMode.Tile;
             lineRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             lineRenderer.receiveShadows = false;
             lineRenderer.alignment = LineAlignment.View; // Ribbon faces the camera since it floats in the air.
 
-            // The trail's passive-to-normal gradient comes through vertex colors, which
-            // URP's plain Unlit ignores - its Particles/Unlit multiplies them in.
-            lineMaterialInstance = CreateLineMaterial("Universal Render Pipeline/Particles/Unlit");
+            lineMaterialInstance = CreateTrailMaterial();
             lineRenderer.material = lineMaterialInstance;
 
             endpointMarker = GameObject.CreatePrimitive(PrimitiveType.Quad);
             endpointMarker.name = "Endpoint Marker";
             endpointMarker.transform.SetParent(transform, false);
             endpointMarker.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
-            markerBaseScale = endpointMarker.transform.localScale;
             Destroy(endpointMarker.GetComponent<Collider>());
             endpointRenderer = endpointMarker.GetComponent<Renderer>();
-            endpointRenderer.material = CreateLineMaterial();
+            endpointMaterial = CreateEndpointWaveMaterial();
+            endpointRenderer.sharedMaterial = endpointMaterial;
             endpointRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 
             plannedEndpointAnchor = new GameObject("Planned Endpoint").transform;
@@ -404,17 +447,58 @@ namespace ForeverFight.GameMechanics.Movement
             costLabel.color = Color.white;
         }
 
-        private Material CreateLineMaterial(string urpShaderName = "Universal Render Pipeline/Unlit")
+        // The trail uses its own shader (Resources/GuideLineTrail.shader): URP's Unlit ignores
+        // the LineRenderer's vertex colors (the passive/normal AP gradient), and its
+        // Particles/Unlit ignores texture offset (the chevron scroll). The custom shader does
+        // both, and fades the trail's sides. Falls back to URP Unlit if it's missing.
+        private Material CreateTrailMaterial()
+        {
+            var trailShader = Resources.Load<Shader>("GuideLineTrail");
+            if (trailShader == null)
+            {
+                Debug.LogError("GuideLineTrail shader missing from Resources, the trail falls back to URP Unlit");
+                var fallback = CreateLineMaterial();
+                trailTexturePropertyName = texturePropertyName;
+                return fallback;
+            }
+
+            var material = new Material(trailShader);
+            var texture = CreateChevronTexture();
+            texture.wrapMode = TextureWrapMode.Repeat;
+            material.SetTexture("_BaseMap", texture);
+            material.SetColor("_BaseColor", Color.white);
+            material.SetFloat("_SolidCenterWidth", solidCenterWidth);
+            material.SetFloat("_TipLength", tipLength);
+            return material;
+        }
+
+        // The endpoint marker's expanding wave ring (Resources/GuideLineEndpointWave.shader).
+        // Falls back to the plain line material if the shader is missing.
+        private Material CreateEndpointWaveMaterial()
+        {
+            var waveShader = Resources.Load<Shader>("GuideLineEndpointWave");
+            if (waveShader == null)
+            {
+                Debug.LogError("GuideLineEndpointWave shader missing from Resources, the endpoint marker falls back to URP Unlit");
+                var fallback = CreateLineMaterial();
+                endpointColorPropertyName = colorPropertyName;
+                return fallback;
+            }
+
+            var material = new Material(waveShader);
+            material.SetColor("_BaseColor", mainColor);
+            material.SetFloat("_WaveSpeed", markerWaveSpeed);
+            material.SetFloat("_RingWidth", markerRingWidth);
+            return material;
+        }
+
+        private Material CreateLineMaterial()
         {
             // URP's Unlit shader respects texture tiling/offset, which the scrolling
             // chevron animation depends on. Sprites/Default ignores _MainTex_ST, so a
             // scrolled offset renders static there - only used as a last-resort fallback.
             Material material;
-            var urpShader = Shader.Find(urpShaderName);
-            if (urpShader == null)
-            {
-                urpShader = Shader.Find("Universal Render Pipeline/Unlit");
-            }
+            var urpShader = Shader.Find("Universal Render Pipeline/Unlit");
             if (urpShader != null)
             {
                 material = new Material(urpShader);
