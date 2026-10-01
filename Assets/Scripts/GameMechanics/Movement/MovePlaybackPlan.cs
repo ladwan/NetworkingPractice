@@ -72,6 +72,33 @@ namespace ForeverFight.GameMechanics.Movement
         }
 
 
+        /// <summary>
+        /// A move that covers the whole path in a set time instead of following a movement curve,
+        /// e.g. a leap that has to land when its animation does. progressCurve maps normalized
+        /// time (0..1) to how much of the path is covered (0..1). CharSpeed stays at 0 because the
+        /// move's own animation is playing, not the locomotion blend tree.
+        /// </summary>
+        public MovePlaybackPlan(IReadOnlyList<Vector3> waypoints, float totalLength, float duration, AnimationCurve progressCurve)
+        {
+            Waypoints = waypoints;
+            TotalLength = Mathf.Max(0.001f, totalLength);
+            Duration = Mathf.Max(0.01f, duration);
+            curve = new AnimationCurve(new Keyframe(0f, 0f), new Keyframe(1f, 0f));
+            curveLength = 1f;
+
+            for (int i = 0; i <= BakeSteps; i++)
+            {
+                float t01 = (float)i / BakeSteps;
+                float progress = progressCurve != null && progressCurve.keys.Length > 0
+                    ? Mathf.Clamp01(progressCurve.Evaluate(t01))
+                    : t01;
+                distanceByTime[i] = progress * TotalLength;
+            }
+
+            distanceByTime[BakeSteps] = TotalLength;
+        }
+
+
         /// <summary>Distance traveled along the path at normalized time (0..1).</summary>
         public float DistanceAt(float t01)
         {

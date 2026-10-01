@@ -25725,6 +25725,14 @@ MonoBehaviour:
   threeSqRadius: {fileID: 0}
   fourSqRadius: {fileID: 0}
   fiveSqRadius: {fileID: 0}
+  specialMovements:
+  - name: Ire Leap
+    movementIndex: 1
+    maxDistance: 3
+    animatorTrigger: Small
+    windUpSeconds: 0.4
+    travelType: 1
+    travelSeconds: 0.5
   movementAnimCurves:
   - name: Base Movement
     movementCurves:

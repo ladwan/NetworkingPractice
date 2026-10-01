@@ -23,9 +23,6 @@ namespace ForeverFight.Interactable.Abilities
         [SerializeField]
         private GameObject increasedGroundPoundRadius = null;
         [SerializeField] private IreVFXManager ireVFXManagerREF = null;
-        // Old rule fired the small anim when fewer than 4 path points (start included)
-        // were moved, i.e. under 3 grid squares = under 3 world units.
-        [SerializeField] private float smallMoveThreshold = 3.0f;
 
 
         protected Ire()
@@ -53,7 +50,6 @@ namespace ForeverFight.Interactable.Abilities
 
         protected void OnEnable()
         {
-            MovementPlanner.Instance.OnMoveConfirmed += SmallIreMovement;
             PlayerTurnManager.Instance.OnTurnEnd += UpdateAbilityDuration;
             AbilitySelectionUiManager.Instance.OnSpawnButtonUi += InstantiateStatusEffectUiOnButton;
             AbilitySelectionUiManager.Instance.OnReadyToBeFormatted += SendStatusEffectDataToBeFormatted;
@@ -62,10 +58,6 @@ namespace ForeverFight.Interactable.Abilities
 
         protected void OnDisable()
         {
-            if (MovementPlanner.Instance != null)
-            {
-                MovementPlanner.Instance.OnMoveConfirmed -= SmallIreMovement;
-            }
             PlayerTurnManager.Instance.OnTurnEnd -= UpdateAbilityDuration;
             AbilitySelectionUiManager.Instance.OnSpawnButtonUi -= InstantiateStatusEffectUiOnButton;
             AbilitySelectionUiManager.Instance.OnReadyToBeFormatted -= SendStatusEffectDataToBeFormatted;
@@ -156,15 +148,8 @@ namespace ForeverFight.Interactable.Abilities
                 ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating(animREF, "Ire Idle to Idle", shake);
             }
         }
-
-        private void SmallIreMovement(float pathDistance)
-        {
-            if (!StatusActive) return;
-            if (pathDistance >= smallMoveThreshold) return;
-
-            ToggleTimerAndUi.Instance.SetTriggerWithoutListeningForAnimEnd(animREF, "Small", shakeParameters[0]);
-            //ExecuteMethodAfterDelay.Instance.BeginDelay(1.5f,ToggleTimerAndUi.Instance.ToggleInteractivityWhileAnimating);
-        }
+        // The small Ire leap is now a Character.SpecialMovement on the Brawn prefab, played by
+        // MovementExecutor on both clients so its wind up stays in place and in sync.
     }
 
     /*
