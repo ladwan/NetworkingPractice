@@ -62,9 +62,17 @@ namespace ForeverFight.GameMechanics.Movement
             // A Unity Plane primitive is exactly 10x10 units at scale 1 - the same
             // footprint as the old grid. Its collider handles drag ground raycasts;
             // its (temporarily enabled) renderer feeds the runtime NavMesh bake.
+            // NavMeshSurface lays its tile grid out from its own position, so a surface on
+            // the plane itself puts 4 tiles meeting at the arena center, and paths crossing
+            // that point can bend through it. Putting the surface on a parent past the
+            // arena's corner keeps the whole arena inside a single tile.
+            var navMeshRoot = new GameObject("Walkable Arena NavMesh");
+            navMeshRoot.transform.SetParent(transform, false);
+            navMeshRoot.transform.position = arenaCenter - new Vector3(6f, 0f, 6f);
+
             var walkableArena = GameObject.CreatePrimitive(PrimitiveType.Plane);
             walkableArena.name = "Walkable Arena";
-            walkableArena.transform.SetParent(transform, false);
+            walkableArena.transform.SetParent(navMeshRoot.transform, false);
             walkableArena.transform.position = arenaCenter;
 
             int groundLayer = LayerMask.NameToLayer("Ground");
@@ -77,7 +85,7 @@ namespace ForeverFight.GameMechanics.Movement
                 Debug.LogError("Layer 'Ground' is not defined in TagManager - drag ground sampling will fail");
             }
 
-            navMeshSurface = walkableArena.AddComponent<NavMeshSurface>();
+            navMeshSurface = navMeshRoot.AddComponent<NavMeshSurface>();
             navMeshSurface.collectObjects = CollectObjects.Children;
             navMeshSurface.useGeometry = NavMeshCollectGeometry.RenderMeshes;
             navMeshSurface.BuildNavMesh();
