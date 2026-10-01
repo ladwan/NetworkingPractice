@@ -28,6 +28,9 @@ namespace ForeverFight.GameMechanics.Movement
 
         public int PendingCost => pendingPassiveCost + pendingMainCost;
 
+        // Passive AP is spent first, so this much of the start of the planned path is paid by it.
+        public float PendingPassiveDistance => pendingPassiveCost * unitsPerAp;
+
 
         private void Awake()
         {
