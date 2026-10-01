@@ -31,8 +31,13 @@ namespace ForeverFight.GameMechanics.Movement
         [SerializeField] private float markerPulseSpeed = 4f;
 
         [Header("Colors")]
-        [SerializeField] private Color lineColor = new Color(0.3f, 0.85f, 1f, 0.9f);
+        [Tooltip("The part of the trail paid for with passive AP (spent first).")]
+        [SerializeField] private Color passiveColor = new Color(0.25f, 0.55f, 1f, 0.9f);
+        [Tooltip("The part of the trail paid for with normal AP.")]
+        [SerializeField] private Color mainColor = new Color(0.3f, 1f, 0.45f, 0.9f);
         [SerializeField] private Color cappedColor = new Color(1f, 0.7f, 0.15f, 0.95f);
+        [Tooltip("How many units the passive color takes to blend into the normal color.")]
+        [SerializeField] private float colorBlendDistance = 0.8f;
 
         [Header("Endpoint Re-Grab")]
         [Tooltip("Radius of the click target on a released plan's endpoint.")]
@@ -54,6 +59,9 @@ namespace ForeverFight.GameMechanics.Movement
         private readonly List<Vector3> revealedPoints = new List<Vector3>();
         private float revealDistance = 0f;
         private float totalTrailLength = 0f;
+        private float passiveDistance = 0f;
+        private Color endColor = Color.white;
+        private readonly Gradient trailGradient = new Gradient();
         private bool visible = false;
 
         public static MovementGuideLine Instance { get; private set; }
@@ -182,10 +190,10 @@ namespace ForeverFight.GameMechanics.Movement
             }
             revealDistance = Mathf.Min(revealDistance, totalTrailLength);
 
+            // Capped swaps the normal AP color for the warning color; the passive part stays blue.
             bool capped = pathLength >= ApDistanceBank.Instance.MaxPlannableDistance() - 0.01f;
-            Color color = capped ? cappedColor : lineColor;
-            endpointRenderer.material.SetColor(colorPropertyName, color);
-            lineMaterialInstance.SetColor(colorPropertyName, color);
+            endColor = capped ? cappedColor : mainColor;
+            passiveDistance = Mathf.Min(ApDistanceBank.Instance.PendingPassiveDistance, totalTrailLength);
 
             costLabel.text = $"{pathLength:0.0}m  -  {apCost} AP";
 
@@ -259,7 +267,51 @@ namespace ForeverFight.GameMechanics.Movement
                 lineRenderer.SetPosition(i, revealedPoints[i]);
             }
 
+            float revealedLength = Mathf.Min(revealDistance, totalTrailLength);
+            ApplyTrailGradient(revealedLength);
+            endpointRenderer.material.SetColor(colorPropertyName, ColorAtDistance(revealedLength));
+
             endpointMarker.transform.position = head;
+        }
+
+        /// <summary>
+        /// Blue for the stretch paid by passive AP, blending into the normal AP color after it.
+        /// The gradient spans only the revealed part of the trail, so its keys are rescaled
+        /// to that length as the head animates out.
+        /// </summary>
+        private void ApplyTrailGradient(float revealedLength)
+        {
+            if (revealedLength <= 0.0001f)
+            {
+                return;
+            }
+
+            float blendStart = Mathf.Clamp01(passiveDistance / revealedLength);
+            float blendEnd = Mathf.Clamp01((passiveDistance + colorBlendDistance) / revealedLength);
+            float[] times = { 0f, blendStart, blendEnd, 1f };
+
+            var colorKeys = new GradientColorKey[times.Length];
+            var alphaKeys = new GradientAlphaKey[times.Length];
+            for (int i = 0; i < times.Length; i++)
+            {
+                Color color = ColorAtDistance(times[i] * revealedLength);
+                colorKeys[i] = new GradientColorKey(color, times[i]);
+                alphaKeys[i] = new GradientAlphaKey(color.a, times[i]);
+            }
+
+            trailGradient.SetKeys(colorKeys, alphaKeys);
+            lineRenderer.colorGradient = trailGradient;
+        }
+
+        private Color ColorAtDistance(float distance)
+        {
+            if (passiveDistance <= 0f)
+            {
+                return endColor;
+            }
+
+            float t = Mathf.InverseLerp(passiveDistance, passiveDistance + colorBlendDistance, distance);
+            return Color.Lerp(passiveColor, endColor, t);
         }
 
         /// <summary>Subdivides the waypoints, lifts them to airHeight and caches cumulative distances.</summary>
@@ -309,7 +361,9 @@ namespace ForeverFight.GameMechanics.Movement
             lineRenderer.receiveShadows = false;
             lineRenderer.alignment = LineAlignment.View; // Ribbon faces the camera since it floats in the air.
 
-            lineMaterialInstance = CreateLineMaterial();
+            // The trail's passive-to-normal gradient comes through vertex colors, which
+            // URP's plain Unlit ignores - its Particles/Unlit multiplies them in.
+            lineMaterialInstance = CreateLineMaterial("Universal Render Pipeline/Particles/Unlit");
             lineRenderer.material = lineMaterialInstance;
 
             endpointMarker = GameObject.CreatePrimitive(PrimitiveType.Quad);
@@ -350,13 +404,17 @@ namespace ForeverFight.GameMechanics.Movement
             costLabel.color = Color.white;
         }
 
-        private Material CreateLineMaterial()
+        private Material CreateLineMaterial(string urpShaderName = "Universal Render Pipeline/Unlit")
         {
             // URP's Unlit shader respects texture tiling/offset, which the scrolling
             // chevron animation depends on. Sprites/Default ignores _MainTex_ST, so a
             // scrolled offset renders static there - only used as a last-resort fallback.
             Material material;
-            var urpShader = Shader.Find("Universal Render Pipeline/Unlit");
+            var urpShader = Shader.Find(urpShaderName);
+            if (urpShader == null)
+            {
+                urpShader = Shader.Find("Universal Render Pipeline/Unlit");
+            }
             if (urpShader != null)
             {
                 material = new Material(urpShader);
@@ -380,7 +438,7 @@ namespace ForeverFight.GameMechanics.Movement
             var texture = CreateChevronTexture();
             texture.wrapMode = TextureWrapMode.Repeat;
             material.SetTexture(texturePropertyName, texture);
-            material.SetColor(colorPropertyName, lineColor);
+            material.SetColor(colorPropertyName, Color.white);
             return material;
         }
 
