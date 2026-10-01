@@ -38,6 +38,12 @@ namespace ForeverFight.GameMechanics.Movement
         [Tooltip("Endpoint marker: thickness of the wave ring, as a fraction of the marker's radius.")]
         [Range(0.01f, 0.5f)]
         [SerializeField] private float markerRingWidth = 0.08f;
+        [Tooltip("Endpoint marker: size in world units. The wave reaches the marker's edge, so this sets its diameter.")]
+        [SerializeField] private float markerSize = 0.726f;
+
+        // Where the cost label sat when the marker was 0.6 wide, kept fixed as markerSize changes.
+        private const float LabelWorldOffset = 0.54f;
+        private const float LabelWorldScale = 0.6f;
 
         [Header("Colors")]
         [Tooltip("The part of the trail paid for with passive AP (spent first).")]
@@ -412,7 +418,9 @@ namespace ForeverFight.GameMechanics.Movement
             endpointMarker = GameObject.CreatePrimitive(PrimitiveType.Quad);
             endpointMarker.name = "Endpoint Marker";
             endpointMarker.transform.SetParent(transform, false);
-            endpointMarker.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+            // The wave ring's width is a fraction of the marker's radius, so scaling the marker grows
+            // the ring's diameter and thickness together.
+            endpointMarker.transform.localScale = Vector3.one * markerSize;
             Destroy(endpointMarker.GetComponent<Collider>());
             endpointRenderer = endpointMarker.GetComponent<Renderer>();
             endpointMaterial = CreateEndpointWaveMaterial();
@@ -440,7 +448,10 @@ namespace ForeverFight.GameMechanics.Movement
             labelObject.transform.SetParent(endpointMarker.transform, false);
             // Local +Y = screen-up (past the marker), local -Z = world-up (slight lift so the
             // flat label never z-fights the marker or the trail ribbon).
-            labelObject.transform.localPosition = new Vector3(0f, 0.9f, -0.05f);
+            // The label is a child of the marker, so undo the marker's size to keep the label the same
+            // size and at the same distance (0.54 world units) whatever markerSize is.
+            labelObject.transform.localPosition = new Vector3(0f, LabelWorldOffset / markerSize, -0.05f);
+            labelObject.transform.localScale = Vector3.one * (LabelWorldScale / markerSize);
             costLabel = labelObject.AddComponent<TextMeshPro>();
             costLabel.fontSize = 3f;
             costLabel.alignment = TextAlignmentOptions.Center;
@@ -527,19 +538,28 @@ namespace ForeverFight.GameMechanics.Movement
         }
 
         /// <summary>Generates a small dash/chevron strip so the scroll reads as flow.</summary>
+        // Worked out from each pixel's center in 0..1 space so the arrow's point lands exactly on
+        // the middle of the width. The old integer version measured from row height/2, which
+        // is half a pixel off center on an even row count and pushed the arrows to one side.
         private static Texture2D CreateChevronTexture()
         {
-            const int width = 16;
-            const int height = 8;
+            const int width = 64;
+            const int height = 32;
+            // How far (in tiles) the arrow's edges trail its point. 0.25 is the original shape and
+            // what the trail shader's 0.25 unit tip is matched to.
+            const float pointDepth = 0.25f;
             var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
 
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
+                    float u = (x + 0.5f) / width;
+                    float v = (y + 0.5f) / height;
+
                     // Diagonal band pointing along +X: opaque where the wrapped diagonal falls.
-                    int band = (x + Mathf.Abs(y - height / 2)) % width;
-                    bool solid = band < width / 2;
+                    float band = Mathf.Repeat(u + Mathf.Abs(v - 0.5f) * 2f * pointDepth, 1f);
+                    bool solid = band < 0.5f;
                     texture.SetPixel(x, y, solid ? Color.white : new Color(1f, 1f, 1f, 0.15f));
                 }
             }
