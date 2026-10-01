@@ -135,6 +135,52 @@ namespace ForeverFight.GameMechanics.Movement
             return PathLength(path);
         }
 
+        /// <summary>
+        /// Writes path into result with every interior corner replaced by a curve. Each corner
+        /// starts radius units before the corner and ends radius units after it (shrunk to half
+        /// of a short segment so neighboring curves never overlap), bending through the corner
+        /// as a quadratic Bezier. The start and end points don't move.
+        /// </summary>
+        public static void RoundCorners(List<Vector3> path, float radius, int segments, List<Vector3> result)
+        {
+            result.Clear();
+            if (path.Count < 3 || radius <= 0f || segments < 1)
+            {
+                result.AddRange(path);
+                return;
+            }
+
+            result.Add(path[0]);
+
+            for (int i = 1; i < path.Count - 1; i++)
+            {
+                Vector3 previous = path[i - 1];
+                Vector3 corner = path[i];
+                Vector3 next = path[i + 1];
+
+                Vector3 toPrevious = previous - corner;
+                Vector3 toNext = next - corner;
+                float cornerRadius = Mathf.Min(radius, toPrevious.magnitude * 0.5f, toNext.magnitude * 0.5f);
+                if (cornerRadius <= 0.001f)
+                {
+                    result.Add(corner);
+                    continue;
+                }
+
+                Vector3 curveStart = corner + toPrevious.normalized * cornerRadius;
+                Vector3 curveEnd = corner + toNext.normalized * cornerRadius;
+
+                for (int s = 0; s <= segments; s++)
+                {
+                    float t = (float)s / segments;
+                    float u = 1f - t;
+                    result.Add(u * u * curveStart + 2f * u * t * corner + t * t * curveEnd);
+                }
+            }
+
+            result.Add(path[path.Count - 1]);
+        }
+
         public static void FlattenY(List<Vector3> path, float y = 0f)
         {
             for (int i = 0; i < path.Count; i++)
