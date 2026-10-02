@@ -37,6 +37,8 @@ namespace ForeverFight.Interactable.Characters
         [SerializeField] private List<MovementAnimationCurves> movementAnimCurves = null;
         // Moves that play their own animation (e.g. the Brawn's Ire leap) instead of plain locomotion.
         [SerializeField] private List<SpecialMovement> specialMovements = new List<SpecialMovement>();
+        [Tooltip("CharSpeed value where the blend tree plays the run animation.")]
+        [SerializeField] private float runBlendValue = 20f;
         // TODO: dead since MovePlaybackPlan - pacing comes from movementAnimCurves.
         [SerializeField]
         private AnimationCurve runSpeedCurve = new AnimationCurve(
@@ -51,6 +53,11 @@ namespace ForeverFight.Interactable.Characters
             private string name;
             [SerializeField]
             public List<AnimationCurve> movementCurves = null;
+            // The curve value is both the blend value and the move speed, so a faster run can't come from
+            // the curves alone - this scales translation instead, and the curve's timing scales with it.
+            // Per movement state so a buff like Haste can run faster than the base state.
+            [Tooltip("Moves whose curve reaches runBlendValue (the run animation) translate this many times faster.")]
+            public float runTranslationMultiplier = 1f;
         }
 
         /// <summary>
@@ -161,6 +168,34 @@ namespace ForeverFight.Interactable.Characters
 
             int curveIndex = Mathf.Clamp(Mathf.RoundToInt(pathLength) - 1, 0, curves.Count - 1);
             return curves[curveIndex];
+        }
+
+        /// <summary>How many times faster than normal a move on this curve, in this movement state, translates.</summary>
+        // Checks the keys rather than sampling the curve: a run curve's peak is always a key.
+        // An unknown movement state uses the base state, the same as GetMovementCurve.
+        public float GetTranslationMultiplier(int stateIndex, AnimationCurve movementCurve)
+        {
+            if (movementCurve == null || movementAnimCurves == null || movementAnimCurves.Count == 0)
+            {
+                return 1f;
+            }
+
+            if (stateIndex < 0 || stateIndex >= movementAnimCurves.Count)
+            {
+                stateIndex = 0;
+            }
+            float runTranslationMultiplier = movementAnimCurves[stateIndex].runTranslationMultiplier;
+
+            var keys = movementCurve.keys;
+            for (int i = 0; i < keys.Length; i++)
+            {
+                if (keys[i].value >= runBlendValue)
+                {
+                    return runTranslationMultiplier;
+                }
+            }
+
+            return 1f;
         }
 
         /// <summary>The special movement for this movement state and move length, or null for a normal move.</summary>

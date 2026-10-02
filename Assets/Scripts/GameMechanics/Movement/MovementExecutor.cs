@@ -97,10 +97,14 @@ namespace ForeverFight.GameMechanics.Movement
                 movementCurve = fallbackCurve;
             }
 
+            // Run moves can translate faster per character (e.g. the Speedster), and the plan
+            // squeezes the curve's timing to match, so the blend values stay in sync.
+            float translationMultiplier = character != null ? character.GetTranslationMultiplier(movementIndex, movementCurve) : 1f;
+
             var specialMovement = character != null ? character.GetSpecialMovement(movementIndex, pathLength) : null;
             var plan = specialMovement != null && specialMovement.travelType == Character.SpecialMovement.TravelType.FixedDuration
                 ? new MovePlaybackPlan(waypoints, pathLength, specialMovement.travelSeconds, specialMovement.travelProgress)
-                : new MovePlaybackPlan(waypoints, pathLength, movementCurve, unitsPerSecondPerCurveValue);
+                : new MovePlaybackPlan(waypoints, pathLength, movementCurve, unitsPerSecondPerCurveValue * translationMultiplier);
             isPlaying = true;
             playbackCoroutine = StartCoroutine(PlayPlan(spawnToMove, character, plan, specialMovement, onComplete));
         }
