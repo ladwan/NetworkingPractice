@@ -90,6 +90,9 @@ namespace ForeverFight.Interactable.Abilities
 
 
             StatusActive = true;
+            // Movement state 1 = hasted runs. The state goes out with each move, so the opponent
+            // plays the faster run even though it doesn't know Haste is active.
+            OwningCharacter.MovementIndex = 1;
             ToggleParticles(true);
             AbilitySelectionUiManager.Instance.ToggleAbilityDisplay(2, false, CurrentStatusEffectType); // Pass a 2 because you want the third index of the list because this is the third ability
             AbilityFunctionality();
@@ -170,6 +173,7 @@ namespace ForeverFight.Interactable.Abilities
                 if (CurrentAbilityDuration <= 1)
                 {
                     StatusActive = false;
+                    OwningCharacter.MovementIndex = 0;
                     fasterPassiveREF.SetMaxPassiveApPool(3);
                     quickPunchREF.SetAbilityRadius(quickPunchREF.OriginalRadius);
                     //AugmentedMovementManager.Instance.ToggleAugmentMovement();
