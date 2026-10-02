@@ -310,7 +310,7 @@ namespace ForeverFight.GameMechanics.Movement
             float revealedLength = Mathf.Min(revealDistance, totalTrailLength);
             ApplyTrailGradient(revealedLength);
             lineMaterialInstance.SetFloat("_TrailLength", revealedLength); // The shader cuts the pointed tip from this.
-            endpointMaterial.SetColor(endpointColorPropertyName, MarkerColorAtDistance(revealedLength));
+            endpointMaterial.SetColor(endpointColorPropertyName, ColorAtDistance(revealedLength));
 
             endpointMarker.transform.position = head;
         }
@@ -351,19 +351,6 @@ namespace ForeverFight.GameMechanics.Movement
 
             float t = Mathf.InverseLerp(passiveDistance, passiveDistance + colorBlendDistance, distance);
             return Color.Lerp(passiveColor, endColor, t);
-        }
-
-        // The endpoint wave only shows which AP type pays for the end of the move: blue for
-        // passive, green for normal. Unlike the trail it skips the capped warning color.
-        private Color MarkerColorAtDistance(float distance)
-        {
-            if (passiveDistance <= 0f)
-            {
-                return mainColor;
-            }
-
-            float t = Mathf.InverseLerp(passiveDistance, passiveDistance + colorBlendDistance, distance);
-            return Color.Lerp(passiveColor, mainColor, t);
         }
 
         /// <summary>Subdivides the waypoints, lifts them to airHeight and caches cumulative distances.</summary>
