@@ -53,6 +53,10 @@ namespace ForeverFight.GameMechanics.Movement
         [SerializeField] private Color cappedColor = new Color(1f, 0.7f, 0.15f, 0.95f);
         [Tooltip("How many units the passive color takes to blend into the normal color.")]
         [SerializeField] private float colorBlendDistance = 0.8f;
+        [Tooltip("Outline around the cost label so it stays readable over white things.")]
+        [SerializeField] private Color labelOutlineColor = new Color(0f, 0f, 0f, 1f);
+        [Range(0f, 1f)]
+        [SerializeField] private float labelOutlineWidth = 0.25f;
 
         [Header("Endpoint Re-Grab")]
         [Tooltip("Radius of the click target on a released plan's endpoint.")]
@@ -440,9 +444,24 @@ namespace ForeverFight.GameMechanics.Movement
             labelObject.transform.localPosition = new Vector3(0f, LabelWorldOffset / markerSize, -0.05f);
             labelObject.transform.localScale = Vector3.one * (LabelWorldScale / markerSize);
             costLabel = labelObject.AddComponent<TextMeshPro>();
-            costLabel.fontSize = 3f;
+            costLabel.fontSize = 6f;
             costLabel.alignment = TextAlignmentOptions.Center;
             costLabel.color = Color.white;
+
+            // The overlay shader skips the depth test so the label draws over the character and
+            // the arena, and the dark outline keeps the white text readable over white things.
+            // The shader is in Graphics Settings' Always Included Shaders so Shader.Find works in builds.
+            var overlayShader = Shader.Find("TextMeshPro/Distance Field Overlay");
+            if (overlayShader != null)
+            {
+                costLabel.fontMaterial.shader = overlayShader;
+            }
+            else
+            {
+                Debug.LogError("TMP Distance Field Overlay shader missing, the cost label can be hidden behind objects");
+            }
+            costLabel.outlineWidth = labelOutlineWidth;
+            costLabel.outlineColor = labelOutlineColor;
         }
 
         // The trail uses its own shader (Resources/GuideLineTrail.shader): URP's Unlit ignores
