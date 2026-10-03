@@ -141,7 +141,7 @@ public class ApReferenceLists : MonoBehaviour
 
     public void ColorAp(Color color, int amount)
     {
-        for (int i = 0; i < amount && amount < apLights.Count; i++)
+        for (int i = 0; i < amount && i < apLights.Count; i++)
         {
             var image = apLights[i].gameObject.GetComponent<Image>();
             if (image != null)
