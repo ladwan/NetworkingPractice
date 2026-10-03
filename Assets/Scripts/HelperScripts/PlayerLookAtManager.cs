@@ -29,8 +29,14 @@ namespace ForeverFight.HelperScripts
                 InstantiateLookAt(player1Transform.gameObject, false);
             }
 
-            MovementPlanner.Instance.OnMoveCompleted += TurnOnLookAt;
             PlayerTurnManager.Instance.IsLocalPlayersTurnAction += EnableLookAtBasedOnLocalPlayerTurn;
+        }
+
+        //Subscribed in Start, not Awake: MovementPlanner sets its Instance in its own Awake,
+        //which can run after ours, so subscribing in Awake silently missed the move-completed event
+        private void Start()
+        {
+            MovementPlanner.Instance.OnMoveCompleted += TurnOnLookAt;
         }
 
         private void OnDestroy()
