@@ -72,11 +72,6 @@ namespace ForeverFight.GameMechanics.Movement
                     PreparePlayers(player2Spawn);
                     localPlayerSpawn = player2Spawn;
                     opponentSpawn = player1Spawn;
-                    if (playerREF != null)
-                    {
-                        playerREF.transform.position = player2Spawn.transform.position;
-                        playerREF.transform.rotation = player2Spawn.transform.rotation;
-                    }
                     break;
                 default:
                     Debug.Log("ClientInfo.playerNumber returned an abnormal value, spawns not assigned");
