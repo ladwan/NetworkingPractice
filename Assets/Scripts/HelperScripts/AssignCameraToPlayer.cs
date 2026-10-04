@@ -14,23 +14,18 @@ namespace ForeverFight.HelperScripts
         private Transform player2Spawn = null;
 
 
-        private Transform currentPlayerSpawn = null;
-
         protected void Awake()
         {
             var transformToParentPlayerHolderUnder = ClientInfo.playerNumber == 1 ? player1Spawn : player2Spawn;
             playerHolderREF.transform.parent = transformToParentPlayerHolderUnder;
             playerHolderREF.transform.localPosition = Vector3.zero;
-
-            currentPlayerSpawn = transformToParentPlayerHolderUnder;
         }
 
 
         private void Start()
         {
-            playerHolderREF.transform.localRotation = currentPlayerSpawn == player1Spawn ?
-                                playerHolderREF.transform.localRotation = Quaternion.Euler(new Vector3(0, -90, 0)) :
-                                                playerHolderREF.transform.localRotation = Quaternion.Euler(new Vector3(0, -90, 0));
+            //Same for both players, the spawn point the holder is parented under already faces the right way
+            playerHolderREF.transform.localRotation = Quaternion.Euler(new Vector3(0, -90, 0));
         }
     }
 }
