@@ -25,6 +25,9 @@ namespace GameServer
         }
 
         private int desyncedTimersRecived = 0;
+        private bool player1ReadyToStart = false;
+        private bool player2ReadyToStart = false;
+        private bool hasMatchStarted = false;
 
 
         // =============================
@@ -112,6 +115,9 @@ namespace GameServer
                 case (int)ClientPackets.toggleTimerCountdown:
                     HandleToggleTimerSignal(fromClient, packet);
                     break;
+                case (int)ClientPackets.readyToStartMatch:
+                    HandleReadyToStartMatch(fromClient);
+                    break;
             }
         }
 
@@ -141,6 +147,23 @@ namespace GameServer
                 Console.WriteLine("~ ~ ~ Sync ~ ~ ~");
                 desyncedTimersRecived = 0;
             }
+        }
+
+        // Players finish loading the combat scene at different times, so neither one starts until both have checked in.
+        // Tracked per player (not with a counter) so the same player sending it twice can't start the match alone.
+        public void HandleReadyToStartMatch(int fromClientId)
+        {
+            if (Player1.id == fromClientId)
+                player1ReadyToStart = true;
+            else if (Player2.id == fromClientId)
+                player2ReadyToStart = true;
+
+            if (!player1ReadyToStart || !player2ReadyToStart || hasMatchStarted)
+                return;
+
+            hasMatchStarted = true;
+            ServerSend.StartMatch(MatchId);
+            Console.WriteLine($"Match {MatchId}: Both players ready, starting match");
         }
 
         public void HandleToggleTimerSignal(int fromClientId, Packet _packet)

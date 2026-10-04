@@ -120,6 +120,12 @@ public class ClientHandle : MonoBehaviour
         PlayerTurnManager.Instance.StartTurn();
     }
 
+    // Both players get this at the same moment, once the server knows both have loaded in
+    public static void ReceiveStartMatchSignal(Packet _packet)
+    {
+        PlayerTurnManager.Instance.BeginMatch();
+    }
+
     public static void ReceiveAnimationTrigger(Packet _packet)
     {
         string trigger = _packet.ReadString();

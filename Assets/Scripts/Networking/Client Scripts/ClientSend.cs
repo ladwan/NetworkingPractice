@@ -95,6 +95,14 @@ public class ClientSend : MonoBehaviour
         }
     }
 
+    public static void ReadyToStartMatch()
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.readyToStartMatch))
+        {
+            SendTcpData(_packet);
+        }
+    }
+
     public static void EndTurn()
     {
         using (Packet _packet = new Packet((int)ClientPackets.endTurn))

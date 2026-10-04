@@ -31,7 +31,7 @@ namespace ForeverFight.FlowControl
         [NonSerialized]
         private static PlayerTurnManager instance = null;
         [NonSerialized]
-        private bool isLocalPlayersTurn = true; //This will be true for player 2 on the when the game FIRST starts, it should set itself to false using the EndTurn() method
+        private bool isLocalPlayersTurn = true; //This will be true for player 2 on the when the game FIRST starts, it should set itself to false in BeginMatch()
         private Action onTurnStart = null;
         [NonSerialized]
         private Animator localCharacterAnimator = null;
@@ -108,7 +108,31 @@ namespace ForeverFight.FlowControl
             return;
         }
 
+        //Called on both players at the same time by the server, once both have loaded in. Nothing (timer, die, turns) starts before this
+        public void BeginMatch()
+        {
+            if (ClientInfo.playerNumber == 1)
+            {
+                StartTurn();
+                return;
+            }
+
+            //Player 2 starts on the opponent's turn. Player 1 already knows it's their go, so nothing is sent
+            EndTurnLocally(false);
+            transform.gameObject.AddComponent<BasePlayerLookAt>();
+        }
+
         public void EndTurn(bool timeRanOut)
+        {
+            if (isLocalPlayersTurn)
+            {
+                EndTurnLocally(timeRanOut);
+                ClientSend.EndTurn();
+            }
+        }
+
+        //Everything ending a turn does on this client, without telling the opponent it's their go
+        private void EndTurnLocally(bool timeRanOut)
         {
             if (isLocalPlayersTurn)
             {
@@ -151,7 +175,6 @@ namespace ForeverFight.FlowControl
 
                 onTurnEnd?.Invoke();
                 IsLocalPlayersTurn = false;
-                ClientSend.EndTurn();
                 return;
             }
         }
@@ -159,12 +182,10 @@ namespace ForeverFight.FlowControl
         private void SetCharacterAnimatorReferences(CharacterAnimationReferences animationReferences)
         {
             localCharacterAnimator = animationReferences.CharacterAnimator;
-            if (ClientInfo.playerNumber == 2)
-            {
-                EndTurn(false);
 
-                transform.gameObject.AddComponent<BasePlayerLookAt>();
-            }
+            //Players load in at different speeds, so the server waits for both of these before sending BeginMatch to both
+            playerTimerSubtext.text = "( Waiting for opponent... )";
+            ClientSend.ReadyToStartMatch();
         }
 
         private void UpdateTurnsUntilOverdrive()
