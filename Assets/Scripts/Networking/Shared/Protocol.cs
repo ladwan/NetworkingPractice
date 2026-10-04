@@ -28,6 +28,7 @@ public enum ServerPackets
     // sendSegmentedRotationData = 18, -- RETIRED (facing derives from waypoints); number reserved
     sendNetworkedMethodIndex = 19,
     initalMatchDetails = 20,
+    startMatch = 21,             // Sent to both players at once, only after both have said they're ready
 }
 
 /// <summary>Sent from client to server.</summary>
@@ -50,6 +51,7 @@ public enum ClientPackets
     sendMovementPath = 15,       // Renamed from sendSegmentedMovementData; payload is now a full waypoint list
     // sendSegmentedRotationData = 16, -- RETIRED (facing derives from waypoints); number reserved
     sendNetworkedMethodIndex = 17,
+    readyToStartMatch = 18,      // The combat scene is loaded and the local character has spawned
 }
 
 // Protocol holds the rules both sides have to agree on, beyond just the packet IDs above.
@@ -61,7 +63,8 @@ public static class Protocol
     // The client and server compare it when they connect and refuse to play together if it doesn't match,
     // so an out of date build fails loudly instead of quietly reading packets wrong.
     // 2: the movement path packet sends a movement state index instead of four pacing floats.
-    public const int Version = 2;
+    // 3: added readyToStartMatch / startMatch so both players start the match at the same time.
+    public const int Version = 3;
 
     // Packets the server doesn't need to understand, it just forwards them to the opponent untouched.
     // Left side is the ID the client sends, right side is the ID the opponent receives it as.

@@ -266,6 +266,7 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.sendMovementPath, ClientHandle.ReceiveMovementPath },
             { (int)ServerPackets.toggleCountdownTimer, ClientHandle.ReceiveToggleTimerSignal},
             { (int)ServerPackets.startTurn, ClientHandle.ReceiveStartTurnSignal},
+            { (int)ServerPackets.startMatch, ClientHandle.ReceiveStartMatchSignal},
             { (int)ServerPackets.serverSendAnimationTrigger, ClientHandle.ReceiveAnimationTrigger },
             { (int)ServerPackets.sendDamageToOpponent, ClientHandle.ReceiveDamage},
             { (int)ServerPackets.serverSendStatusEffectData, ClientHandle.ClientReceiveStatusEffectData},

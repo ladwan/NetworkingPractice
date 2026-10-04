@@ -93,6 +93,14 @@ namespace GameServer
             }
         }
 
+        public static void StartMatch(int matchId)
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.startMatch))
+            {
+                SendTcpDataToAllMatchPlayers(matchId, _packet);
+            }
+        }
+
         // Replaces the old one-sender-per-packet methods (RelayReadyUp, StartTurn, SendDamageToOpponent, etc).
         // Those each re-read and re-wrote the packet's contents, so any change on the client had to be copied here too.
         // This sends the bytes exactly as the client wrote them, only swapping in the ID the opponent listens for.

@@ -72,6 +72,7 @@ namespace GameServer
                 {(int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
                 {(int)ClientPackets.enterSyncTimerQueue, ServerHandle.ServerReadFromClient},
                 {(int)ClientPackets.toggleTimerCountdown, ServerHandle.ServerReadFromClient},
+                {(int)ClientPackets.readyToStartMatch, ServerHandle.ServerReadFromClient},
             };
 
             // Relayed packets all go through the same handler, so they're registered straight from Protocol's list.
